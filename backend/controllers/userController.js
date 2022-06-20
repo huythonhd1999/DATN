@@ -1,11 +1,9 @@
 const bcrypt = require('bcrypt')
 const path = require('path')
 const User = require('../models/User')
-const Tag = require('../models/Tag')
 const config = require('../config/config')
 const jwtHelper = require('../helpers/jwtToken')
 const { OAuth2Client } = require('google-auth-library')
-const OAuthClient = new OAuth2Client(config.googleClientID)
 
 let nodemailer = require("nodemailer");
 const { query } = require('express')

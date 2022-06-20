@@ -1,6 +1,5 @@
 const path = require('path')
 const Post = require('../models/Post')
-const Tag = require('../models/Tag')
 const PostTag = require('../models/PostTag')
 const PostVote = require('../models/PostVote')
 const User = require('../models/User')

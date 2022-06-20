@@ -1,0 +1,89 @@
+#navSideBar {
+    position: absolute;
+    width: 220px;
+}
+
+#navSideBar .pro-sidebar {
+    height: 100vh;
+}
+
+#navSideBar .closemenu {
+    color: #000;
+    position: absolute;
+    right: 0;
+    z-index: 9999;
+    line-height: 20px;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 22px;
+    top: 55px;
+    cursor: pointer;
+}
+
+#navSideBar .pro-sidebar {
+    width: 100%;
+    min-width: 100%;
+}
+
+#navSideBar .pro-sidebar.collapsed {
+    width: 85px;
+    min-width: 85px;
+}
+
+#navSideBar .pro-sidebar-inner {
+    background-color: white;
+    box-shadow: 0.5px 0.866px 2px 0px rgba(0, 0, 0, 0.15);
+}
+
+#navSideBar .pro-sidebar-inner .pro-sidebar-layout {
+    overflow-y: hidden;
+}
+
+#navSideBar .pro-sidebar-inner .pro-sidebar-layout .logotext {
+    display: flex;
+    justify-content: center;
+}
+.pro-sidebar > .pro-sidebar-inner > .pro-sidebar-layout .pro-sidebar-header nav {
+    padding: 0;
+}
+
+#navSideBar .pro-sidebar-inner .pro-sidebar-layout .logotext p {
+    font-size: 20px;
+    padding: auto;
+    color: #000;
+    font-weight: bold;
+}
+
+#navSideBar .pro-sidebar-inner .pro-sidebar-layout ul {
+    padding: 0 5px;
+}
+
+#navSideBar .pro-sidebar-inner .pro-sidebar-layout ul .pro-inner-item {
+    color: #000;
+    margin: 10px 0px;
+    font: normal normal normal 14px/19px Segoe UI;
+}
+
+#navSideBar .pro-sidebar-inner .pro-sidebar-layout ul .pro-inner-item .pro-icon-wrapper {
+    background-color: #e3fbcd;
+    color: #000;
+    border-radius: 3px;
+}
+
+#navSideBar .pro-sidebar-inner .pro-sidebar-layout ul .pro-inner-item .pro-icon-wrapper .pro-item-content {
+    color: #000;
+}
+
+#navSideBar .pro-sidebar-inner .pro-sidebar-layout .active {
+    background-image: linear-gradient(0deg, #7bfe00 0%, #c9ff72 100%);
+}
+
+#navSideBar .logo {
+    padding: 20px;
+}
+
+@media only screen and (max-width: 720px) {
+    html {
+        overflow: hidden;
+    }
+}

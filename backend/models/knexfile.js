@@ -8,6 +8,6 @@ module.exports = {
       port : 3306,
       user : 'DAHTTT',
       password : 'haiduong_1999',
-      database : 'DAHTTT'
+      database : 'DATN'
   }
 }};

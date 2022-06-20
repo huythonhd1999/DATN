@@ -1,0 +1,13 @@
+.c-settings-nav {
+    display: flex;
+    width: 365px;
+}
+.c-settings-nav .c-settings-nav-settings {
+    padding-left: 87px;
+}
+.c-settings-nav-main-collapse {
+    position : fixed 
+}
+.c-settings-nav-settings {
+    position : fixed 
+}
