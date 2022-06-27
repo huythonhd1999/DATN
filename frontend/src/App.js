@@ -8,11 +8,13 @@ import Setting from './components/page/setting/setting';
 import Shop from './components/page/setting/component/shop/shop';
 import ProductCategories from './components/page/setting/component/productCategories';
 import ProductOptions from './components/page/setting/component/productOptions';
-import Users from './components/page/setting/component/users';
 import DiscountRules from './components/page/setting/component/discountRules';
 import Taxes from './components/page/setting/component/taxes/taxes';
 import TaxInfo from './components/page/setting/component/taxes/detail/taxInfo';
 import TaxAdd from './components/page/setting/component/taxes/add/taxAdd';
+import Users from './components/page/setting/component/user/index';
+import UserInfo from './components/page/setting/component/user/detail/index';
+import UserAdd from './components/page/setting/component/user/add/index'
 // import Api from './api/api';
 // import jwt from "jwt-decode";
 class App extends React.Component {
@@ -78,8 +80,6 @@ class App extends React.Component {
                         </Route>
                         <Route path="/settings/product-options" exact component={() => <ProductOptions />}>
                         </Route>
-                        <Route path="/settings/users" exact component={() => <Users />}>
-                        </Route>
                         <Route path="/settings/discount-rules" exact component={() => <DiscountRules />}>
                         </Route>
                         <Route path="/settings/taxes" exact component={() => <Taxes />}>
@@ -87,6 +87,12 @@ class App extends React.Component {
                         <Route path="/settings/taxes/add" exact component={() => <TaxAdd />}>
                         </Route>
                         <Route path="/settings/taxes/:id" exact component={(props) => <TaxInfo {...props} />}>
+                        </Route>
+                        <Route path="/settings/users" exact component={() => <Users />}>
+                        </Route>
+                        <Route path="/settings/users/add" exact component={() => <UserAdd />}>
+                        </Route>
+                        <Route path="/settings/users/:id" exact component={(props) => <UserInfo {...props} />}>
                         </Route>
                         {/* <PrivateRouter exact path="/" component={<Home />} role={[2, 1, 0]} />
               <PrivateRouter exact path="/account-info" component={<AccountInfo />} role={[2, 1, 0]} />
