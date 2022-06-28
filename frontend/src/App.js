@@ -8,13 +8,15 @@ import Setting from './components/page/setting/setting';
 import Shop from './components/page/setting/component/shop/shop';
 import ProductCategories from './components/page/setting/component/productCategories';
 import ProductOptions from './components/page/setting/component/productOptions';
-import DiscountRules from './components/page/setting/component/discountRules';
+import DiscountRules from './components/page/setting/component/discount/discountRules';
+import CouponInfo from './components/page/setting/component/discount/detail/couponInfo';
 import Taxes from './components/page/setting/component/taxes/taxes';
 import TaxInfo from './components/page/setting/component/taxes/detail/taxInfo';
 import TaxAdd from './components/page/setting/component/taxes/add/taxAdd';
 import Users from './components/page/setting/component/user/index';
 import UserInfo from './components/page/setting/component/user/detail/index';
 import UserAdd from './components/page/setting/component/user/add/index'
+import CouponAdd from './components/page/setting/component/discount/add/couponAdd';
 // import Api from './api/api';
 // import jwt from "jwt-decode";
 class App extends React.Component {
@@ -80,7 +82,13 @@ class App extends React.Component {
                         </Route>
                         <Route path="/settings/product-options" exact component={() => <ProductOptions />}>
                         </Route>
+                        <Route path="/settings/users" exact component={() => <Users />}>
+                        </Route>
                         <Route path="/settings/discount-rules" exact component={() => <DiscountRules />}>
+                        </Route>
+                        <Route path="/settings/discount-rules/add" exact component={() => <CouponAdd />}>
+                        </Route>
+                        <Route path="/settings/discount-rules/:id" exact component={() => <CouponInfo />}>
                         </Route>
                         <Route path="/settings/taxes" exact component={() => <Taxes />}>
                         </Route>

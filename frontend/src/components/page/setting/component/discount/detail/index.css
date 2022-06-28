@@ -1,0 +1,123 @@
+.c-settings-coupon-info {
+    display: flex;
+}
+.c-settings-coupon-info-content {
+    width: 100%;
+}
+.c-setting-coupon-info-content-info{
+    display: flex;
+    flex-direction: column;
+}
+.c-setting-coupon-info-content-info .row{
+    display: flex;
+    padding-top: 20px;
+}
+
+.c-setting-coupon-info-content-info .row .left-col{
+    width: 40%;
+    padding-right: 2%;
+}
+
+.c-setting-coupon-info-content-info .row .right-col{
+    width: 55%;
+}
+
+.c-setting-coupon-info-info-guild .c-guild-header {
+    padding-bottom: 5px;
+}
+
+.happy-day div label{
+    display: flex;
+    align-items: center;
+}
+
+.happy-day div label :nth-child(2) {
+    font: normal normal normal 14px/19px Segoe UI;
+}
+
+.c-setting-coupon-info-info-detail .c-gap-1 {
+    height: 50px;
+}
+
+.c-setting-coupon-info-info-detail .c-gap-2 {
+    height: 40px;
+}
+.c-setting-coupon-info-info-detail .c-text-field-name {
+    font: normal normal normal 14px/19px Segoe UI;
+}
+
+.c-setting-coupon-info-info-detail .c-text-field-name-1 {
+    font: normal normal normal 14px/19px Segoe UI;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.c-setting-coupon-info-info-detail .c-text-field-name + div {
+    margin-top: 8px;
+}
+
+.c-settings-coupon-info-content .c-setting-coupon-info-content-header {
+    font: normal normal normal 16px/21px Segoe UI;
+    box-shadow: 0.5px 0.866px 1.5px 0.8px rgba(0, 0, 0, 0.15);
+    height: 55px;
+    padding-left: 20px;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    background-color: white;
+    z-index: 1;
+}
+.c-setting-coupon-info-content-header .text {
+    display: flex;
+}
+
+.c-setting-coupon-info-content-header .text a{
+    padding-right: 5px;
+}
+
+.c-setting-coupon-info-info-guild .c-guild-header {
+    font: normal normal normal 16px/21px Segoe UI;
+    padding-left: 20px;
+}
+
+.c-setting-coupon-info-info-guild .c-guild-content {
+    font: normal normal normal 14px/19px Segoe UI;
+    padding-left: 25px;
+}
+
+.c-setting-coupon-info-content-header {
+    display: flex;
+    justify-content: space-between;
+    top: 0
+}
+.c-setting-coupon-info-content-header button {
+    margin-right: 5.5%;
+    text-transform: none;
+    width: 100px;
+}
+.c-setting-coupon-info-control-form {
+    display: flex;
+    flex-flow: row-reverse;
+}
+.c-setting-coupon-info-control-form button {
+    text-transform: none;
+    width: 100px;
+}
+.c-setting-coupon-info-control-form :nth-child(1) {
+    margin-left: 10px;
+}
+.c-setting-coupon-info-content-header div a:visited {
+    text-decoration: underline;
+}
+
+.happy-day .c-text-field-name {
+    font: normal normal normal 14px/19px Segoe UI;
+    padding-top: 10px;
+}
+.happy-day .list {
+    padding-left: 20px;
+}
+.css-m69qwo-MuiStack-root {
+    display: flex;
+    justify-content: space-between;
+}

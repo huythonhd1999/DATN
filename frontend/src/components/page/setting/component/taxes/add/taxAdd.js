@@ -78,7 +78,7 @@ class TaxAdd extends Component {
         })
     }
     onHandleTaxPercentChange = (e) => {
-        let regEx = new RegExp("^[0-9]+[0-9]*$|^$")
+        let regEx = /^(100(\.0{1,2})?|[1-9]?\d(\.\d{1,2})?)$|^$/
         if (regEx.test(e.target.value)) {
             this.setState({
                 percent: e.target.value

@@ -1,0 +1,64 @@
+.c-settings-coupons {
+    display: flex;
+}
+.c-settings-coupons-content {
+    width: 100%;
+}
+.c-setting-coupons-content-info{
+    display: flex;
+    flex-direction: column;
+}
+
+.c-settings-coupons-content .c-setting-coupons-content-header {
+    font: normal normal normal 16px/21px Segoe UI;
+    box-shadow: 0.5px 0.866px 1.5px 0.8px rgba(0, 0, 0, 0.15);
+    height: 55px;
+    padding-left: 20px;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    background-color: white;
+    z-index: 1;
+}
+
+.c-setting-coupons-content-header {
+    display: flex;
+    justify-content: space-between;
+    top: 0
+}
+.c-setting-coupons-content-header button {
+    margin-right: 5.5%;
+    text-transform: none;
+    width: 180px;
+}
+.c-setting-coupons-detail-header .search-bar {
+    display: flex;
+    align-items: center;
+    width: 96%;
+}
+.c-setting-coupons-detail-header .search-bar .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 10px;
+    height: 40px;
+    width: 40px;
+}
+.c-setting-coupons-detail-list{
+    padding-left: 10px;
+}
+.c-setting-coupons-detail-header .tag-list {
+    padding-left: 10px;
+}
+.c-setting-coupons-content-info .action-button {
+    padding-left: 15px;
+    padding-top: 5px;
+}
+.c-setting-coupons-content-info .c-setting-coupons-detail-list {
+    padding-left: 10px;
+    padding-top: 5px;
+}
+.action-option button {
+    background-color: aliceblue;
+    color: black;
+}

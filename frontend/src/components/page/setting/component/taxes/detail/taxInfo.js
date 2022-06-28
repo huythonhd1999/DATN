@@ -6,6 +6,7 @@ import SettingNav from "../../../../../common/setting nav/settingNav";
 import './index.css';
 import Api from "../../../../../../api/api";
 import { connect } from 'react-redux';
+import LoadingScreen from "../../../../../common/loading";
 // import CircularProgress from '@mui/material/CircularProgress';
 
 class TaxInfo extends Component {
@@ -94,7 +95,7 @@ class TaxInfo extends Component {
         })
     }
     onHandleTaxPercentChange = (e) => {
-        let regEx = new RegExp("^[0-9]+[0-9]*$|^$")
+        let regEx = /^(100(\.0{1,2})?|[1-9]?\d(\.\d{1,2})?)$|^$/
         if (regEx.test(e.target.value)) {
             this.setState({
                 percent: e.target.value
@@ -105,13 +106,16 @@ class TaxInfo extends Component {
     render() {
         return (
             <div className="c-settings-page">
+                <LoadingScreen 
+                    open = {this.state.loading}
+                />
                 <div className="c-settings-tax-info">
                     <SettingNav />
                     <div className="c-settings-tax-info-content">
                         <div className="c-setting-tax-info-content-header">
                             <div>
                                 <a href="/settings/taxes">Taxes</a>
-                                /Tax name
+                                /{this.state.name}
                             </div>
                             <Button
                                 variant="contained"
