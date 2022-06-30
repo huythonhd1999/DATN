@@ -4,19 +4,21 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Login from './components/page/login/login';
 import jwt from "jwt-decode";
 import DashBoard from './components/page/dashboard/dashboard'
-import Setting from './components/page/setting/setting';
-import Shop from './components/page/setting/component/shop/shop';
-import ProductCategories from './components/page/setting/component/productCategories';
+import Setting from './components/page/setting';
+import Shop from './components/page/setting/component/shop';
 import ProductOptions from './components/page/setting/component/productOptions';
-import DiscountRules from './components/page/setting/component/discount/discountRules';
+import DiscountRules from './components/page/setting/component/discount';
 import CouponInfo from './components/page/setting/component/discount/detail/couponInfo';
-import Taxes from './components/page/setting/component/taxes/taxes';
-import TaxInfo from './components/page/setting/component/taxes/detail/taxInfo';
-import TaxAdd from './components/page/setting/component/taxes/add/taxAdd';
+import Taxes from './components/page/setting/component/taxes';
+import TaxInfo from './components/page/setting/component/taxes/detail';
+import TaxAdd from './components/page/setting/component/taxes/add';
 import Users from './components/page/setting/component/user/index';
 import UserInfo from './components/page/setting/component/user/detail/index';
 import UserAdd from './components/page/setting/component/user/add/index'
-import CouponAdd from './components/page/setting/component/discount/add/couponAdd';
+import CouponAdd from './components/page/setting/component/discount/add';
+import ProductCategories from './components/page/setting/component/category';
+import ProductCategoryInfo from './components/page/setting/component/category/detail/index';
+import ProductCategoryAdd from './components/page/setting/component/category/add/index';
 // import Api from './api/api';
 // import jwt from "jwt-decode";
 class App extends React.Component {
@@ -78,8 +80,6 @@ class App extends React.Component {
                         </Route>
                         <Route path="/settings/shop" exact component={() => <Shop />}>
                         </Route>
-                        <Route path="/settings/product-categories" exact component={() => <ProductCategories />}>
-                        </Route>
                         <Route path="/settings/product-options" exact component={() => <ProductOptions />}>
                         </Route>
                         <Route path="/settings/users" exact component={() => <Users />}>
@@ -101,6 +101,12 @@ class App extends React.Component {
                         <Route path="/settings/users/add" exact component={() => <UserAdd />}>
                         </Route>
                         <Route path="/settings/users/:id" exact component={(props) => <UserInfo {...props} />}>
+                        </Route>
+                        <Route path="/settings/product-categories" exact component={() => <ProductCategories />}>
+                        </Route>
+                        <Route path="/settings/product-categories/add" exact component={() => <ProductCategoryAdd />}>
+                        </Route>
+                        <Route path="/settings/product-categories/:id" exact component={() => <ProductCategoryInfo />}>
                         </Route>
                         {/* <PrivateRouter exact path="/" component={<Home />} role={[2, 1, 0]} />
               <PrivateRouter exact path="/account-info" component={<AccountInfo />} role={[2, 1, 0]} />

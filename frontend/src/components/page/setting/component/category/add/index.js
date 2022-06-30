@@ -2,26 +2,18 @@ import React, { Component } from "react";
 import Button from '@mui/material/Button';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SettingNav from "../../../../../common/setting nav/settingNav";
-import './index.css';
 import Api from "../../../../../../api/api";
 import { connect } from 'react-redux';
-import IconButton from '@mui/material/IconButton';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputAdornment from '@mui/material/InputAdornment';
-import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import Select from '@mui/material/Select';
 import { withRouter } from "react-router-dom";
-import MenuItem from '@mui/material/MenuItem';
+import Tags from "../../../../../common/selected search";
 // import CircularProgress from '@mui/material/CircularProgress';
 
-class UserInfo extends Component {
+class ProductCategoryAdd extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            disable: true,
+            disable: false,
             loading: false,
             Id: 1,
             name: "",
@@ -45,11 +37,7 @@ class UserInfo extends Component {
             currentTax: tax,
             loading: false
         })
-    }
-    onHandleEditClick = () => {
-        this.setState({
-            disable: !this.state.disable
-        })
+        console.log(res)
     }
     onHandleCancelClick = () => {
         this.setState({
@@ -128,39 +116,29 @@ class UserInfo extends Component {
     render() {
         return (
             <div className="c-settings-page">
-                <div className="c-settings-user-info">
+                <div className="c-settings-category-info">
                     <SettingNav />
-                    <div className="c-settings-user-info-content">
-                        <div className="c-setting-user-info-content-header">
+                    <div className="c-settings-category-info-content">
+                        <div className="c-setting-category-info-content-header">
                             <div>
-                                <a href="/settings/users">User</a>
-                                {" / " + this.state.name}
+                                <a href="/settings/product-categories">Categories</a>
+                                {" / New Category"}
                             </div>
-                            <Button
-                                variant="contained"
-                                onClick={() => this.onHandleEditClick()}
-                                disabled={!this.state.disable}
-                            >
-                                Edit
-                            </Button>
                         </div>
-                        <div className="c-setting-user-info-content-info">
-                            <div className="c-setting-user-info-content-info-column-1">
-                                <div className="c-setting-user-info-info-guild">
+                        <div className="c-setting-category-info-content-info">
+                            <div className="c-setting-category-info-content-info-column-1">
+                                <div className="c-setting-category-info-info-guild">
                                     <div className="c-guild-header">
-                                        User Details
+                                        Your Product Category Details
                                     </div>
                                     <div className="c-guild-content">
-                                        Cashiers have access only to billing. Cashier will use user name and password to lock and unlock their register.
-                                    </div>
-                                    <div className="c-guild-content">
-                                        Manager have access to everything. Manager will use user name and password to lock and unlock their register.
+                                        Products will be grouped under these categories in the sales register.
                                     </div>
                                 </div>
                             </div>
-                            <div className="c-setting-user-info-content-info-column-2">
-                                <div className="c-setting-user-info-info-detail">
-                                    <div className="c-text-field-name">User Name</div>
+                            <div className="c-setting-category-info-content-info-column-2">
+                                <div className="c-setting-category-info-info-detail">
+                                    <div className="c-text-field-name">Product Category Name</div>
                                     <TextField
                                         margin="normal"
                                         required
@@ -172,55 +150,27 @@ class UserInfo extends Component {
                                         helperText={this.state.nameErrorMessage}
                                         autoFocus
                                         onChange={this.onHandleTaxNameChange}
-                                        inputProps={{
-                                            autoComplete: 'new-password',
-                                            form: {
-                                                autoComplete: 'off',
-                                            },
-                                        }}
                                     />
-                                    <div className="c-text-field-name">User Password</div>
-                                    <FormControl variant="outlined" size="small" fullWidth disabled={this.state.disable}>
-                                        <OutlinedInput
-                                            type={this.state.showPassword ? 'text' : 'password'}
-                                            value={this.state.password}
-                                            onChange={this.handlePasswordChange}
-                                            endAdornment={
-                                                <InputAdornment position="end">
-                                                    <IconButton
-                                                        aria-label="toggle password visibility"
-                                                        onClick={this.handleClickShowPassword}
-                                                        onMouseDown={this.handleMouseDownPassword}
-                                                        edge="end"
-                                                    >
-                                                        {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
-                                                    </IconButton>
-                                                </InputAdornment>
-                                            }
-                                            inputProps={{
-                                                autoComplete: 'new-password',
-                                                form: {
-                                                    autoComplete: 'off',
-                                                },
-                                            }}
-                                        />
-                                    </FormControl>
+                                    <div className="c-text-field-name">Note</div>
+                                    <TextField
+                                        margin="normal"
+                                        required
+                                        value={this.state.name}
+                                        fullWidth
+                                        disabled={this.state.disable}
+                                        size="small"
+                                        error={this.state.nameErrorMessage ? true : false}
+                                        helperText={this.state.nameErrorMessage}
+                                        autoFocus
+                                        multiline
+                                        onChange={this.onHandleTaxNameChange}
+                                    />
 
-                                    <div className="c-text-field-name">User Type</div>
-                                    <FormControl variant="outlined" size="small" fullWidth disabled={this.state.disable}>
-                                        <Select
-                                            value={this.state.type}
-                                            // onChange={handleChange}
-                                            fullWidth
-                                        >
-                                            <MenuItem value={-1} disabled>
-                                                <em>Select type of user</em>
-                                            </MenuItem>
-                                            <MenuItem value={1}>Manager</MenuItem>
-                                            <MenuItem value={0}>Cashier</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                    <div className="c-setting-user-info-control-form">
+                                    <div className="c-text-field-name">Product List</div>
+                                    <Tags
+                                        disabled={this.state.disable}
+                                    />
+                                    <div className="c-setting-category-info-control-form">
                                         <Button
                                             type="cancel"
                                             variant="outlined"
@@ -265,4 +215,4 @@ const mapDispatchToProp = (dispatch, props) => {
     return {
     }
 }
-export default connect(mapStateToProp, mapDispatchToProp)(withRouter(UserInfo));
+export default connect(mapStateToProp, mapDispatchToProp)(withRouter(ProductCategoryAdd));

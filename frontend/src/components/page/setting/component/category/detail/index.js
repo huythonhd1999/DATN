@@ -1,15 +1,16 @@
 import React, { Component } from "react";
-import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SettingNav from "../../../../../common/setting nav/settingNav";
 import './index.css';
 import Api from "../../../../../../api/api";
 import { connect } from 'react-redux';
-import LoadingScreen from "../../../../../common/loading";
+import TextField from '@mui/material/TextField';
+import { withRouter } from "react-router-dom";
+import Tags from "../../../../../common/selected search";
 // import CircularProgress from '@mui/material/CircularProgress';
 
-class TaxInfo extends Component {
+class ProductCategoryInfo extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -21,7 +22,10 @@ class TaxInfo extends Component {
             status: 1,
             currentTax: {},
             nameErrorMessage: "",
-            percentErrorMessage: ""
+            percentErrorMessage: "",
+            showPassword: false,
+            password: "",
+            type: 1,
         };
     }
     componentDidMount = async () => {
@@ -34,6 +38,7 @@ class TaxInfo extends Component {
             currentTax: tax,
             loading: false
         })
+        console.log(res)
     }
     onHandleEditClick = () => {
         this.setState({
@@ -80,7 +85,7 @@ class TaxInfo extends Component {
                 name: this.state.name,
                 percent: this.state.percent
             };
-    
+
             let res = await Api.editTax(editTax)
             let tax = res.data.tax;
             this.setState({
@@ -95,27 +100,35 @@ class TaxInfo extends Component {
         })
     }
     onHandleTaxPercentChange = (e) => {
-        let regEx = /^(100(\.0{1,2})?|[1-9]?\d(\.\d{1,2})?)$|^$/
+        let regEx = new RegExp("^[0-9]+[0-9]*$|^$")
         if (regEx.test(e.target.value)) {
             this.setState({
                 percent: e.target.value
             })
         }
     }
+    handleClickShowPassword = () => {
+        this.setState({
+            showPassword: !this.state.showPassword
+        })
+    }
+
+    handlePasswordChange = (e) => {
+        this.setState({
+            password: e.target.value
+        })
+    }
 
     render() {
         return (
             <div className="c-settings-page">
-                <LoadingScreen 
-                    open = {this.state.loading}
-                />
-                <div className="c-settings-tax-info">
+                <div className="c-settings-category-info">
                     <SettingNav />
-                    <div className="c-settings-tax-info-content">
-                        <div className="c-setting-tax-info-content-header">
+                    <div className="c-settings-category-info-content">
+                        <div className="c-setting-category-info-content-header">
                             <div>
-                                <a href="/settings/taxes">Taxes</a>
-                                /{this.state.name}
+                                <a href="/settings/product-categories">Categories</a>
+                                {" / " + this.state.name}
                             </div>
                             <Button
                                 variant="contained"
@@ -125,20 +138,20 @@ class TaxInfo extends Component {
                                 Edit
                             </Button>
                         </div>
-                        <div className="c-setting-tax-info-content-info">
-                            <div className="c-setting-tax-info-content-info-column-1">
-                                <div className="c-setting-tax-info-info-guild">
+                        <div className="c-setting-category-info-content-info">
+                            <div className="c-setting-category-info-content-info-column-1">
+                                <div className="c-setting-category-info-info-guild">
                                     <div className="c-guild-header">
-                                        Setup Taxes
+                                        Your Product Category Details
                                     </div>
                                     <div className="c-guild-content">
-                                        Create separate taxes for different tax rates and types.
+                                        Products will be grouped under these categories in the sales register.
                                     </div>
                                 </div>
                             </div>
-                            <div className="c-setting-tax-info-content-info-column-2">
-                                <div className="c-setting-tax-info-info-detail">
-                                    <div className="c-text-field-name">Tax Name</div>
+                            <div className="c-setting-category-info-content-info-column-2">
+                                <div className="c-setting-category-info-info-detail">
+                                    <div className="c-text-field-name">Product Category Name</div>
                                     <TextField
                                         margin="normal"
                                         required
@@ -151,20 +164,26 @@ class TaxInfo extends Component {
                                         autoFocus
                                         onChange={this.onHandleTaxNameChange}
                                     />
-                                    <div className="c-text-field-name">Tax Percent</div>
+                                    <div className="c-text-field-name">Note</div>
                                     <TextField
                                         margin="normal"
                                         required
-                                        value={this.state.percent}
+                                        value={this.state.name}
                                         fullWidth
                                         disabled={this.state.disable}
-                                        error={this.state.percentErrorMessage ? true : false}
-                                        helperText={this.state.percentErrorMessage}
                                         size="small"
-                                        onChange={this.onHandleTaxPercentChange}
+                                        error={this.state.nameErrorMessage ? true : false}
+                                        helperText={this.state.nameErrorMessage}
                                         autoFocus
+                                        multiline
+                                        onChange={this.onHandleTaxNameChange}
                                     />
-                                    <div className="c-setting-tax-info-control-form">
+
+                                    <div className="c-text-field-name">Product List</div>
+                                    <Tags
+                                        disabled={this.state.disable}
+                                    />
+                                    <div className="c-setting-category-info-control-form">
                                         <Button
                                             type="cancel"
                                             variant="outlined"
@@ -209,4 +228,4 @@ const mapDispatchToProp = (dispatch, props) => {
     return {
     }
 }
-export default connect(mapStateToProp, mapDispatchToProp)(TaxInfo);
+export default connect(mapStateToProp, mapDispatchToProp)(withRouter(ProductCategoryInfo));

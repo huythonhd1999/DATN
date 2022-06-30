@@ -1,8 +1,7 @@
 import React, { Component } from "react";
+import SettingNav from "../../common/setting nav/settingNav";
 
-import SettingNav from "../../../common/setting nav/settingNav";
-
-class ProductCategories extends Component {
+class Setting extends Component {
     constructor(props) {
         super(props);
         this.state = {};
@@ -16,4 +15,4 @@ class ProductCategories extends Component {
         );
     }
 }
-export default ProductCategories;
+export default Setting;

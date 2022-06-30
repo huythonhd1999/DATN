@@ -1,23 +1,16 @@
 import React, { Component } from "react";
+import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SettingNav from "../../../../../common/setting nav/settingNav";
 import './index.css';
 import Api from "../../../../../../api/api";
 import { connect } from 'react-redux';
-import IconButton from '@mui/material/IconButton';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputAdornment from '@mui/material/InputAdornment';
-import FormControl from '@mui/material/FormControl';
-import TextField from '@mui/material/TextField';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import Select from '@mui/material/Select';
+import LoadingScreen from "../../../../../common/loading";
 import { withRouter } from "react-router-dom";
-import MenuItem from '@mui/material/MenuItem';
 // import CircularProgress from '@mui/material/CircularProgress';
 
-class UserInfo extends Component {
+class TaxInfo extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -29,10 +22,7 @@ class UserInfo extends Component {
             status: 1,
             currentTax: {},
             nameErrorMessage: "",
-            percentErrorMessage: "",
-            showPassword: false,
-            password: "",
-            type: 1,
+            percentErrorMessage: ""
         };
     }
     componentDidMount = async () => {
@@ -91,7 +81,7 @@ class UserInfo extends Component {
                 name: this.state.name,
                 percent: this.state.percent
             };
-
+    
             let res = await Api.editTax(editTax)
             let tax = res.data.tax;
             this.setState({
@@ -106,35 +96,27 @@ class UserInfo extends Component {
         })
     }
     onHandleTaxPercentChange = (e) => {
-        let regEx = new RegExp("^[0-9]+[0-9]*$|^$")
+        let regEx = /^(100(\.0{1,2})?|[1-9]?\d(\.\d{1,2})?)$|^$/
         if (regEx.test(e.target.value)) {
             this.setState({
                 percent: e.target.value
             })
         }
     }
-    handleClickShowPassword = () => {
-        this.setState({
-            showPassword: !this.state.showPassword
-        })
-    }
-
-    handlePasswordChange = (e) => {
-        this.setState({
-            password: e.target.value
-        })
-    }
 
     render() {
         return (
             <div className="c-settings-page">
-                <div className="c-settings-user-info">
+                <LoadingScreen 
+                    open = {this.state.loading}
+                />
+                <div className="c-settings-tax-info">
                     <SettingNav />
-                    <div className="c-settings-user-info-content">
-                        <div className="c-setting-user-info-content-header">
+                    <div className="c-settings-tax-info-content">
+                        <div className="c-setting-tax-info-content-header">
                             <div>
-                                <a href="/settings/users">User</a>
-                                {" / " + this.state.name}
+                                <a href="/settings/taxes">Taxes</a>
+                                /{this.state.name}
                             </div>
                             <Button
                                 variant="contained"
@@ -144,23 +126,20 @@ class UserInfo extends Component {
                                 Edit
                             </Button>
                         </div>
-                        <div className="c-setting-user-info-content-info">
-                            <div className="c-setting-user-info-content-info-column-1">
-                                <div className="c-setting-user-info-info-guild">
+                        <div className="c-setting-tax-info-content-info">
+                            <div className="c-setting-tax-info-content-info-column-1">
+                                <div className="c-setting-tax-info-info-guild">
                                     <div className="c-guild-header">
-                                        User Details
+                                        Setup Taxes
                                     </div>
                                     <div className="c-guild-content">
-                                        Cashiers have access only to billing. Cashier will use user name and password to lock and unlock their register.
-                                    </div>
-                                    <div className="c-guild-content">
-                                        Manager have access to everything. Manager will use user name and password to lock and unlock their register.
+                                        Create separate taxes for different tax rates and types.
                                     </div>
                                 </div>
                             </div>
-                            <div className="c-setting-user-info-content-info-column-2">
-                                <div className="c-setting-user-info-info-detail">
-                                    <div className="c-text-field-name">User Name</div>
+                            <div className="c-setting-tax-info-content-info-column-2">
+                                <div className="c-setting-tax-info-info-detail">
+                                    <div className="c-text-field-name">Tax Name</div>
                                     <TextField
                                         margin="normal"
                                         required
@@ -172,55 +151,21 @@ class UserInfo extends Component {
                                         helperText={this.state.nameErrorMessage}
                                         autoFocus
                                         onChange={this.onHandleTaxNameChange}
-                                        inputProps={{
-                                            autoComplete: 'new-password',
-                                            form: {
-                                                autoComplete: 'off',
-                                            },
-                                        }}
                                     />
-                                    <div className="c-text-field-name">User Password</div>
-                                    <FormControl variant="outlined" size="small" fullWidth disabled={this.state.disable}>
-                                        <OutlinedInput
-                                            type={this.state.showPassword ? 'text' : 'password'}
-                                            value={this.state.password}
-                                            onChange={this.handlePasswordChange}
-                                            endAdornment={
-                                                <InputAdornment position="end">
-                                                    <IconButton
-                                                        aria-label="toggle password visibility"
-                                                        onClick={this.handleClickShowPassword}
-                                                        onMouseDown={this.handleMouseDownPassword}
-                                                        edge="end"
-                                                    >
-                                                        {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
-                                                    </IconButton>
-                                                </InputAdornment>
-                                            }
-                                            inputProps={{
-                                                autoComplete: 'new-password',
-                                                form: {
-                                                    autoComplete: 'off',
-                                                },
-                                            }}
-                                        />
-                                    </FormControl>
-
-                                    <div className="c-text-field-name">User Type</div>
-                                    <FormControl variant="outlined" size="small" fullWidth disabled={this.state.disable}>
-                                        <Select
-                                            value={this.state.type}
-                                            // onChange={handleChange}
-                                            fullWidth
-                                        >
-                                            <MenuItem value={-1} disabled>
-                                                <em>Select type of user</em>
-                                            </MenuItem>
-                                            <MenuItem value={1}>Manager</MenuItem>
-                                            <MenuItem value={0}>Cashier</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                    <div className="c-setting-user-info-control-form">
+                                    <div className="c-text-field-name">Tax Percent</div>
+                                    <TextField
+                                        margin="normal"
+                                        required
+                                        value={this.state.percent}
+                                        fullWidth
+                                        disabled={this.state.disable}
+                                        error={this.state.percentErrorMessage ? true : false}
+                                        helperText={this.state.percentErrorMessage}
+                                        size="small"
+                                        onChange={this.onHandleTaxPercentChange}
+                                        autoFocus
+                                    />
+                                    <div className="c-setting-tax-info-control-form">
                                         <Button
                                             type="cancel"
                                             variant="outlined"
@@ -265,4 +210,4 @@ const mapDispatchToProp = (dispatch, props) => {
     return {
     }
 }
-export default connect(mapStateToProp, mapDispatchToProp)(withRouter(UserInfo));
+export default connect(mapStateToProp, mapDispatchToProp)(withRouter(TaxInfo));

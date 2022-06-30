@@ -1,28 +1,28 @@
 import * as React from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
-import Stack from '@mui/material/Stack';
 
-export default function Tags() {
+
+export default function Tags(props) {
     return (
-        <Stack>
-            <Autocomplete
-                multiple
-                id="tags-outlined"
-                options={top100Films}
-                getOptionLabel={(option) => option.title}
-                defaultValue={[top100Films[13]]}
-                filterSelectedOptions
-                onChange={(_event, value) => console.log(value)}
-                renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        placeholder="Select a value"
-                        size="small"
-                    />
-                )}
-            />
-        </Stack>
+        <Autocomplete
+            multiple
+            id="tags-outlined"
+            options={top100Films}
+            getOptionLabel={(option) => option.title}
+            defaultValue={[top100Films[13]]}
+            filterSelectedOptions
+            onChange={(_event, value) => console.log(value)}
+            disabled={props.disabled}
+            renderInput={(params) => (
+                <TextField
+                    {...params}
+                    placeholder="Select a value"
+                    size="small"
+                    fullWidth
+                />
+            )}
+        />
     );
 }
 

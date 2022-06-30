@@ -12,6 +12,7 @@ import TextField from '@mui/material/TextField';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Select from '@mui/material/Select';
+import { withRouter } from "react-router-dom";
 import MenuItem from '@mui/material/MenuItem';
 // import CircularProgress from '@mui/material/CircularProgress';
 
@@ -257,4 +258,4 @@ const mapDispatchToProp = (dispatch, props) => {
     return {
     }
 }
-export default connect(mapStateToProp, mapDispatchToProp)(UserAdd);
+export default connect(mapStateToProp, mapDispatchToProp)(withRouter(UserAdd));
