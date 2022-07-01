@@ -11,3 +11,9 @@
 .c-settings-nav-settings {
     position : fixed 
 }
+
+.pro-sidebar > .pro-sidebar-inner > .pro-sidebar-layout .pro-sidebar-header {
+    display: flex;
+    align-items: center;
+    height: 70px;
+}

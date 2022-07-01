@@ -1,14 +1,13 @@
 import './App.css';
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
-import Login from './components/page/login/login';
+import Login from './components/page/login/index';
 import jwt from "jwt-decode";
 import DashBoard from './components/page/dashboard/dashboard'
 import Setting from './components/page/setting';
 import Shop from './components/page/setting/component/shop';
-import ProductOptions from './components/page/setting/component/productOptions';
 import DiscountRules from './components/page/setting/component/discount';
-import CouponInfo from './components/page/setting/component/discount/detail/couponInfo';
+import CouponInfo from './components/page/setting/component/discount/detail';
 import Taxes from './components/page/setting/component/taxes';
 import TaxInfo from './components/page/setting/component/taxes/detail';
 import TaxAdd from './components/page/setting/component/taxes/add';
@@ -19,6 +18,21 @@ import CouponAdd from './components/page/setting/component/discount/add';
 import ProductCategories from './components/page/setting/component/category';
 import ProductCategoryInfo from './components/page/setting/component/category/detail/index';
 import ProductCategoryAdd from './components/page/setting/component/category/add/index';
+import ProductOptions from './components/page/setting/component/options/index';
+import VariantInfo from './components/page/setting/component/options/detail/variants/index';
+import VariantAdd from './components/page/setting/component/options/add/variants/index';
+import AddonInfo from './components/page/setting/component/options/detail/addons/index';
+import AddonAdd from './components/page/setting/component/options/add/addons/index';
+import VariantGroupInfo from './components/page/setting/component/options/detail/variants group/index';
+import VariantGroupAdd from './components/page/setting/component/options/add/variants group/index';
+import AddonGroupInfo from './components/page/setting/component/options/detail/addons group/index';
+import AddonGroupAdd from './components/page/setting/component/options/add/addons group/index';
+import Customer from './components/page/customer/index';
+import CustomerInfo from './components/page/customer/detail/index';
+import CustomerAdd from './components/page/customer/add/index';
+import Products from './components/page/product/index';
+import ProductInfo from './components/page/product/detail/index';
+import ProductAdd from './components/page/product/add/index';
 // import Api from './api/api';
 // import jwt from "jwt-decode";
 class App extends React.Component {
@@ -80,8 +94,6 @@ class App extends React.Component {
                         </Route>
                         <Route path="/settings/shop" exact component={() => <Shop />}>
                         </Route>
-                        <Route path="/settings/product-options" exact component={() => <ProductOptions />}>
-                        </Route>
                         <Route path="/settings/users" exact component={() => <Users />}>
                         </Route>
                         <Route path="/settings/discount-rules" exact component={() => <DiscountRules />}>
@@ -107,6 +119,36 @@ class App extends React.Component {
                         <Route path="/settings/product-categories/add" exact component={() => <ProductCategoryAdd />}>
                         </Route>
                         <Route path="/settings/product-categories/:id" exact component={() => <ProductCategoryInfo />}>
+                        </Route>
+                        <Route path="/settings/product-options" exact component={() => <ProductOptions />}>
+                        </Route>
+                        <Route path="/settings/variants/add" exact component={() => <VariantAdd />}>
+                        </Route>
+                        <Route path="/settings/variants/:id" exact component={() => <VariantInfo />}>
+                        </Route>
+                        <Route path="/settings/addons/add" exact component={() => <AddonAdd />}>
+                        </Route>
+                        <Route path="/settings/addons/:id" exact component={() => <AddonInfo />}>
+                        </Route>
+                        <Route path="/settings/variant-groups/add" exact component={() => <VariantGroupAdd />}>
+                        </Route>
+                        <Route path="/settings/variant-groups/:id" exact component={() => <VariantGroupInfo />}>
+                        </Route>
+                        <Route path="/settings/addon-groups/add" exact component={() => <AddonGroupAdd />}>
+                        </Route>
+                        <Route path="/settings/addon-groups/:id" exact component={() => <AddonGroupInfo />}>
+                        </Route>
+                        <Route path="/customers" exact component={() => <Customer />}>
+                        </Route>
+                        <Route path="/customers/add" exact component={() => <CustomerAdd />}>
+                        </Route>
+                        <Route path="/customers/:id" exact component={() => <CustomerInfo />}>
+                        </Route>
+                        <Route path="/products" exact component={() => <Products />}>
+                        </Route>
+                        <Route path="/products/add" exact component={() => <ProductAdd />}>
+                        </Route>
+                        <Route path="/products/:id" exact component={() => <ProductInfo />}>
                         </Route>
                         {/* <PrivateRouter exact path="/" component={<Home />} role={[2, 1, 0]} />
               <PrivateRouter exact path="/account-info" component={<AccountInfo />} role={[2, 1, 0]} />

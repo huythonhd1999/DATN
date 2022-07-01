@@ -7,6 +7,7 @@ import './index.css';
 import Api from "../../../../../../api/api";
 import { connect } from 'react-redux';
 import { withRouter } from "react-router-dom";
+// import CustomizedSnackbars from "../../../../../common/notification/index"
 // import CircularProgress from '@mui/material/CircularProgress';
 
 class TaxAdd extends Component {
@@ -20,7 +21,8 @@ class TaxAdd extends Component {
             status: 1,
             currentTax: {},
             nameErrorMessage: "",
-            percentErrorMessage: ""
+            percentErrorMessage: "",
+            showNotification: false,
         };
     }
 
@@ -62,12 +64,13 @@ class TaxAdd extends Component {
                 name: this.state.name,
                 percent: this.state.percent
             };
-    
+
             let res = await Api.createTax(newTax)
             let tax = res.data.tax;
             this.setState({
                 ...tax,
-                loading: false
+                loading: false,
+                showNotification: true,
             })
             this.props.history.push('/settings/taxes')
         }
@@ -93,9 +96,9 @@ class TaxAdd extends Component {
                     <SettingNav />
                     <div className="c-settings-tax-info-content">
                         <div className="c-setting-tax-info-content-header">
-                            <div>
-                                <a href="/settings/taxes">Taxes</a>
-                                /Tax name
+                            <div className="text">
+                                <div className="title" onClick={() => this.props.history.push("/settings/taxes")}>Taxes </div>
+                                <div> {" / New tax"}</div>
                             </div>
                         </div>
                         <div className="c-setting-tax-info-content-info">
@@ -120,7 +123,7 @@ class TaxAdd extends Component {
                                         size="small"
                                         error={this.state.nameErrorMessage ? true : false}
                                         helperText={this.state.nameErrorMessage}
-                                        autoFocus
+
                                         onChange={this.onHandleTaxNameChange}
                                     />
                                     <div className="c-text-field-name">Tax Percent</div>
@@ -133,7 +136,7 @@ class TaxAdd extends Component {
                                         helperText={this.state.percentErrorMessage}
                                         size="small"
                                         onChange={this.onHandleTaxPercentChange}
-                                        autoFocus
+
                                     />
                                     <div className="c-setting-tax-info-control-form">
                                         <Button

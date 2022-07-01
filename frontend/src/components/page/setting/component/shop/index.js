@@ -5,7 +5,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import SettingNav from "../../../../common/setting nav/settingNav";
 import './index.css';
 import Api from "../../../../../api/api";
-import * as storeAction from "../../../../../redux/action/index";
+import * as storeAction from "../../../../../redux/action/setting/store/index";
 import {connect} from 'react-redux';
 import LoadingScreen from "../../../../common/loading";
 // import CircularProgress from '@mui/material/CircularProgress';
@@ -158,7 +158,7 @@ class Shop extends Component {
                                         fullWidth
                                         disabled={this.state.disable}
                                         size="small"
-                                        autoFocus
+                                        
                                         onChange={this.onHandleResNameChange}
                                     />
                                     <div className="c-text-field-name">Address</div>
@@ -170,7 +170,7 @@ class Shop extends Component {
                                         disabled={this.state.disable}
                                         size="small"
                                         onChange={this.onHandleAddressChange}
-                                        autoFocus
+                                        
                                     />
                                     <div className="c-text-field-name">Website Link</div>
                                     <TextField
@@ -181,7 +181,7 @@ class Shop extends Component {
                                         onChange={this.onHandleWebLinkChange}
                                         disabled={this.state.disable}
                                         size="small"
-                                        autoFocus
+                                        
                                     />
                                     <div className="c-text-field-name">Facebook Link</div>
                                     <TextField
@@ -192,7 +192,7 @@ class Shop extends Component {
                                         disabled={this.state.disable}
                                         size="small"
                                         onChange={this.onHandleFBLinkChange}
-                                        autoFocus
+                                        
                                     />
                                     <div className="c-text-field-gap" />
                                     <div className="c-text-field-name">Owner name</div>
@@ -204,7 +204,7 @@ class Shop extends Component {
                                         onChange={this.onHandleOwnerNameChange}
                                         disabled={this.state.disable}
                                         size="small"
-                                        autoFocus
+                                        
                                     />
                                     <div className="c-text-field-name">Email</div>
                                     <TextField
@@ -215,7 +215,7 @@ class Shop extends Component {
                                         onChange={this.onHandleEmailChange}
                                         disabled={this.state.disable}
                                         size="small"
-                                        autoFocus
+                                        
                                     />
                                     <div className="c-text-field-name">Mobile phone number</div>
                                     <TextField
@@ -226,7 +226,7 @@ class Shop extends Component {
                                         onChange={this.onHandlePhoneNumChange}
                                         disabled={this.state.disable}
                                         size="small"
-                                        autoFocus
+                                        
                                     />
                                     <div className="c-setting-store-control-form">
                                         <Button

@@ -18,6 +18,8 @@ import {
     FiFileText,
     FiBriefcase,
     FiSettings,
+    FiUser,
+    FiTag
 } from "react-icons/fi";
 //import sidebar css from react-pro-sidebar module and our custom css
 import "react-pro-sidebar/dist/css/styles.css";
@@ -47,9 +49,17 @@ const CollapseSideBar = () => {
                             Petty Cash
                             <Link to="/expenses" />
                         </MenuItem>
+                        <MenuItem icon={<FiUser />}>
+                            Products
+                            <Link to="/products" />
+                        </MenuItem>
+                        <MenuItem icon={<FiTag />}>
+                            Customers
+                            <Link to="/customers" />
+                        </MenuItem>
                         <MenuItem icon={<FiSettings />}>
                             Settings
-                            <Link to="/settings" />
+                            <Link to="/settings/shop" />
                         </MenuItem>
                     </Menu>
                 </SidebarContent>

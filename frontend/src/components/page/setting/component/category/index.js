@@ -140,7 +140,7 @@ class ProductCategories extends Component {
                                         disabled={this.state.disable}
                                         placeholder="Search by category name"
                                         size="small"
-                                        autoFocus
+                                        
                                     />
                                 </div>
                             </div>
@@ -156,6 +156,7 @@ class ProductCategories extends Component {
                                     checkboxSelection
                                     disableSelectionOnClick={true}
                                     onRowClick={(params) => this.onRowClick(params)}
+                                    selectionModel={this.state.selectedItemsId}
                                     onSelectionModelChange={(selectedItems) => this.onHandleSelected(selectedItems)}
                                 />
                             </div>

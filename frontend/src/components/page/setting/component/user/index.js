@@ -159,7 +159,7 @@ class Users extends Component {
                                         disabled={this.state.disable}
                                         placeholder="Search by user name"
                                         size="small"
-                                        autoFocus
+                                        
                                     />
                                 </div>
                             </div>
@@ -175,6 +175,7 @@ class Users extends Component {
                                     checkboxSelection
                                     disableSelectionOnClick={true}
                                     onRowClick={(params) => this.onRowClick(params)}
+                                    selectionModel={this.state.selectedItemsId}
                                     onSelectionModelChange={(selectedItems) => this.onHandleSelected(selectedItems)}
                                 />
                             </div>

@@ -81,7 +81,7 @@ class TaxInfo extends Component {
                 name: this.state.name,
                 percent: this.state.percent
             };
-    
+
             let res = await Api.editTax(editTax)
             let tax = res.data.tax;
             this.setState({
@@ -107,16 +107,16 @@ class TaxInfo extends Component {
     render() {
         return (
             <div className="c-settings-page">
-                <LoadingScreen 
-                    open = {this.state.loading}
+                <LoadingScreen
+                    open={this.state.loading}
                 />
                 <div className="c-settings-tax-info">
                     <SettingNav />
                     <div className="c-settings-tax-info-content">
                         <div className="c-setting-tax-info-content-header">
-                            <div>
-                                <a href="/settings/taxes">Taxes</a>
-                                /{this.state.name}
+                            <div className="text">
+                                <div className="title" onClick={() => this.props.history.push("/settings/taxes")}>Taxes </div>
+                                <div> {" / " + this.state.name}</div>
                             </div>
                             <Button
                                 variant="contained"
@@ -149,7 +149,7 @@ class TaxInfo extends Component {
                                         size="small"
                                         error={this.state.nameErrorMessage ? true : false}
                                         helperText={this.state.nameErrorMessage}
-                                        autoFocus
+
                                         onChange={this.onHandleTaxNameChange}
                                     />
                                     <div className="c-text-field-name">Tax Percent</div>
@@ -163,7 +163,7 @@ class TaxInfo extends Component {
                                         helperText={this.state.percentErrorMessage}
                                         size="small"
                                         onChange={this.onHandleTaxPercentChange}
-                                        autoFocus
+
                                     />
                                     <div className="c-setting-tax-info-control-form">
                                         <Button

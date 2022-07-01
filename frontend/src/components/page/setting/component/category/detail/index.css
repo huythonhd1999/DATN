@@ -17,6 +17,15 @@
 .c-setting-category-info-info-guild .c-guild-header {
     padding-bottom: 5px;
 }
+.c-setting-category-info-content-header .text {
+    display: flex;
+}
+.c-setting-category-info-content-header .text .title{
+    cursor: pointer;
+    text-decoration: none;
+    color: #008cba;
+    padding-right: 7px;
+}
 .c-setting-category-info-info-detail .c-text-field-name {
     font: normal normal normal 14px/19px Segoe UI;
 }
@@ -31,7 +40,7 @@
 .c-settings-category-info-content .c-setting-category-info-content-header {
     font: normal normal normal 16px/21px Segoe UI;
     box-shadow: 0.5px 0.866px 1.5px 0.8px rgba(0, 0, 0, 0.15);
-    height: 55px;
+    height: 70px;
     padding-left: 20px;
     display: flex;
     align-items: center;

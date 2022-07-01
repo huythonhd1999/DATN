@@ -26,7 +26,7 @@ export default function AlertDialog(props) {
                 <DialogActions>
                     <Button onClick={props.onCancelClick}>Go back</Button>
                     {props.selectedItems.length > 0 &&
-                        <Button onClick={props.onDeleteClick} autoFocus>
+                        <Button onClick={props.onDeleteClick} >
                             Delete
                         </Button>}
                 </DialogActions>

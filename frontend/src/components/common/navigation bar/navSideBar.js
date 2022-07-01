@@ -22,7 +22,10 @@ import {
     FiFileText,
     FiBriefcase,
     FiSettings,
+    FiUser,
+    FiTag
 } from "react-icons/fi";
+
 //import sidebar css from react-pro-sidebar module and our custom css
 import "react-pro-sidebar/dist/css/styles.css";
 import "./navSideBar.css";
@@ -34,7 +37,7 @@ const NavSideBar = () => {
     //create a custom function that will change menucollapse state from false to true and true to false
     const menuIconClick = () => {
         //condition checking to change state from true to false and vice versa
-        menuCollapse ? setMenuCollapse(false) : setMenuCollapse(true);
+        menuCollapse ? setMenuCollapse(false) : setMenuCollapse(false);
     };
 
     return (
@@ -70,6 +73,14 @@ const NavSideBar = () => {
                         <MenuItem icon={<FiBriefcase />}>
                             Petty Cash
                             <Link to="/expenses" />
+                        </MenuItem>
+                        <MenuItem icon={<FiTag />}>
+                            Products
+                            <Link to="/products" />
+                        </MenuItem>
+                        <MenuItem icon={<FiUser />}>
+                            Customers
+                            <Link to="/customers" />
                         </MenuItem>
                         <MenuItem icon={<FiSettings />}>
                             Settings

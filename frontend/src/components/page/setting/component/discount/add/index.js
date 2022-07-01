@@ -275,7 +275,7 @@ class CouponAdd extends Component {
                     <div className="c-settings-coupon-info-content">
                         <div className="c-setting-coupon-info-content-header">
                             <div className="text">
-                                <a href="/settings/discount-rules">Discount Rules</a>
+                                <div className="title" onClick={() => this.props.history.push("/settings/discount-rules")}>Discount Rules </div>
                                 <div> {" / New Discount Rule"}</div>
                             </div>
                         </div>
@@ -305,7 +305,7 @@ class CouponAdd extends Component {
                                                 size="small"
                                                 error={this.state.codeErrorMessage ? true : false}
                                                 helperText={this.state.codeErrorMessage}
-                                                autoFocus
+                                                
                                                 onChange={this.onHandleCodeChange}
                                             />
 
@@ -511,7 +511,7 @@ class CouponAdd extends Component {
                                             size="small"
                                             error={this.state.amountErrorMessage ? true : false}
                                             helperText={this.state.amountErrorMessage}
-                                            autoFocus
+                                            
                                             onChange={this.onHandleAmountChange}
                                         />
                                         <div className="c-text-field-name">Minimum Order Value</div>
@@ -524,7 +524,7 @@ class CouponAdd extends Component {
                                             size="small"
                                             error={this.state.minimumOrderValueErrorMessage ? true : false}
                                             helperText={this.state.minimumOrderValueErrorMessage}
-                                            autoFocus
+                                            
                                             onChange={this.onHandleMinimumOrderValueChange}
                                         />
 

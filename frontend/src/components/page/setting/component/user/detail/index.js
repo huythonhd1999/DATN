@@ -132,9 +132,9 @@ class UserInfo extends Component {
                     <SettingNav />
                     <div className="c-settings-user-info-content">
                         <div className="c-setting-user-info-content-header">
-                            <div>
-                                <a href="/settings/users">User</a>
-                                {" / " + this.state.name}
+                            <div className="text">
+                                <div className="title" onClick={() => this.props.history.push("/settings/product-options")}>Users </div>
+                                <div> {" / " + this.state.name}</div>
                             </div>
                             <Button
                                 variant="contained"
@@ -170,7 +170,7 @@ class UserInfo extends Component {
                                         size="small"
                                         error={this.state.nameErrorMessage ? true : false}
                                         helperText={this.state.nameErrorMessage}
-                                        autoFocus
+
                                         onChange={this.onHandleTaxNameChange}
                                         inputProps={{
                                             autoComplete: 'new-password',

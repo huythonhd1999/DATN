@@ -129,7 +129,7 @@ class Taxes extends Component {
                                         disabled={this.state.disable}
                                         placeholder="Search by tax name"
                                         size="small"
-                                        autoFocus
+                                        
                                     />
                                 </div>
                             </div>
@@ -145,6 +145,7 @@ class Taxes extends Component {
                                     checkboxSelection
                                     disableSelectionOnClick={true}
                                     onRowClick={(params) => this.onRowClick(params)}
+                                    selectionModel={this.state.selectedItemsId}
                                     onSelectionModelChange={(selectedItems) => this.onHandleSelected(selectedItems)}
                                 />
                             </div>

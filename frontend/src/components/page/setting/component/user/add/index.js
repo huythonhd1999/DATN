@@ -131,9 +131,9 @@ class UserAdd extends Component {
                     <SettingNav />
                     <div className="c-settings-user-info-content">
                         <div className="c-setting-user-info-content-header">
-                            <div>
-                                <a href="/settings/users">User</a>
-                                {" / New User"}
+                            <div className="text">
+                                <div className="title" onClick={() => this.props.history.push("/settings/product-options")}>Users </div>
+                                <div> {" / New User"}</div>
                             </div>
                         </div>
                         <div className="c-setting-user-info-content-info">
@@ -162,7 +162,7 @@ class UserAdd extends Component {
                                         size="small"
                                         error={this.state.nameErrorMessage ? true : false}
                                         helperText={this.state.nameErrorMessage}
-                                        autoFocus
+
                                         onChange={this.onHandleTaxNameChange}
                                         autoComplete="false"
                                         inputProps={{

@@ -126,9 +126,9 @@ class ProductCategoryInfo extends Component {
                     <SettingNav />
                     <div className="c-settings-category-info-content">
                         <div className="c-setting-category-info-content-header">
-                            <div>
-                                <a href="/settings/product-categories">Categories</a>
-                                {" / " + this.state.name}
+                            <div className="text">
+                                <div className="title" onClick={() => this.props.history.push("/settings/product-categories")}>Product Categories </div>
+                                <div> {" / " + this.state.name}</div>
                             </div>
                             <Button
                                 variant="contained"
@@ -161,7 +161,7 @@ class ProductCategoryInfo extends Component {
                                         size="small"
                                         error={this.state.nameErrorMessage ? true : false}
                                         helperText={this.state.nameErrorMessage}
-                                        autoFocus
+                                        
                                         onChange={this.onHandleTaxNameChange}
                                     />
                                     <div className="c-text-field-name">Note</div>
@@ -174,7 +174,7 @@ class ProductCategoryInfo extends Component {
                                         size="small"
                                         error={this.state.nameErrorMessage ? true : false}
                                         helperText={this.state.nameErrorMessage}
-                                        autoFocus
+                                        
                                         multiline
                                         onChange={this.onHandleTaxNameChange}
                                     />

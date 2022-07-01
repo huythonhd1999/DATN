@@ -18,6 +18,15 @@
     padding-right: 2%;
 }
 
+.c-setting-coupon-info-content-header .text {
+    display: flex;
+}
+.c-setting-coupon-info-content-header .text .title{
+    cursor: pointer;
+    text-decoration: none;
+    color: #008cba;
+    padding-right: 7px;
+}
 .c-setting-coupon-info-content-info .row .right-col{
     width: 55%;
 }
@@ -59,7 +68,7 @@
 .c-settings-coupon-info-content .c-setting-coupon-info-content-header {
     font: normal normal normal 16px/21px Segoe UI;
     box-shadow: 0.5px 0.866px 1.5px 0.8px rgba(0, 0, 0, 0.15);
-    height: 55px;
+    height: 70px;
     padding-left: 20px;
     display: flex;
     align-items: center;
