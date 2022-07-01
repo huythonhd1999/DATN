@@ -1,0 +1,89 @@
+.c-settings-customer-info {
+    display: flex;
+}
+.c-settings-customer-info-content {
+    width: 100%;
+    padding-left: 220px;
+}
+.c-setting-customer-info-content-info{
+    display: flex;
+}
+.c-setting-customer-info-content-info-column-1 {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    padding-top: 20px;
+}
+.c-setting-customer-info-info-guild .c-guild-header {
+    padding-bottom: 5px;
+}
+.c-setting-customer-info-info-detail .c-text-field-name {
+    font: normal normal normal 14px/19px Segoe UI;
+}
+.c-setting-customer-info-info-detail .c-text-field-name + div {
+    margin-top: 8px;
+}
+.c-setting-customer-info-content-info-column-2 {
+    width: 55%;
+    padding-top: 20px;
+}
+.c-setting-customer-info-content-header .text {
+    display: flex;
+}
+.c-setting-customer-info-content-header .text .title{
+    cursor: pointer;
+    text-decoration: none;
+    color: #008cba;
+    padding-right: 7px;
+}
+.c-settings-customer-info-content .c-setting-customer-info-content-header {
+    font: normal normal normal 16px/21px Segoe UI;
+    box-shadow: 0.5px 0.866px 1.5px 0.8px rgba(0, 0, 0, 0.15);
+    height: 70px;
+    padding-left: 20px;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    background-color: white;
+    z-index: 1;
+}
+.c-setting-customer-info-info-guild .c-guild-header {
+    font: normal normal normal 16px/21px Segoe UI;
+    padding-left: 20px;
+}
+
+.c-setting-customer-info-info-guild .c-guild-content {
+    font: normal normal normal 14px/19px Segoe UI;
+    padding-left: 25px;
+}
+.c-setting-customer-info-content-info-column-1 .c-setting-customer-info-info-gap {
+    height: 300px;
+}
+
+.c-setting-customer-info-content-header {
+    display: flex;
+    justify-content: space-between;
+    top: 0
+}
+.c-setting-customer-info-content-header button {
+    margin-right: 5.5%;
+    text-transform: none;
+    width: 100px;
+}
+.c-setting-customer-info-control-form {
+    display: flex;
+    flex-flow: row-reverse;
+}
+.c-setting-customer-info-control-form button {
+    text-transform: none;
+    width: 100px;
+}
+.c-setting-customer-info-control-form :nth-child(1) {
+    margin-left: 10px;
+}
+.c-setting-customer-info-content-header div a:visited {
+    text-decoration: underline;
+}
+.c-setting-customer-info-info-detail .c-gap {
+    height: 40px;
+}

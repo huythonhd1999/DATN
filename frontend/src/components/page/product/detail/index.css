@@ -1,0 +1,90 @@
+.c-product-info {
+    display: flex;
+}
+.c-product-info-content {
+    width: 100%;
+    padding-left: 220px;
+}
+.c-product-info-content-info{
+    display: flex;
+    margin-bottom: 40px;
+}
+.c-product-info-content-info-column-1 {
+    display: flex;
+    flex-direction: column;
+    width: 39%;
+    padding-top: 20px;
+    padding-right: 1%;
+}
+.c-product-info-info-guild .c-guild-header {
+    padding-bottom: 5px;
+}
+.c-product-info-info-detail .c-text-field-name {
+    font: normal normal normal 14px/19px Segoe UI;
+    padding-bottom: 5px;
+    padding-top: 3px;
+}
+.c-product-info-info-detail .c-text-field-name + div {
+    margin-top: 8px;
+}
+.c-product-info-content-info-column-2 {
+    width: 55%;
+    padding-top: 20px;
+}
+.c-product-info-content-header .text {
+    display: flex;
+}
+.c-product-info-content-header .text .title{
+    cursor: pointer;
+    text-decoration: none;
+    color: #008cba;
+    padding-right: 7px;
+}
+.c-product-info-content .c-product-info-content-header {
+    font: normal normal normal 16px/21px Segoe UI;
+    box-shadow: 0.5px 0.866px 1.5px 0.8px rgba(0, 0, 0, 0.15);
+    height: 70px;
+    padding-left: 20px;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    background-color: white;
+    z-index: 1;
+}
+.c-product-info-info-guild .c-guild-header {
+    font: normal normal normal 16px/21px Segoe UI;
+    padding-left: 20px;
+}
+
+.c-product-info-info-guild .c-guild-content {
+    font: normal normal normal 14px/19px Segoe UI;
+    padding-left: 25px;
+}
+.c-product-info-content-info-column-1 .c-product-info-info-gap {
+    height: 300px;
+}
+
+.c-product-info-content-header {
+    display: flex;
+    justify-content: space-between;
+    top: 0
+}
+.c-product-info-content-header button {
+    margin-right: 5.5%;
+    text-transform: none;
+    width: 100px;
+}
+.c-product-info-control-form {
+    display: flex;
+    flex-flow: row-reverse;
+}
+.c-product-info-control-form button {
+    text-transform: none;
+    width: 100px;
+}
+.c-product-info-control-form :nth-child(1) {
+    margin-left: 10px;
+}
+.c-product-info-content-header div a:visited {
+    text-decoration: underline;
+}
