@@ -3,7 +3,7 @@ import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Login from './components/page/login/index';
 import jwt from "jwt-decode";
-import DashBoard from './components/page/dashboard/dashboard'
+import DashBoard from './components/page/dashboard/index'
 import Setting from './components/page/setting';
 import Shop from './components/page/setting/component/shop';
 import DiscountRules from './components/page/setting/component/discount';
@@ -33,6 +33,12 @@ import CustomerAdd from './components/page/customer/add/index';
 import Products from './components/page/product/index';
 import ProductInfo from './components/page/product/detail/index';
 import ProductAdd from './components/page/product/add/index';
+import PettyCashes from './components/page/petty cash';
+import PettyCashInfo from './components/page/petty cash/detail/index';
+import PettyCashAdd from './components/page/petty cash/add/index';
+import Receipts from './components/page/receipt';
+import ReceiptInfo from './components/page/receipt/detail/index';
+import Sell from './components/page/sell';
 // import Api from './api/api';
 // import jwt from "jwt-decode";
 class App extends React.Component {
@@ -149,6 +155,18 @@ class App extends React.Component {
                         <Route path="/products/add" exact component={() => <ProductAdd />}>
                         </Route>
                         <Route path="/products/:id" exact component={() => <ProductInfo />}>
+                        </Route>
+                        <Route path="/expenses" exact component={() => <PettyCashes />}>
+                        </Route>
+                        <Route path="/expenses/add" exact component={() => <PettyCashAdd />}>
+                        </Route>
+                        <Route path="/expenses/:id" exact component={() => <PettyCashInfo />}>
+                        </Route>
+                        <Route path="/receipts" exact component={() => <Receipts />}>
+                        </Route>
+                        <Route path="/receipts/:id" exact component={() => <ReceiptInfo />}>
+                        </Route>
+                        <Route path="/sell" exact component={() => <Sell />}>
                         </Route>
                         {/* <PrivateRouter exact path="/" component={<Home />} role={[2, 1, 0]} />
               <PrivateRouter exact path="/account-info" component={<AccountInfo />} role={[2, 1, 0]} />

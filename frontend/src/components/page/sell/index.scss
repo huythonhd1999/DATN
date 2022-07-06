@@ -1,0 +1,22 @@
+.c-page {
+    .c-sell-info {
+        .detail {
+            padding-left: 220px;
+            .header {
+                display: flex;
+                align-items: center;
+                height: 70px;
+                padding-left: 20px;
+                position: sticky;
+                box-shadow: 0.5px 0.866px 1.5px 0.8px rgba(0, 0, 0, 0.15);
+                font: normal normal normal 16px/21px Segoe UI;
+            }
+            .content {
+                .tag-list {
+                    padding-left: 2%;
+                    padding-top: 10px;
+                }
+            }
+        }
+    }
+}

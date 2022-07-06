@@ -1,0 +1,17 @@
+.dashboard-page {
+    .dashboard-content {
+        padding-left: 220px;
+        .header {
+            display: flex;
+            align-items: center;
+            height: 70px;
+            padding-left: 20px;
+            position: sticky;
+            box-shadow: 0.5px 0.866px 1.5px 0.8px rgba(0, 0, 0, 0.15);
+            font: normal normal normal 16px/21px Segoe UI;
+        }
+        .dashboard-detail {
+            
+        }
+    }
+}

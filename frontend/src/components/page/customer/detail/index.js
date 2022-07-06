@@ -283,7 +283,7 @@ class CustomerInfo extends Component {
                                     </Stack>
                                     <div className="c-text-field-name">Recent Receipts</div>
                                     <TableContainer component={Paper}>
-                                        <Table  size="small" aria-label="a dense table">
+                                        <Table size="small" aria-label="a dense table">
                                             <TableHead>
                                                 <TableRow>
                                                     <TableCell>Created At</TableCell>

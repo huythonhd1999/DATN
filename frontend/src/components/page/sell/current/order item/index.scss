@@ -1,0 +1,66 @@
+.order-element {
+    display: flex;
+    flex-direction: row;
+
+    .column-1 {
+        display: flex;
+        flex-direction: column;
+        width: 45%;
+        padding-left: 2%;
+        padding-right: 4%;
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+
+            .icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 40px;
+                width: 40px;
+            }
+        }
+
+        .categories {
+            .selection {
+                margin-bottom: 20px;
+                .c-text-field-name-1 {
+                    font: normal normal normal 14px/19px Segoe UI;
+                }
+            }
+
+            .products {
+                display: flex;
+                flex-wrap: wrap;
+                .product {
+                    display: flex;
+                    margin-bottom: 15px;
+                    margin-right: 10px;
+                    div {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                }
+            }
+        }
+    }
+    .column-2 {
+        display: flex;
+        flex-direction: column;
+        width: 45%;
+        .order-table {
+            .c-text-field-name {
+                font: normal normal normal 14px/19px Segoe UI;
+                margin-bottom: 20px;
+            }
+        }
+        .coupon-code {
+            margin-top: 25px;
+            .c-text-field-name {
+                font: normal normal normal 14px/19px Segoe UI;
+            }
+        }
+    }
+}

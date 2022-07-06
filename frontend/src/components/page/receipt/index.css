@@ -1,0 +1,65 @@
+.c-receipts {
+    display: flex;
+}
+.c-receipts-content {
+    width: 100%;
+    padding-left: 220px;
+}
+.c-receipts-content-info{
+    display: flex;
+    flex-direction: column;
+}
+
+.c-receipts-content .c-receipts-content-header {
+    font: normal normal normal 16px/21px Segoe UI;
+    box-shadow: 0.5px 0.866px 1.5px 0.8px rgba(0, 0, 0, 0.15);
+    height: 70px;
+    padding-left: 20px;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    background-color: white;
+    z-index: 1;
+}
+
+.c-receipts-content-header {
+    display: flex;
+    justify-content: space-between;
+    top: 0
+}
+.c-receipts-content-header button {
+    margin-right: 5.5%;
+    text-transform: none;
+    width: 150px;
+}
+.c-receipts-detail-header .search-bar {
+    display: flex;
+    align-items: center;
+    width: 96%;
+}
+.c-receipts-detail-header .search-bar .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 10px;
+    height: 40px;
+    width: 40px;
+}
+.c-receipts-detail-list{
+    padding-left: 10px;
+}
+.c-receipts-detail-header .tag-list {
+    padding-left: 10px;
+}
+.c-receipts-content-info .action-button {
+    padding-left: 15px;
+    padding-top: 5px;
+}
+.c-receipts-content-info .c-receipts-detail-list {
+    padding-left: 10px;
+    padding-top: 5px;
+}
+.action-option button {
+    background-color: aliceblue;
+    color: black;
+}
