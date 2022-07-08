@@ -4,7 +4,7 @@ exports.generateToken = function (user, secretSignature, tokenLife) {
   return new Promise((resolve, reject) => {
     // Định nghĩa những thông tin của user mà bạn muốn lưu vào token ở đây
     const userData = {
-      userId: user.userId,
+      userId: user.Id,
       userName: user.userName,
       userType: user.userType,
       status: user.status

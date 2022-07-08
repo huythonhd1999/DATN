@@ -53,6 +53,7 @@ const Api = {
         return user.post(`${baseUrl}/setting/store/set-store`, store)
     },
 
+    //tax
     getTaxList: () => {
         return guest.get(`${baseUrl}/setting/tax/get-list`)
     },
@@ -72,6 +73,7 @@ const Api = {
         return user.post(`${baseUrl}/setting/tax/delete-tax`, IdList)
     },
 
+    //coupon
     getCouponList: () => {
         return guest.get(`${baseUrl}/setting/coupon/get-list`)
     },
@@ -89,6 +91,26 @@ const Api = {
     },
     deleteCouponList: (IdList) => {
         return user.post(`${baseUrl}/setting/coupon/delete-coupon`, {IdList: IdList})
+    },
+    
+    //user
+    getUserList: () => {
+        return guest.get(`${baseUrl}/setting/user/get-list`)
+    },
+    getUser: (id) => {
+        return guest.get(`${baseUrl}/setting/user/id/${id}`)
+    },
+    createUser: (userInfo) => {
+        return user.post(`${baseUrl}/setting/user/create-user`, userInfo)
+    },
+    searchUser: (searchString) => {
+        return guest.post(`${baseUrl}/setting/user/search-user`, {searchString: searchString})
+    },
+    editUser: (userInfo) => {
+        return user.post(`${baseUrl}/setting/user/edit-user`, userInfo)
+    },
+    deleteUserList: (IdList) => {
+        return user.post(`${baseUrl}/setting/user/delete-user`, {IdList: IdList})
     },
 }
 export default Api;

@@ -2,6 +2,7 @@ const settingRouter = require('express').Router()
 const storeController = require('../controllers/storeController')
 const taxController = require('../controllers/taxControler')
 const couponController = require('../controllers/couponController')
+const userController = require('../controllers/userController')
 const authMiddleware = require('../middlewares/authentication')
 const notFound = require('./404')
 
@@ -12,6 +13,10 @@ settingRouter.post('/tax/search-tax', taxController.searchTax)
 settingRouter.get('/coupon/id/:id', couponController.getCoupon)
 settingRouter.get('/coupon/get-list', couponController.getCouponList)
 settingRouter.post('/coupon/search-coupon', couponController.searchCoupon)
+
+settingRouter.get('/user/id/:id', userController.getUser)
+settingRouter.get('/user/get-list', userController.getUserList)
+settingRouter.post('/user/search-user', userController.searchUser)
 
 settingRouter.use(authMiddleware.isAuth)
 
@@ -28,6 +33,11 @@ settingRouter.post('/tax/delete-tax', taxController.deleteTax)
 settingRouter.post('/coupon/create-coupon', couponController.createCoupon)
 settingRouter.post('/coupon/edit-coupon', couponController.editCoupon)
 settingRouter.post('/coupon/delete-coupon', couponController.deleteCoupon)
+
+//user setting route
+settingRouter.post('/user/create-user', userController.createUser)
+settingRouter.post('/user/edit-user', userController.editUser)
+settingRouter.post('/user/delete-user', userController.deleteUser)
 
 settingRouter.use(notFound)
 

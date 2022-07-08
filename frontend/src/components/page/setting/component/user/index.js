@@ -22,7 +22,7 @@ class Users extends Component {
         this.state = {
             selectedItemsId: [],
             showDialog: false,
-            taxList: [],
+            userList: [],
             loading: true,
             searchString: ""
         };
@@ -32,19 +32,21 @@ class Users extends Component {
         this.setState({
             loading: true,
         })
-        let res = await Api.getTaxList();
+        let res = await Api.getUserList();
         this.setState({
-            taxList: res.data.taxList,
+            userList: res.data.userList,
             loading: false,
         })
     }
 
     getRowData = () => {
-        return this.state.taxList.map(item => {
+        return this.state.userList.map(item => {
             return {
                 id: item.Id,
-                name: item.name,
-                percent: item.percent,
+                name: item.userName,
+                password: item.password,
+                type: item.userType === 1 ? "Manager" : "Cashier",
+                status: item.status === 1 ? "Enable" : "Disable"
             }
         })
     }

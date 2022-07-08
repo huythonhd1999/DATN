@@ -14,6 +14,8 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Select from '@mui/material/Select';
 import { withRouter } from "react-router-dom";
 import MenuItem from '@mui/material/MenuItem';
+import { FormHelperText } from "@mui/material";
+import LoadingScreen from "../../../../../common/loading";
 // import CircularProgress from '@mui/material/CircularProgress';
 
 class UserAdd extends Component {
@@ -23,95 +25,70 @@ class UserAdd extends Component {
             disable: false,
             loading: false,
             Id: 1,
-            name: "",
-            percent: "",
-            status: 1,
-            currentTax: {},
-            nameErrorMessage: "",
-            percentErrorMessage: "",
-            showPassword: false,
+            userName: "",
             password: "",
-            type: 1,
+            userType: 1,
+            status: 1,
+            userNameErrorMessage: "",
+            passwordErrorMessage: "",
+            showPassword: false,
         };
     }
-    componentDidMount = async () => {
-        let id = this.props.match.params.id
-        this.setState({ loading: true })
-        let res = await Api.getTax(id)
-        let tax = res.data.tax;
-        this.setState({
-            ...tax,
-            currentTax: tax,
-            loading: false
-        })
-    }
-    onHandleEditClick = () => {
-        this.setState({
-            disable: !this.state.disable
-        })
-    }
+
     onHandleCancelClick = () => {
-        this.setState({
-            ...this.state.currentTax,
-            disable: true
-        })
+        this.props.history.push("/settings/users")
     }
     onHandleSaveClick = async (e) => {
         e.preventDefault();
 
-        if (!this.state.name) {
+        if (!this.state.userName) {
             this.setState({
-                nameErrorMessage: "Cannot leave this field empty."
+                userNameErrorMessage: "Cannot leave this field empty."
             })
         } else {
             this.setState({
-                nameErrorMessage: ""
+                userNameErrorMessage: ""
             })
         }
 
-        if (this.state.percent === "") {
+        if (this.state.password === "") {
             this.setState({
-                percentErrorMessage: "Cannot leave this field empty."
+                passwordErrorMessage: "Cannot leave this field empty."
             })
         } else {
             this.setState({
-                percentErrorMessage: ""
+                passwordErrorMessage: ""
             })
         }
 
-        if (this.state.percent !== "" && this.state.name) {
+        if (this.state.userName !== "" && this.state.password !== "") {
             this.setState({
                 disable: true,
                 loading: true
             })
             e.preventDefault();
-            let editTax = {
-                Id: this.state.Id,
-                name: this.state.name,
-                percent: this.state.percent
+            let newUser = {
+                userName: this.state.userName,
+                password: this.state.password,
+                userType: this.state.userType
             };
 
-            let res = await Api.editTax(editTax)
-            let tax = res.data.tax;
+            let res = await Api.createUser(newUser)
+            let user = res.data.user;
             this.setState({
-                ...tax,
-                loading: false
+                ...user,
+                loading: false,
+                showPassword: false
             })
+            this.props.history.push("/settings/users")
         }
     }
-    onHandleTaxNameChange = (e) => {
+    onHandleUserNameChange = (e) => {
         this.setState({
-            name: e.target.value
+            userName: e.target.value
         })
     }
-    onHandleTaxPercentChange = (e) => {
-        let regEx = new RegExp("^[0-9]+[0-9]*$|^$")
-        if (regEx.test(e.target.value)) {
-            this.setState({
-                percent: e.target.value
-            })
-        }
-    }
+
     handleClickShowPassword = () => {
         this.setState({
             showPassword: !this.state.showPassword
@@ -124,15 +101,24 @@ class UserAdd extends Component {
         })
     }
 
+    handleUserTypeChange = (e) => {
+        this.setState({
+            userType: e.target.value
+        })
+    }
+
     render() {
         return (
             <div className="c-settings-page">
+                <LoadingScreen
+                    open={this.state.loading}
+                />
                 <div className="c-settings-user-info">
                     <SettingNav />
                     <div className="c-settings-user-info-content">
                         <div className="c-setting-user-info-content-header">
                             <div className="text">
-                                <div className="title" onClick={() => this.props.history.push("/settings/product-options")}>Users </div>
+                                <div className="title" onClick={() => this.props.history.push("/settings/users")}>Users </div>
                                 <div> {" / New User"}</div>
                             </div>
                         </div>
@@ -156,24 +142,27 @@ class UserAdd extends Component {
                                     <TextField
                                         margin="normal"
                                         required
-                                        value={this.state.name}
+                                        value={this.state.userName}
                                         fullWidth
                                         disabled={this.state.disable}
                                         size="small"
-                                        error={this.state.nameErrorMessage ? true : false}
-                                        helperText={this.state.nameErrorMessage}
-
-                                        onChange={this.onHandleTaxNameChange}
-                                        autoComplete="false"
+                                        error={this.state.userNameErrorMessage ? true : false}
+                                        helperText={this.state.userNameErrorMessage}
+                                        onChange={this.onHandleUserNameChange}
                                         inputProps={{
-                                            autocomplete: 'new-password',
+                                            autoComplete: 'new-password',
                                             form: {
-                                                autocomplete: 'off',
+                                                autoComplete: 'off',
                                             },
                                         }}
                                     />
                                     <div className="c-text-field-name">User Password</div>
-                                    <FormControl variant="outlined" size="small" fullWidth disabled={this.state.disable}>
+                                    <FormControl
+                                        variant="outlined"
+                                        size="small" fullWidth
+                                        disabled={this.state.disable}
+                                        error={this.state.passwordErrorMessage ? true : false}
+                                    >
                                         <OutlinedInput
                                             type={this.state.showPassword ? 'text' : 'password'}
                                             value={this.state.password}
@@ -191,26 +180,31 @@ class UserAdd extends Component {
                                                 </InputAdornment>
                                             }
                                             inputProps={{
-                                                autocomplete: 'new-password',
+                                                autoComplete: 'new-password',
                                                 form: {
-                                                    autocomplete: 'off',
+                                                    autoComplete: 'off',
                                                 },
                                             }}
                                         />
+                                        {!!this.state.passwordErrorMessage && (
+                                            <FormHelperText error id="password-error">
+                                                {this.state.passwordErrorMessage}
+                                            </FormHelperText>
+                                        )}
                                     </FormControl>
 
                                     <div className="c-text-field-name">User Type</div>
                                     <FormControl variant="outlined" size="small" fullWidth disabled={this.state.disable}>
                                         <Select
-                                            value={this.state.type}
-                                            // onChange={handleChange}
+                                            value={this.state.userType}
+                                            onChange={this.handleUserTypeChange}
                                             fullWidth
                                         >
                                             <MenuItem value={-1} disabled>
                                                 <em>Select type of user</em>
                                             </MenuItem>
                                             <MenuItem value={1}>Manager</MenuItem>
-                                            <MenuItem value={0}>Cashier</MenuItem>
+                                            <MenuItem value={2}>Cashier</MenuItem>
                                         </Select>
                                     </FormControl>
                                     <div className="c-setting-user-info-control-form">
