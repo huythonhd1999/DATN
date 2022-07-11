@@ -8,7 +8,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { DataGrid } from '@mui/x-data-grid';
 import Api from "../../../../../api/api";
 // import Api from "../../../../../api/api";
-// import * as taxesAction from "../../../../../redux/action/index";
+// import * as categoryesAction from "../../../../../redux/action/index";
 // import {connect} from 'react-redux';
 import Tab from '@mui/material/Tab';
 import BasicMenu from "../../../../common/menu/menu";
@@ -20,7 +20,7 @@ class ProductCategories extends Component {
         this.state = {
             selectedItemsId: [],
             showDialog: false,
-            taxList: [],
+            categoryList: [],
             loading: true,
             searchString: ""
         };
@@ -30,19 +30,20 @@ class ProductCategories extends Component {
         this.setState({
             loading: true,
         })
-        let res = await Api.getTaxList();
+        let res = await Api.getCategoryList();
         this.setState({
-            taxList: res.data.taxList,
+            categoryList: res.data.categoryList,
             loading: false,
         })
     }
 
     getRowData = () => {
-        return this.state.taxList.map(item => {
+        return this.state.categoryList.map(item => {
             return {
                 id: item.Id,
                 name: item.name,
-                percent: item.percent,
+                note: item.note,
+                numProduct: item.productList.length
             }
         })
     }
@@ -52,9 +53,9 @@ class ProductCategories extends Component {
         this.setState({
             loading: true,
         })
-        let res = await Api.searchTax(this.state.searchString);
+        let res = await Api.searchCategory(this.state.searchString);
         this.setState({
-            taxList: res.data.taxList,
+            categoryList: res.data.categoryList,
             loading: false,
         })
     }
@@ -65,9 +66,9 @@ class ProductCategories extends Component {
             this.setState({
                 loading: true,
             })
-            let res = await Api.searchTax(this.state.searchString);
+            let res = await Api.searchCategory(this.state.searchString);
             this.setState({
-                taxList: res.data.taxList,
+                categoryList: res.data.categoryList,
                 loading: false,
             })
         }
@@ -90,6 +91,11 @@ class ProductCategories extends Component {
                 field: 'name',
                 headerName: 'Category Name',
                 width: 300,
+            },
+            {
+                field: 'numProduct',
+                headerName: 'Number of Products',
+                width: 200,
             },
             {
                 field: 'note',
@@ -189,12 +195,14 @@ class ProductCategories extends Component {
     }
     onConfirmDeleteItems = async () => {
         this.setState({
-            showDialog: false
+            showDialog: false,
+            loading: true
         })
-        await Api.deleteTaxList(this.state.selectedItemsId);
-        let res = await Api.getTaxList();
+        await Api.deleteCategoryList(this.state.selectedItemsId);
+        let res = await Api.getCategoryList();
         this.setState({
-            taxList: res.data.taxList
+            categoryList: res.data.categoryList,
+            loading: false
         })
     }
 }

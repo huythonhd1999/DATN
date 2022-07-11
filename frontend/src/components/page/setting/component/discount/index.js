@@ -187,12 +187,14 @@ class DiscountRules extends Component {
     }
     onConfirmDeleteItems = async () => {
         this.setState({
-            showDialog: false
+            showDialog: false,
+            loading: true
         })
         await Api.deleteCouponList(this.state.selectedItemsId);
         let res = await Api.getCouponList();
         this.setState({
-            couponList: res.data.couponList
+            couponList: res.data.couponList,
+            loading: false
         })
     }
 }

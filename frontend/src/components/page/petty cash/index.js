@@ -18,7 +18,7 @@ class PettyCashes extends Component {
         this.state = {
             selectedItemsId: [],
             showDialog: false,
-            taxList: [],
+            pettyCashList: [],
             loading: true,
             searchString: ""
         };
@@ -28,19 +28,22 @@ class PettyCashes extends Component {
         this.setState({
             loading: true,
         })
-        let res = await Api.getTaxList();
+        let res = await Api.getPettyCashList();
         this.setState({
-            taxList: res.data.taxList,
+            pettyCashList: res.data.pettyCashList,
             loading: false,
         })
     }
 
     getRowData = () => {
-        return this.state.taxList.map(item => {
+        return this.state.pettyCashList.map(item => {
             return {
                 id: item.Id,
-                name: item.name,
-                percent: item.percent,
+                date: (new Date (item.createDate)).toLocaleString(),
+                type: item.type === 1 ? "Cash In" : "Cash Out",
+                amount: item.amount,
+                note: item.notes,
+                user: item.userInfo.userName
             }
         })
     }
@@ -50,9 +53,9 @@ class PettyCashes extends Component {
         this.setState({
             loading: true,
         })
-        let res = await Api.searchTax(this.state.searchString);
+        let res = await Api.searchPettyCash(this.state.searchString);
         this.setState({
-            taxList: res.data.taxList,
+            pettyCashList: res.data.pettyCashList,
             loading: false,
         })
     }
@@ -63,9 +66,9 @@ class PettyCashes extends Component {
             this.setState({
                 loading: true,
             })
-            let res = await Api.searchTax(this.state.searchString);
+            let res = await Api.searchPettyCash(this.state.searchString);
             this.setState({
-                taxList: res.data.taxList,
+                pettyCashList: res.data.pettyCashList,
                 loading: false,
             })
         }
@@ -83,6 +86,7 @@ class PettyCashes extends Component {
             { field: 'date', headerName: 'Create Date', width: 250 },
             { field: 'type', headerName: 'Type', width: 150 },
             { field: 'amount', headerName: 'Amount', width: 150 },
+            { field: 'user', headerName: 'Create By', width: 150 },
             { field: 'note', headerName: 'Note', width: 400 },
         ];
         return (
@@ -177,12 +181,14 @@ class PettyCashes extends Component {
     }
     onConfirmDeleteItems = async () => {
         this.setState({
-            showDialog: false
+            showDialog: false,
+            loading: true,
         })
-        await Api.deleteTaxList(this.state.selectedItemsId);
-        let res = await Api.getTaxList();
+        await Api.deletePettyCashList(this.state.selectedItemsId);
+        let res = await Api.getPettyCashList();
         this.setState({
-            taxList: res.data.taxList
+            pettyCashList: res.data.pettyCashList,
+            loading: false,
         })
     }
 }

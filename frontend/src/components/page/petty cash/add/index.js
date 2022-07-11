@@ -16,92 +16,73 @@ class PettyCashAdd extends Component {
             disable: false,
             loading: false,
             Id: 1,
-            name: "",
-            percent: "",
+            amount: "",
+            notes: "",
             status: 1,
-            currentTax: {},
-            nameErrorMessage: "",
-            percentErrorMessage: "",
-            type: -1
+            currentPettyCash: {},
+            amountErrorMessage: "",
+            type: 1
         };
     }
-    componentDidMount = async () => {
-        let id = this.props.match.params.id
-        this.setState({ loading: true })
-        let res = await Api.getTax(id)
-        let tax = res.data.tax;
-        this.setState({
-            ...tax,
-            currentTax: tax,
-            loading: false
-        })
-    }
-    onHandleEditClick = () => {
-        this.setState({
-            disable: !this.state.disable
-        })
-    }
+
     onHandleCancelClick = () => {
-        this.setState({
-            ...this.state.currentTax,
-            disable: true
-        })
+        this.props.history.push("/expenses")
     }
     onHandleSaveClick = async (e) => {
         e.preventDefault();
 
-        if (!this.state.name) {
+        if (this.state.amount === "") {
             this.setState({
-                nameErrorMessage: "Cannot leave this field empty."
+                amountErrorMessage: "Cannot leave this field empty."
             })
         } else {
             this.setState({
-                nameErrorMessage: ""
+                amountErrorMessage: ""
             })
         }
 
-        if (this.state.percent === "") {
-            this.setState({
-                percentErrorMessage: "Cannot leave this field empty."
-            })
-        } else {
-            this.setState({
-                percentErrorMessage: ""
-            })
-        }
-
-        if (this.state.percent !== "" && this.state.name) {
+        if (this.state.amount !== "") {
             this.setState({
                 disable: true,
                 loading: true
             })
             e.preventDefault();
-            let editTax = {
-                Id: this.state.Id,
-                name: this.state.name,
-                percent: this.state.percent
+            let newPettyCash = {
+                type: this.state.type,
+                notes: this.state.notes,
+                amount: this.state.amount,
+                userId: this.props.user.userId || 1,
             };
 
-            let res = await Api.editTax(editTax)
-            let tax = res.data.tax;
+            let res = await Api.createPettyCash(newPettyCash)
+            let pettyCash = res.data.pettyCash;
             this.setState({
-                ...tax,
+                ...pettyCash,
+                currentPettyCash: pettyCash,
                 loading: false
             })
+            this.props.history.push("/expenses")
         }
     }
-    onHandleTaxNameChange = (e) => {
+    
+    onHandleNotesChange = (e) => {
         this.setState({
-            name: e.target.value
+            notes: e.target.value
         })
     }
-    onHandleTaxPercentChange = (e) => {
-        let regEx = /^(100(\.0{1,2})?|[1-9]?\d(\.\d{1,2})?)$|^$/
+    onHandleAmountChange = (e) => {
+        let regEx = new RegExp("^[0-9]+[0-9]*$|^$")
         if (regEx.test(e.target.value)) {
             this.setState({
-                percent: e.target.value
+                amount: e.target.value
             })
         }
+    }
+
+    onHandleTypeChange = (e) => {
+        this.setState({
+            type: e.target.value
+        })
     }
 
     render() {
@@ -116,7 +97,7 @@ class PettyCashAdd extends Component {
                         <div className="c-expense-info-content-header">
                             <div className="text">
                                 <div className="title" onClick={() => this.props.history.push("/expenses")}>Petty Cashes </div>
-                                <div> {" / New Entry"}</div>
+                                <div> {" / New Petty Cash Entry"}</div>
                             </div>
                         </div>
                         <div className="c-expense-info-content-info">
@@ -127,7 +108,7 @@ class PettyCashAdd extends Component {
                                     </div>
                                     {/* đổi state chỗ này */}
                                     <div className="c-guild-content">
-                                        Edit your petty cash details here.
+                                        Add your petty cash details here.
                                     </div>
                                 </div>
                             </div>
@@ -137,40 +118,38 @@ class PettyCashAdd extends Component {
                                     <FormControl variant="outlined" size="small" fullWidth disabled={this.state.disable}>
                                         <Select
                                             value={this.state.type}
-                                            // onChange={handleChange}
+                                            onChange={this.onHandleTypeChange}
                                             fullWidth
                                         >
                                             <MenuItem value={-1} disabled>
                                                 <em>Select type of user</em>
                                             </MenuItem>
-                                            <MenuItem value={1}>Manager</MenuItem>
-                                            <MenuItem value={0}>Cashier</MenuItem>
+                                            <MenuItem value={1}>Cash In</MenuItem>
+                                            <MenuItem value={2}>Cash Out</MenuItem>
                                         </Select>
                                     </FormControl>
                                     <div className="c-text-field-name">Amount</div>
                                     <TextField
                                         margin="normal"
                                         required
-                                        value={this.state.name}
+                                        value={this.state.amount}
                                         fullWidth
                                         disabled={this.state.disable}
                                         size="small"
-                                        error={this.state.nameErrorMessage ? true : false}
-                                        helperText={this.state.nameErrorMessage}
-                                        onChange={this.onHandleTaxNameChange}
+                                        error={this.state.amountErrorMessage ? true : false}
+                                        helperText={this.state.amountErrorMessage}
+                                        onChange={this.onHandleAmountChange}
                                     />
                                     <div className="c-text-field-name">Notes</div>
                                     <TextField
                                         margin="normal"
                                         required
-                                        value={this.state.name}
+                                        value={this.state.notes}
                                         fullWidth
                                         disabled={this.state.disable}
                                         size="small"
-                                        error={this.state.nameErrorMessage ? true : false}
-                                        helperText={this.state.nameErrorMessage}
                                         multiline
-                                        onChange={this.onHandleTaxNameChange}
+                                        onChange={this.onHandleNotesChange}
                                     />
                                     <div className="c-expense-info-control-form">
                                         <Button
@@ -211,6 +190,7 @@ class PettyCashAdd extends Component {
 }
 const mapStateToProp = (state) => {
     return {
+        ...state.authReducer
     }
 }
 const mapDispatchToProp = (dispatch, props) => {

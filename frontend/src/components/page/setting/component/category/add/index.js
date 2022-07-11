@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import TextField from '@mui/material/TextField';
 import { withRouter } from "react-router-dom";
 import Tags from "../../../../../common/selected search";
+import LoadingScreen from "../../../../../common/loading";
 // import CircularProgress from '@mui/material/CircularProgress';
 
 class ProductCategoryAdd extends Component {
@@ -17,32 +18,25 @@ class ProductCategoryAdd extends Component {
             loading: false,
             Id: 1,
             name: "",
-            percent: "",
+            note: "",
             status: 1,
-            currentTax: {},
+            currentCategory: {},
             nameErrorMessage: "",
-            percentErrorMessage: "",
-            showPassword: false,
-            password: "",
-            type: 1,
+            selectedProducts: [],
+            productWithoutCategory: []
         };
     }
     componentDidMount = async () => {
-        let id = this.props.match.params.id
         this.setState({ loading: true })
-        let res = await Api.getTax(id)
-        let tax = res.data.tax;
+        let res1 = await Api.getProductWithoutCategory()
         this.setState({
-            ...tax,
-            currentTax: tax,
+            productWithoutCategory: res1.data.productList,
             loading: false
         })
     }
+
     onHandleCancelClick = () => {
-        this.setState({
-            ...this.state.currentTax,
-            disable: true
-        })
+        this.props.history.push("/settings/product-categories")
     }
     onHandleSaveClick = async (e) => {
         e.preventDefault();
@@ -57,64 +51,55 @@ class ProductCategoryAdd extends Component {
             })
         }
 
-        if (this.state.percent === "") {
-            this.setState({
-                percentErrorMessage: "Cannot leave this field empty."
-            })
-        } else {
-            this.setState({
-                percentErrorMessage: ""
-            })
-        }
-
-        if (this.state.percent !== "" && this.state.name) {
+        if (this.state.name) {
             this.setState({
                 disable: true,
                 loading: true
             })
             e.preventDefault();
-            let editTax = {
-                Id: this.state.Id,
+            let newCategory = {
                 name: this.state.name,
-                percent: this.state.percent
+                note: this.state.note,
+                productList: this.state.selectedProducts.map((item) => item.Id)
             };
 
-            let res = await Api.editTax(editTax)
-            let tax = res.data.tax;
+            let res = await Api.createCategory(newCategory)
+            let category = res.data.category;
+            let res1 = await Api.getProductWithoutCategory()
             this.setState({
-                ...tax,
+                ...category,
+                productWithoutCategory: res1.data.productList,
+                currentCategory: category,
+                selectedProducts: category.productList,
                 loading: false
             })
+            this.props.history.push("/settings/product-categories")
         }
     }
-    onHandleTaxNameChange = (e) => {
+    onHandleCategoryNameChange = (e) => {
         this.setState({
             name: e.target.value
         })
     }
-    onHandleTaxPercentChange = (e) => {
-        let regEx = new RegExp("^[0-9]+[0-9]*$|^$")
-        if (regEx.test(e.target.value)) {
-            this.setState({
-                percent: e.target.value
-            })
-        }
-    }
-    handleClickShowPassword = () => {
+
+    onHandleCategoryNoteChange = (e) => {
         this.setState({
-            showPassword: !this.state.showPassword
+            note: e.target.value
         })
     }
 
-    handlePasswordChange = (e) => {
+    onHandleProductListChange = (value) => {
         this.setState({
-            password: e.target.value
+            selectedProducts: value
         })
     }
 
     render() {
         return (
             <div className="c-settings-page">
+                <LoadingScreen
+                    open={this.state.loading}
+                />
                 <div className="c-settings-category-info">
                     <SettingNav />
                     <div className="c-settings-category-info-content">
@@ -147,27 +132,29 @@ class ProductCategoryAdd extends Component {
                                         size="small"
                                         error={this.state.nameErrorMessage ? true : false}
                                         helperText={this.state.nameErrorMessage}
-                                        
-                                        onChange={this.onHandleTaxNameChange}
+
+                                        onChange={this.onHandleCategoryNameChange}
                                     />
                                     <div className="c-text-field-name">Note</div>
                                     <TextField
                                         margin="normal"
                                         required
-                                        value={this.state.name}
+                                        value={this.state.note}
                                         fullWidth
                                         disabled={this.state.disable}
                                         size="small"
                                         error={this.state.nameErrorMessage ? true : false}
                                         helperText={this.state.nameErrorMessage}
-                                        
                                         multiline
-                                        onChange={this.onHandleTaxNameChange}
+                                        onChange={this.onHandleCategoryNoteChange}
                                     />
 
                                     <div className="c-text-field-name">Product List</div>
                                     <Tags
                                         disabled={this.state.disable}
+                                        options={this.state.productWithoutCategory}
+                                        value={this.state.selectedProducts}
+                                        onSelectedListChange={this.onHandleProductListChange}
                                     />
                                     <div className="c-setting-category-info-control-form">
                                         <Button

@@ -9,7 +9,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import Api from "../../../../../api/api";
 // import Api from "../../../../../api/api";
 // import * as taxesAction from "../../../../../redux/action/index";
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import Tab from '@mui/material/Tab';
 import BasicMenu from "../../../../common/menu/menu";
 import AlertDialog from "../../../../common/dialog";
@@ -22,7 +22,7 @@ class ProductOptions extends Component {
         this.state = {
             selectedItemsId: [],
             showDialog: false,
-            taxList: [],
+            itemList: [],
             loading: true,
             searchString: "",
             selectedTab: 1 //1 la variant, 2 la variant group, 3 la addon, 4 la addon group
@@ -30,23 +30,57 @@ class ProductOptions extends Component {
     }
 
     componentDidMount = async () => {
-        this.setState({
-            loading: true,
-        })
-        let res = await Api.getTaxList();
-        this.setState({
-            taxList: res.data.taxList,
-            loading: false,
-        })
-    }
+        this.setState({ loading: true })
+        let newItems = []
+        let req = {}
 
-    getRowData = () => {
-        return this.state.taxList.map(item => {
-            return {
-                id: item.Id,
-                name: item.name,
-                percent: item.percent,
-            }
+        switch (this.props.productOptions.selectedTab) {
+            case 1: //variant
+                req = await Api.getVariantList()
+                newItems = req.data.variantList.map((item) => ({
+                    id: item.Id,
+                    name: item.name,
+                    price: item.price,
+                    isLinked: !!item.variantGroupId ? "Yes" : "No",
+                    status: item.status === 1 ? "Enable" : "Disable"
+                }))
+                break
+
+            case 2: //variant group
+                req = await Api.getVariantGroupList()
+                newItems = req.data.variantGroupList.map((item) => ({
+                    id: item.Id,
+                    name: item.name,
+                    num: item.variantList.length,
+                    status: item.status === 1 ? "Enable" : "Disable"
+                }))
+                break
+            case 3: //addon
+                req = await Api.getAddonList()
+                newItems = req.data.addonList.map((item) => ({
+                    id: item.Id,
+                    name: item.name,
+                    price: item.price,
+                    isLinked: !!item.addonGroupId ? "Yes" : "No",
+                    status: item.status === 1 ? "Enable" : "Disable"
+                }))
+                break
+            case 4: //addon group
+                req = await Api.getAddonGroupList()
+                newItems = req.data.addonGroupList.map((item) => ({
+                    id: item.Id,
+                    name: item.name,
+                    num: item.addonList.length,
+                    status: item.status === 1 ? "Enable" : "Disable"
+                }))
+                break
+            default:
+        }
+
+        this.setState({
+            selectedItemsId: [],
+            loading: false,
+            itemList: newItems
         })
     }
 
@@ -54,10 +88,55 @@ class ProductOptions extends Component {
         this.setState({
             loading: true,
         })
-        let res = await Api.searchTax(this.state.searchString);
+        let req = {}
+        let newItems = []
+        switch (this.props.productOptions.selectedTab) {
+            case 1: //variant
+                req = await Api.searchVariant(this.state.searchString)
+                newItems = req.data.variantList.map((item) => ({
+                    id: item.Id,
+                    name: item.name,
+                    price: item.price,
+                    isLinked: !!item.variantGroupId ? "Yes" : "No",
+                    status: item.status === 1 ? "Enable" : "Disable"
+                }))
+                break
+
+            case 2: //variant group
+                req = await Api.searchVariantGroup(this.state.searchString)
+                newItems = req.data.variantGroupList.map((item) => ({
+                    id: item.Id,
+                    name: item.name,
+                    num: item.variantList.length,
+                    status: item.status === 1 ? "Enable" : "Disable"
+                }))
+                break
+            case 3: //addon
+                req = await Api.searchAddon(this.state.searchString)
+                newItems = req.data.addonList.map((item) => ({
+                    id: item.Id,
+                    name: item.name,
+                    price: item.price,
+                    isLinked: !!item.addonGroupId ? "Yes" : "No",
+                    status: item.status === 1 ? "Enable" : "Disable"
+                }))
+                break
+            case 4: //addon group
+                req = await Api.searchAddonGroup(this.state.searchString)
+                newItems = req.data.addonGroupList.map((item) => ({
+                    id: item.Id,
+                    name: item.name,
+                    num: item.addonList.length,
+                    status: item.status === 1 ? "Enable" : "Disable"
+                }))
+                break
+            default:
+        }
+
         this.setState({
-            taxList: res.data.taxList,
+            selectedItemsId: [],
             loading: false,
+            itemList: newItems
         })
     }
 
@@ -67,9 +146,8 @@ class ProductOptions extends Component {
             this.setState({
                 loading: true,
             })
-            let res = await Api.searchTax(this.state.searchString);
+            await this.onSearchItems()
             this.setState({
-                taxList: res.data.taxList,
                 loading: false,
             })
         }
@@ -81,9 +159,58 @@ class ProductOptions extends Component {
         })
     }
 
-    setSelectedTab = (_e, newValue) => {
+    setSelectedTab = async (_e, newValue) => {
+        this.setState({ loading: true })
+        let newItems = []
+        let req = {}
+
+        switch (newValue) {
+            case 1: //variant
+                req = await Api.getVariantList()
+                newItems = req.data.variantList.map((item) => ({
+                    id: item.Id,
+                    name: item.name,
+                    price: item.price,
+                    isLinked: !!item.variantGroupId ? "Yes" : "No",
+                    status: item.status === 1 ? "Enable" : "Disable"
+                }))
+                break
+
+            case 2: //variant group
+                req = await Api.getVariantGroupList()
+                newItems = req.data.variantGroupList.map((item) => ({
+                    id: item.Id,
+                    name: item.name,
+                    num: item.variantList.length,
+                    status: item.status === 1 ? "Enable" : "Disable"
+                }))
+                break
+            case 3: //addon
+                req = await Api.getAddonList()
+                newItems = req.data.addonList.map((item) => ({
+                    id: item.Id,
+                    name: item.name,
+                    price: item.price,
+                    isLinked: !!item.addonGroupId ? "Yes" : "No",
+                    status: item.status === 1 ? "Enable" : "Disable"
+                }))
+                break
+            case 4: //addon group
+                req = await Api.getAddonGroupList()
+                newItems = req.data.addonGroupList.map((item) => ({
+                    id: item.Id,
+                    name: item.name,
+                    num: item.addonList.length,
+                    status: item.status === 1 ? "Enable" : "Disable"
+                }))
+                break
+            default:
+        }
+
         this.setState({
-            selectedItemsId: []
+            selectedItemsId: [],
+            loading: false,
+            itemList: newItems
         })
         this.props.setSelectedTab(newValue)
     }
@@ -104,7 +231,7 @@ class ProductOptions extends Component {
                 columns = [
                     { field: 'id', headerName: 'Variant Id', width: 150 },
                     { field: 'name', headerName: 'Variant Group Name', width: 400, },
-                    { field: 'price', headerName: 'Number of Variants', width: 300, },
+                    { field: 'num', headerName: 'Number of Variants', width: 300, },
                     { field: 'status', headerName: 'Status', width: 100, },
                 ];
                 break
@@ -121,7 +248,7 @@ class ProductOptions extends Component {
                 columns = [
                     { field: 'id', headerName: 'Addon Id', width: 150 },
                     { field: 'name', headerName: 'Addon Group Name', width: 400, },
-                    { field: 'price', headerName: 'Number of Addons', width: 300, },
+                    { field: 'num', headerName: 'Number of Addons', width: 300, },
                     { field: 'status', headerName: 'Status', width: 100, },
                 ];
                 break
@@ -230,7 +357,7 @@ class ProductOptions extends Component {
                             </div>
                             <div className="c-setting-options-detail-list" style={{ height: 400, width: '95%' }}>
                                 <DataGrid
-                                    rows={this.getRowData()}
+                                    rows={this.state.itemList}
                                     columns={this.getColumns()}
                                     pageSize={5}
                                     rowsPerPageOptions={[5]}
@@ -272,7 +399,7 @@ class ProductOptions extends Component {
             selectedItemsId: [...selectedItems]
         })
     }
-    
+
     onHandleAddClick = () => {
         switch (this.props.productOptions.selectedTab) {
             case 1: // variant
@@ -304,12 +431,62 @@ class ProductOptions extends Component {
     }
     onConfirmDeleteItems = async () => {
         this.setState({
-            showDialog: false
+            showDialog: false,
+            loading: true
         })
-        await Api.deleteTaxList(this.state.selectedItemsId);
-        let res = await Api.getTaxList();
+        let req = {}
+        let newItems = []
+        switch (this.props.productOptions.selectedTab) {
+            case 1: //variant
+                await Api.deleteVariantList(this.state.selectedItemsId);
+                req = await Api.getVariantList()
+                newItems = req.data.variantList.map((item) => ({
+                    id: item.Id,
+                    name: item.name,
+                    price: item.price,
+                    isLinked: !!item.variantGroupId ? "Yes" : "No",
+                    status: item.status === 1 ? "Enable" : "Disable"
+                }))
+                break
+
+            case 2: //variant group
+                await Api.deleteVariantGroupList(this.state.selectedItemsId);
+                req = await Api.getVariantGroupList()
+                newItems = req.data.variantGroupList.map((item) => ({
+                    id: item.Id,
+                    name: item.name,
+                    num: item.variantList.length,
+                    status: item.status === 1 ? "Enable" : "Disable"
+                }))
+                break
+            case 3: //addon
+                await Api.deleteAddonList(this.state.selectedItemsId);
+                req = await Api.getAddonList()
+                newItems = req.data.addonList.map((item) => ({
+                    id: item.Id,
+                    name: item.name,
+                    price: item.price,
+                    isLinked: !!item.addonGroupId ? "Yes" : "No",
+                    status: item.status === 1 ? "Enable" : "Disable"
+                }))
+                break
+            case 4: //addon group
+                await Api.deleteAddonGroupList(this.state.selectedItemsId);
+                req = await Api.getAddonGroupList()
+                newItems = req.data.addonGroupList.map((item) => ({
+                    id: item.Id,
+                    name: item.name,
+                    num: item.addonList.length,
+                    status: item.status === 1 ? "Enable" : "Disable"
+                }))
+                break
+            default:
+        }
+
         this.setState({
-            taxList: res.data.taxList
+            selectedItemsId: [],
+            loading: false,
+            itemList: newItems,
         })
     }
 }

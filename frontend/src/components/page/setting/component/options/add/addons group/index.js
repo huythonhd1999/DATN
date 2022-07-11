@@ -7,48 +7,38 @@ import { connect } from 'react-redux';
 import TextField from '@mui/material/TextField';
 import { withRouter } from "react-router-dom";
 import Tags from "../../../../../../common/selected search";
+import LoadingScreen from "../../../../../../common/loading";
 // import CircularProgress from '@mui/material/CircularProgress';
 
 class AddonGroupAdd extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            disable: true,
+            disable: false,
             loading: false,
             Id: 1,
             name: "",
-            percent: "",
+            productId: "",
             status: 1,
-            currentTax: {},
+            addonWithoutGroupList: [],
+            selectedAddons: [],
+            currentAddonGroup: {},
             nameErrorMessage: "",
-            percentErrorMessage: "",
-            showPassword: false,
-            password: "",
-            type: 1,
         };
     }
+
     componentDidMount = async () => {
-        let id = this.props.match.params.id
         this.setState({ loading: true })
-        let res = await Api.getTax(id)
-        let tax = res.data.tax;
+        let res1 = await Api.getAddonWithoutGroupList()
         this.setState({
-            ...tax,
-            currentTax: tax,
+            addonWithoutGroupList: res1.data.addonList,
             loading: false
         })
-        console.log(res)
     }
-    onHandleEditClick = () => {
-        this.setState({
-            disable: !this.state.disable
-        })
-    }
+
+
     onHandleCancelClick = () => {
-        this.setState({
-            ...this.state.currentTax,
-            disable: true
-        })
+        this.props.history.push("/settings/product-options")
     }
     onHandleSaveClick = async (e) => {
         e.preventDefault();
@@ -63,69 +53,59 @@ class AddonGroupAdd extends Component {
             })
         }
 
-        if (this.state.percent === "") {
-            this.setState({
-                percentErrorMessage: "Cannot leave this field empty."
-            })
-        } else {
-            this.setState({
-                percentErrorMessage: ""
-            })
-        }
-
-        if (this.state.percent !== "" && this.state.name) {
+        if (this.state.name) {
             this.setState({
                 disable: true,
                 loading: true
             })
             e.preventDefault();
-            let editTax = {
-                Id: this.state.Id,
+            let newAddonGroup = {
                 name: this.state.name,
-                percent: this.state.percent
+                addonList: this.state.selectedAddons.map((item) => item.Id)
             };
 
-            let res = await Api.editTax(editTax)
-            let tax = res.data.tax;
+            let res = await Api.createAddonGroup(newAddonGroup)
+            let addonGroup = res.data.addonGroup;
+            let res1 = await Api.getAddonWithoutGroupList()
             this.setState({
-                ...tax,
+                ...addonGroup,
+                addonWithoutGroupList: res1.data.addonList,
+                selectedAddons: addonGroup.addonList,
+                currentAddonGroup: addonGroup,
                 loading: false
             })
+            this.props.history.push("/settings/product-options")
         }
     }
-    onHandleTaxNameChange = (e) => {
+    onHandleAddonGroupNameChange = (e) => {
         this.setState({
             name: e.target.value
         })
     }
-    onHandleTaxPercentChange = (e) => {
-        let regEx = new RegExp("^[0-9]+[0-9]*$|^$")
-        if (regEx.test(e.target.value)) {
-            this.setState({
-                percent: e.target.value
-            })
-        }
-    }
-    handleClickShowPassword = () => {
+
+    onHandleStatusChange = () => {
         this.setState({
-            showPassword: !this.state.showPassword
+            status: 1 - this.state.status
         })
     }
 
-    handlePasswordChange = (e) => {
+    onHandleAddonListChange = (value) => {
         this.setState({
-            password: e.target.value
+            selectedAddons: value
         })
     }
 
     render() {
         return (
             <div className="c-settings-page">
+                <LoadingScreen
+                    open={this.state.loading}
+                />
                 <div className="c-settings-addon-group-info">
                     <SettingNav />
                     <div className="c-settings-addon-group-info-content">
                         <div className="c-setting-addon-group-info-content-header">
-                        <div className="text">
+                            <div className="text">
                                 <div className="title" onClick={() => this.props.history.push("/settings/product-options")}>Product Options </div>
                                 <div> {" / New Addon Group" }</div>
                             </div>
@@ -137,7 +117,7 @@ class AddonGroupAdd extends Component {
                                         Setup Addon Group
                                     </div>
                                     <div className="c-guild-content">
-                                        Addon groups are used to bunch a set of addons and attach to a product. Multiple addons can be chosen from an addon group.
+                                        Addon groups are used to bunch a set of addons and attach it to a product. Only one addon can be chosen from a addon group.
                                     </div>
                                 </div>
                             </div>
@@ -154,12 +134,15 @@ class AddonGroupAdd extends Component {
                                         error={this.state.nameErrorMessage ? true : false}
                                         helperText={this.state.nameErrorMessage}
 
-                                        onChange={this.onHandleTaxNameChange}
+                                        onChange={this.onHandleAddonGroupNameChange}
                                     />
 
                                     <div className="c-text-field-name">Addon List</div>
                                     <Tags
                                         disabled={this.state.disable}
+                                        options={this.state.addonWithoutGroupList}
+                                        value={this.state.selectedAddons}
+                                        onSelectedListChange={this.onHandleAddonListChange}
                                     />
                                     <div className="c-setting-addon-group-info-control-form">
                                         <Button

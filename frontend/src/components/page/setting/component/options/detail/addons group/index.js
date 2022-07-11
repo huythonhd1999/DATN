@@ -9,6 +9,7 @@ import TextField from '@mui/material/TextField';
 import { withRouter } from "react-router-dom";
 import Tags from "../../../../../../common/selected search";
 import Switch from '@mui/material/Switch';
+import LoadingScreen from "../../../../../../common/loading";
 // import CircularProgress from '@mui/material/CircularProgress';
 
 class AddonGroupInfo extends Component {
@@ -19,27 +20,27 @@ class AddonGroupInfo extends Component {
             loading: false,
             Id: 1,
             name: "",
-            percent: "",
+            productId: "",
             status: 1,
-            currentTax: {},
+            addonWithoutGroupList: [],
+            selectedAddons: [],
+            currentAddonGroup: {},
             nameErrorMessage: "",
-            percentErrorMessage: "",
-            showPassword: false,
-            password: "",
-            type: 1,
         };
     }
     componentDidMount = async () => {
         let id = this.props.match.params.id
         this.setState({ loading: true })
-        let res = await Api.getTax(id)
-        let tax = res.data.tax;
+        let res = await Api.getAddonGroup(id)
+        let res1 = await Api.getAddonWithoutGroupList()
+        let addonGroup = res.data.addonGroup;
         this.setState({
-            ...tax,
-            currentTax: tax,
+            ...addonGroup,
+            addonWithoutGroupList: res1.data.addonList,
+            selectedAddons: addonGroup.addonList,
+            currentAddonGroup: addonGroup,
             loading: false
         })
-        console.log(res)
     }
     onHandleEditClick = () => {
         this.setState({
@@ -48,7 +49,8 @@ class AddonGroupInfo extends Component {
     }
     onHandleCancelClick = () => {
         this.setState({
-            ...this.state.currentTax,
+            ...this.state.currentAddonGroup,
+            selectedAddons: this.state.currentAddonGroup.addonList,
             disable: true
         })
     }
@@ -65,71 +67,62 @@ class AddonGroupInfo extends Component {
             })
         }
 
-        if (this.state.percent === "") {
-            this.setState({
-                percentErrorMessage: "Cannot leave this field empty."
-            })
-        } else {
-            this.setState({
-                percentErrorMessage: ""
-            })
-        }
-
-        if (this.state.percent !== "" && this.state.name) {
+        if (this.state.name) {
             this.setState({
                 disable: true,
                 loading: true
             })
             e.preventDefault();
-            let editTax = {
+            let editAddonGroup = {
                 Id: this.state.Id,
                 name: this.state.name,
-                percent: this.state.percent
+                addonList: this.state.selectedAddons.map((item) => item.Id)
             };
 
-            let res = await Api.editTax(editTax)
-            let tax = res.data.tax;
+            let res = await Api.editAddonGroup(editAddonGroup)
+            let addonGroup = res.data.addonGroup;
+            let res1 = await Api.getAddonWithoutGroupList()
             this.setState({
-                ...tax,
+                ...addonGroup,
+                addonWithoutGroupList: res1.data.addonList,
+                selectedAddons: addonGroup.addonList,
+                currentAddonGroup: addonGroup,
                 loading: false
             })
         }
     }
-    onHandleTaxNameChange = (e) => {
+    onHandleAddonGroupNameChange = (e) => {
         this.setState({
             name: e.target.value
         })
     }
-    onHandleTaxPercentChange = (e) => {
-        let regEx = new RegExp("^[0-9]+[0-9]*$|^$")
-        if (regEx.test(e.target.value)) {
-            this.setState({
-                percent: e.target.value
-            })
-        }
-    }
-    handleClickShowPassword = () => {
+
+    onHandleStatusChange = () => {
         this.setState({
-            showPassword: !this.state.showPassword
+            status: 1 - this.state.status
         })
     }
 
-    handlePasswordChange = (e) => {
+    onHandleAddonListChange = (value) => {
+        console.log("test")
         this.setState({
-            password: e.target.value
+            selectedAddons: value
         })
     }
 
     render() {
         return (
             <div className="c-settings-page">
+                <LoadingScreen
+                    open={this.state.loading}
+                />
                 <div className="c-settings-addon-group-info">
                     <SettingNav />
                     <div className="c-settings-addon-group-info-content">
                         <div className="c-setting-addon-group-info-content-header">
                             <div className="text">
                                 <div className="title" onClick={() => this.props.history.push("/settings/product-options")}>Product Options </div>
-                                <div> {" / " + this.state.name}</div>
+                                <div> {" / " + this.state.currentAddonGroup.name}</div>
                             </div>
                             <Button
                                 variant="contained"
@@ -169,13 +162,15 @@ class AddonGroupInfo extends Component {
                                         size="small"
                                         error={this.state.nameErrorMessage ? true : false}
                                         helperText={this.state.nameErrorMessage}
-
-                                        onChange={this.onHandleTaxNameChange}
+                                        onChange={this.onHandleAddonGroupNameChange}
                                     />
 
                                     <div className="c-text-field-name">Addon List</div>
                                     <Tags
                                         disabled={this.state.disable}
+                                        options={this.state.addonWithoutGroupList}
+                                        value={this.state.selectedAddons}
+                                        onSelectedListChange={this.onHandleAddonListChange}
                                     />
                                     <div className="c-setting-addon-group-info-control-form">
                                         <Button

@@ -18,7 +18,7 @@ class Customers extends Component {
         this.state = {
             selectedItemsId: [],
             showDialog: false,
-            taxList: [],
+            customerList: [],
             loading: true,
             searchString: ""
         };
@@ -28,19 +28,21 @@ class Customers extends Component {
         this.setState({
             loading: true,
         })
-        let res = await Api.getTaxList();
+        let res = await Api.getCustomerList();
         this.setState({
-            taxList: res.data.taxList,
+            customerList: res.data.customerList,
             loading: false,
         })
     }
 
     getRowData = () => {
-        return this.state.taxList.map(item => {
+        return this.state.customerList.map(item => {
             return {
                 id: item.Id,
                 name: item.name,
-                percent: item.percent,
+                mobile: item.mobilePhone,
+                orderCount: "",
+                lastSeen: "",
             }
         })
     }
@@ -50,9 +52,9 @@ class Customers extends Component {
         this.setState({
             loading: true,
         })
-        let res = await Api.searchTax(this.state.searchString);
+        let res = await Api.searchCustomer(this.state.searchString);
         this.setState({
-            taxList: res.data.taxList,
+            customerList: res.data.customerList,
             loading: false,
         })
     }
@@ -63,9 +65,9 @@ class Customers extends Component {
             this.setState({
                 loading: true,
             })
-            let res = await Api.searchTax(this.state.searchString);
+            let res = await Api.searchCustomer(this.state.searchString);
             this.setState({
-                taxList: res.data.taxList,
+                customerList: res.data.customerList,
                 loading: false,
             })
         }
@@ -177,12 +179,14 @@ class Customers extends Component {
     }
     onConfirmDeleteItems = async () => {
         this.setState({
-            showDialog: false
+            showDialog: false,
+            loading: true,
         })
-        await Api.deleteTaxList(this.state.selectedItemsId);
-        let res = await Api.getTaxList();
+        await Api.deleteCustomerList(this.state.selectedItemsId);
+        let res = await Api.getCustomerList();
         this.setState({
-            taxList: res.data.taxList
+            customerList: res.data.customerList,
+            loading: false,
         })
     }
 }

@@ -6,48 +6,28 @@ import Api from "../../../../../../../api/api";
 import { connect } from 'react-redux';
 import TextField from '@mui/material/TextField';
 import { withRouter } from "react-router-dom";
+import LoadingScreen from "../../../../../../common/loading";
 // import CircularProgress from '@mui/material/CircularProgress';
 
 class VariantAdd extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            disable: true,
+            disable: false,
             loading: false,
             Id: 1,
             name: "",
-            percent: "",
+            price: "",
             status: 1,
-            currentTax: {},
+            currentVariant: {},
             nameErrorMessage: "",
-            percentErrorMessage: "",
-            showPassword: false,
-            password: "",
-            type: 1,
+            priceErrorMessage: "",
+            variantGroupId: ""
         };
     }
-    componentDidMount = async () => {
-        let id = this.props.match.params.id
-        this.setState({ loading: true })
-        let res = await Api.getTax(id)
-        let tax = res.data.tax;
-        this.setState({
-            ...tax,
-            currentTax: tax,
-            loading: false
-        })
-        console.log(res)
-    }
-    onHandleEditClick = () => {
-        this.setState({
-            disable: !this.state.disable
-        })
-    }
+
     onHandleCancelClick = () => {
-        this.setState({
-            ...this.state.currentTax,
-            disable: true
-        })
+        this.props.history.push("/settings/product-options")
     }
     onHandleSaveClick = async (e) => {
         e.preventDefault();
@@ -62,79 +42,72 @@ class VariantAdd extends Component {
             })
         }
 
-        if (this.state.percent === "") {
+        if (this.state.price === "") {
             this.setState({
-                percentErrorMessage: "Cannot leave this field empty."
+                priceErrorMessage: "Cannot leave this field empty."
             })
         } else {
             this.setState({
-                percentErrorMessage: ""
+                priceErrorMessage: ""
             })
         }
 
-        if (this.state.percent !== "" && this.state.name) {
+        if (this.state.price !== "" && this.state.name) {
             this.setState({
                 disable: true,
                 loading: true
             })
             e.preventDefault();
-            let editTax = {
-                Id: this.state.Id,
+            let newVariant = {
                 name: this.state.name,
-                percent: this.state.percent
+                price: this.state.price,
+                variantGroupId: null,
             };
 
-            let res = await Api.editTax(editTax)
-            let tax = res.data.tax;
+            let res = await Api.createVariant(newVariant)
+            let variant = res.data.variant;
             this.setState({
-                ...tax,
+                ...variant,
+                currentVariant: variant,
                 loading: false
             })
+            this.props.history.push("/settings/product-options")
         }
     }
-    onHandleTaxNameChange = (e) => {
+    onHandleVariantNameChange = (e) => {
         this.setState({
             name: e.target.value
         })
     }
-    onHandleTaxPercentChange = (e) => {
+    onHandlePriceNameChange = (e) => {
         let regEx = new RegExp("^[0-9]+[0-9]*$|^$")
         if (regEx.test(e.target.value)) {
             this.setState({
-                percent: e.target.value
+                price: e.target.value
             })
         }
     }
-    handleClickShowPassword = () => {
-        this.setState({
-            showPassword: !this.state.showPassword
-        })
-    }
 
-    handlePasswordChange = (e) => {
+    onHandleStatusChange = () => {
         this.setState({
-            password: e.target.value
+            status: 1 - this.state.status
         })
     }
 
     render() {
         return (
             <div className="c-settings-page">
+                <LoadingScreen
+                    open={this.state.loading}
+                />
                 <div className="c-settings-variant-info">
                     <SettingNav />
                     <div className="c-settings-variant-info-content">
                         <div className="c-setting-variant-info-content-header">
-                        <div className="text">
+                            <div className="text">
                                 <div className="title" onClick={() => this.props.history.push("/settings/product-options")}>Product Options </div>
-                                <div> {" / New Variant"}</div>
+                                <div> {" / New Variant" }</div>
                             </div>
-                            <Button
-                                variant="contained"
-                                onClick={() => this.onHandleEditClick()}
-                                disabled={!this.state.disable}
-                            >
-                                Edit
-                            </Button>
                         </div>
                         <div className="c-setting-variant-info-content-info">
                             <div className="c-setting-variant-info-content-info-column-1">
@@ -162,22 +135,19 @@ class VariantAdd extends Component {
                                         size="small"
                                         error={this.state.nameErrorMessage ? true : false}
                                         helperText={this.state.nameErrorMessage}
-
-                                        onChange={this.onHandleTaxNameChange}
+                                        onChange={this.onHandleVariantNameChange}
                                     />
                                     <div className="c-text-field-name">Price</div>
                                     <TextField
                                         margin="normal"
                                         required
-                                        value={this.state.name}
+                                        value={this.state.price}
                                         fullWidth
                                         disabled={this.state.disable}
                                         size="small"
-                                        error={this.state.nameErrorMessage ? true : false}
-                                        helperText={this.state.nameErrorMessage}
-
-                                        multiline
-                                        onChange={this.onHandleTaxNameChange}
+                                        error={this.state.priceErrorMessage ? true : false}
+                                        helperText={this.state.priceErrorMessage}
+                                        onChange={this.onHandlePriceNameChange}
                                     />
 
                                     <div className="c-setting-variant-info-control-form">

@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import LoadingScreen from "../../../common/loading";
 import { withRouter } from "react-router-dom";
 import Autocomplete from '@mui/material/Autocomplete';
-import Tags from "../../../common/selected search";
 
 // import CircularProgress from '@mui/material/CircularProgress';
 
@@ -18,24 +17,50 @@ class ProductInfo extends Component {
         super(props);
         this.state = {
             disable: true,
-            loading: false,
+            loading: true,
             Id: 1,
             name: "",
-            percent: "",
-            status: 1,
-            currentTax: {},
+            price: "",
+            taxId: null,
+            baseVariantId: "",
+            currentProduct: {},
             nameErrorMessage: "",
-            percentErrorMessage: ""
+            priceErrorMessage: "",
+            selectedCategory: null,
+            categories: [],
+            taxes: [],
+            selectedTax: null,
+            addonGroups: [],
+            variantGroups: [],
+            selectedAddonGroups: [],
+            selectedVariantGroups: [],
         };
     }
     componentDidMount = async () => {
         let id = this.props.match.params.id
-        this.setState({ loading: true })
-        let res = await Api.getTax(id)
-        let tax = res.data.tax;
+
+        let res = await Api.getProduct(id)
+        let product = res.data.product;
+
+        res = await Api.getTaxList()
+        let taxes = res.data.taxList
+
+        res = await Api.getCategoryList()
+        let categories = res.data.categoryList
+
+        res = await Api.getAddonGroupList()
+        let addonGroups = res.data.addonGroupList
+
+        res = await Api.getVariantGroupList()
+        let variantGroups = res.data.variantGroupList
+
         this.setState({
-            ...tax,
-            currentTax: tax,
+            ...product, taxes, categories, addonGroups, variantGroups,
+            selectedTax: product.taxInfo,
+            selectedCategory: product.categoryInfo,
+            selectedVariantGroups: product.variantGroupList,
+            selectedAddonGroups: product.addonGroupList,
+            currentProduct: product,
             loading: false
         })
     }
@@ -46,7 +71,9 @@ class ProductInfo extends Component {
     }
     onHandleCancelClick = () => {
         this.setState({
-            ...this.state.currentTax,
+            ...this.state.currentProduct,
+            nameErrorMessage: "",
+            priceErrorMessage: "",
             disable: true
         })
     }
@@ -63,48 +90,83 @@ class ProductInfo extends Component {
             })
         }
 
-        if (this.state.percent === "") {
+        if (this.state.price === "") {
             this.setState({
-                percentErrorMessage: "Cannot leave this field empty."
+                priceErrorMessage: "Cannot leave this field empty."
             })
         } else {
             this.setState({
-                percentErrorMessage: ""
+                priceErrorMessage: ""
             })
         }
 
-        if (this.state.percent !== "" && this.state.name) {
+        if (this.state.price !== "" && this.state.name) {
             this.setState({
                 disable: true,
                 loading: true
             })
             e.preventDefault();
-            let editTax = {
+            let editProduct = {
                 Id: this.state.Id,
+                baseVariantId: this.state.baseVariantId,
                 name: this.state.name,
-                percent: this.state.percent
+                price: this.state.price,
+                addonGroupList: this.state.selectedAddonGroups?.map((item) => item.Id) || [],
+                variantGroupList: this.state.selectedVariantGroups?.map((item) => item.Id) || [],
+                taxId: this.state.selectedTax?.Id || null,
+                categoryId: this.state.selectedCategory?.Id || null,
             };
 
-            let res = await Api.editTax(editTax)
-            let tax = res.data.tax;
+            let res = await Api.editProduct(editProduct)
+            let product = res.data.product;
             this.setState({
-                ...tax,
+                ...product,
+                selectedTax: product.taxInfo,
+                selectedCategory: product.categoryInfo,
+                selectedVariantGroups: product.variantGroupList,
+                selectedAddonGroups: product.addonGroupList,
+                currentProduct: product,
                 loading: false
             })
         }
     }
-    onHandleTaxNameChange = (e) => {
+    onHandleNameChange = (e) => {
         this.setState({
             name: e.target.value
         })
     }
-    onHandleTaxPercentChange = (e) => {
-        let regEx = /^(100(\.0{1,2})?|[1-9]?\d(\.\d{1,2})?)$|^$/
+
+    onHandlePriceChange = (e) => {
+        let regEx = new RegExp("^[0-9]+[0-9]*$|^$")
         if (regEx.test(e.target.value)) {
             this.setState({
-                percent: e.target.value
+                price: e.target.value
             })
         }
+    }
+
+    onHandleCategoryChange = (value) => {
+        this.setState({
+            selectedCategory: value
+        })
+    }
+
+    onHandleVariantGroupsChange = (value) => {
+        this.setState({
+            selectedVariantGroups: value
+        })
+    }
+
+    onHandleAddonGroupsChange = (value) => {
+        this.setState({
+            selectedAddonGroups: value
+        })
+    }
+
+    onHandleTaxChange = (value) => {
+        this.setState({
+            selectedTax: value
+        })
     }
 
     render() {
@@ -119,7 +181,7 @@ class ProductInfo extends Component {
                         <div className="c-product-info-content-header">
                             <div className="text">
                                 <div className="title" onClick={() => this.props.history.push("/products")}>Products </div>
-                                <div> {" / " + this.state.name}</div>
+                                <div> {" / " + this.state.currentProduct.name}</div>
                             </div>
                             <Button
                                 variant="contained"
@@ -153,53 +215,30 @@ class ProductInfo extends Component {
                                         size="small"
                                         error={this.state.nameErrorMessage ? true : false}
                                         helperText={this.state.nameErrorMessage}
-
-                                        onChange={this.onHandleTaxNameChange}
+                                        onChange={this.onHandleNameChange}
                                     />
                                     <div className="c-text-field-name">Product Category</div>
                                     <Autocomplete
                                         disablePortal
                                         id="combo-box-demo"
-                                        options={[
-                                            { label: 'The Shawshank Redemption', year: 1994 },
-                                            { label: 'The Godfather', year: 1972 },
-                                            { label: 'The Godfather: Part II', year: 1974 },
-                                            { label: 'The Dark Knight', year: 2008 },
-                                            { label: '12 Angry Men', year: 1957 },
-                                            { label: "Schindler's List", year: 1993 },
-                                            { label: 'Pulp Fiction', year: 1994 },]}
+                                        getOptionLabel={(option) => option.name}
+                                        options={this.state.categories}
                                         disabled={this.state.disable}
-                                        value={{ label: 'Pulp Fiction', year: 1994 }}
-                                        renderInput={(params) => <TextField {...params} fullWidth size="small" />}
+                                        value={this.state.selectedCategory}
+                                        onChange={(_event, value) => this.onHandleCategoryChange(value)}
+                                        renderInput={(params) => <TextField {...params} fullWidth size="small" placeholder="Select a value" />}
                                     />
-                                    <div className="c-text-field-name">Tax Group</div>
-                                    <Autocomplete
-                                        disablePortal
-                                        id="combo-box-demo"
-                                        options={[
-                                            { label: 'The Shawshank Redemption', year: 1994 },
-                                            { label: 'The Godfather', year: 1972 },
-                                            { label: 'The Godfather: Part II', year: 1974 },
-                                            { label: 'The Dark Knight', year: 2008 },
-                                            { label: '12 Angry Men', year: 1957 },
-                                            { label: "Schindler's List", year: 1993 },
-                                            { label: 'Pulp Fiction', year: 1994 },]}
-                                        disabled={this.state.disable}
-                                        value={{ label: 'Pulp Fiction', year: 1994 }}
-                                        renderInput={(params) => <TextField {...params} fullWidth size="small" />}
-                                    />
-                                    <div className="c-text-field-name">Customer Email</div>
+                                    <div className="c-text-field-name">Price</div>
                                     <TextField
                                         margin="normal"
                                         required
-                                        value={this.state.name}
+                                        value={this.state.price}
                                         fullWidth
                                         disabled={this.state.disable}
                                         size="small"
-                                        error={this.state.nameErrorMessage ? true : false}
-                                        helperText={this.state.nameErrorMessage}
-
-                                        onChange={this.onHandleTaxNameChange}
+                                        error={this.state.priceErrorMessage ? true : false}
+                                        helperText={this.state.priceErrorMessage}
+                                        onChange={this.onHandlePriceChange}
                                     />
                                 </div>
                             </div>
@@ -210,7 +249,6 @@ class ProductInfo extends Component {
                                     <div className="c-guild-header">
                                         Product Options
                                     </div>
-                                    {/* đổi state chỗ này */}
                                     <div className="c-guild-content">
                                         You can add one ore more variant groups and an add-on group to the product.
                                     </div>
@@ -218,13 +256,40 @@ class ProductInfo extends Component {
                             </div>
                             <div className="c-product-info-content-info-column-2">
                                 <div className="c-product-info-info-detail">
-                                    <div className="c-text-field-name">Variant Groups</div>
-                                    <Tags
+                                    <div className="c-text-field-name">Tax</div>
+                                    <Autocomplete
+                                        disablePortal
+                                        id="combo-box-demo"
+                                        getOptionLabel={(option) => option.name}
+                                        options={this.state.taxes}
                                         disabled={this.state.disable}
+                                        value={this.state.selectedTax}
+                                        onChange={(_event, value) => this.onHandleTaxChange(value)}
+                                        renderInput={(params) => <TextField {...params} fullWidth size="small" placeholder="Select a value" />}
+                                    />
+                                    <div className="c-text-field-name">Variant Groups</div>
+                                    <Autocomplete
+                                        multiple
+                                        disablePortal
+                                        id="combo-box-demo"
+                                        getOptionLabel={(option) => option.name}
+                                        options={this.state.variantGroups}
+                                        disabled={this.state.disable}
+                                        value={this.state.selectedVariantGroups}
+                                        onChange={(_event, value) => this.onHandleVariantGroupsChange(value)}
+                                        renderInput={(params) => <TextField {...params} fullWidth size="small" placeholder="Select a value" />}
                                     />
                                     <div className="c-text-field-name">Addon Groups</div>
-                                    <Tags
+                                    <Autocomplete
+                                        multiple
+                                        disablePortal
+                                        id="combo-box-demo"
+                                        getOptionLabel={(option) => option.name}
+                                        options={this.state.addonGroups}
                                         disabled={this.state.disable}
+                                        value={this.state.selectedAddonGroups}
+                                        onChange={(_event, value) => this.onHandleAddonGroupsChange(value)}
+                                        renderInput={(params) => <TextField {...params} fullWidth size="small" placeholder="Select a value" />}
                                     />
                                     <div className="c-product-info-control-form">
                                         <Button

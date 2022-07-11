@@ -178,12 +178,14 @@ class Taxes extends Component {
     }
     onConfirmDeleteItems = async () => {
         this.setState({
-            showDialog: false
+            showDialog: false,
+            loading: true
         })
         await Api.deleteTaxList(this.state.selectedItemsId);
         let res = await Api.getTaxList();
         this.setState({
-            taxList: res.data.taxList
+            taxList: res.data.taxList,
+            loading: false
         })
     }
 }

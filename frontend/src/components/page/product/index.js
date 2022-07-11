@@ -18,7 +18,7 @@ class Products extends Component {
         this.state = {
             selectedItemsId: [],
             showDialog: false,
-            taxList: [],
+            productList: [],
             loading: true,
             searchString: ""
         };
@@ -28,19 +28,21 @@ class Products extends Component {
         this.setState({
             loading: true,
         })
-        let res = await Api.getTaxList();
+        let res = await Api.getProductList();
         this.setState({
-            taxList: res.data.taxList,
+            productList: res.data.productList,
             loading: false,
         })
     }
 
     getRowData = () => {
-        return this.state.taxList.map(item => {
+        return this.state.productList.map(item => {
             return {
                 id: item.Id,
                 name: item.name,
-                percent: item.percent,
+                category: item.categoryInfo?.name || "",
+                price: item.price,
+                tax: item.taxInfo?.name || ""
             }
         })
     }
@@ -50,9 +52,9 @@ class Products extends Component {
         this.setState({
             loading: true,
         })
-        let res = await Api.searchTax(this.state.searchString);
+        let res = await Api.searchProduct(this.state.searchString);
         this.setState({
-            taxList: res.data.taxList,
+            productList: res.data.productList,
             loading: false,
         })
     }
@@ -63,9 +65,9 @@ class Products extends Component {
             this.setState({
                 loading: true,
             })
-            let res = await Api.searchTax(this.state.searchString);
+            let res = await Api.searchProduct(this.state.searchString);
             this.setState({
-                taxList: res.data.taxList,
+                productList: res.data.productList,
                 loading: false,
             })
         }
@@ -82,7 +84,7 @@ class Products extends Component {
             { field: 'id', headerName: 'Product Id', width: 150 },
             { field: 'name', headerName: 'Name', width: 250 },
             { field: 'category', headerName: 'Category', width: 250 },
-            { field: 'taxGroup', headerName: 'Tax Group', width: 250 },
+            { field: 'tax', headerName: 'Tax Name', width: 250 },
             { field: 'price', headerName: 'Price', width: 150 },
         ];
         return (
@@ -177,12 +179,14 @@ class Products extends Component {
     }
     onConfirmDeleteItems = async () => {
         this.setState({
-            showDialog: false
+            showDialog: false,
+            loading: true,
         })
-        await Api.deleteTaxList(this.state.selectedItemsId);
-        let res = await Api.getTaxList();
+        await Api.deleteProductList(this.state.selectedItemsId);
+        let res = await Api.getProductList();
         this.setState({
-            taxList: res.data.taxList
+            productList: res.data.productList,
+            loading: false,
         })
     }
 }

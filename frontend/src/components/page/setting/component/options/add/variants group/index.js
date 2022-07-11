@@ -7,44 +7,38 @@ import { connect } from 'react-redux';
 import TextField from '@mui/material/TextField';
 import { withRouter } from "react-router-dom";
 import Tags from "../../../../../../common/selected search";
+import LoadingScreen from "../../../../../../common/loading";
 // import CircularProgress from '@mui/material/CircularProgress';
 
 class VariantGroupAdd extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            disable: true,
+            disable: false,
             loading: false,
             Id: 1,
             name: "",
-            percent: "",
+            productId: "",
             status: 1,
-            currentTax: {},
+            variantWithoutGroupList: [],
+            selectedVariants: [],
+            currentVariantGroup: {},
             nameErrorMessage: "",
-            percentErrorMessage: "",
-            showPassword: false,
-            password: "",
-            type: 1,
         };
     }
+
     componentDidMount = async () => {
-        let id = this.props.match.params.id
         this.setState({ loading: true })
-        let res = await Api.getTax(id)
-        let tax = res.data.tax;
+        let res1 = await Api.getVariantWithoutGroupList()
         this.setState({
-            ...tax,
-            currentTax: tax,
+            variantWithoutGroupList: res1.data.variantList,
             loading: false
         })
-        console.log(res)
     }
 
+
     onHandleCancelClick = () => {
-        this.setState({
-            ...this.state.currentTax,
-            disable: true
-        })
+        this.props.history.push("/settings/product-options")
     }
     onHandleSaveClick = async (e) => {
         e.preventDefault();
@@ -59,71 +53,61 @@ class VariantGroupAdd extends Component {
             })
         }
 
-        if (this.state.percent === "") {
-            this.setState({
-                percentErrorMessage: "Cannot leave this field empty."
-            })
-        } else {
-            this.setState({
-                percentErrorMessage: ""
-            })
-        }
-
-        if (this.state.percent !== "" && this.state.name) {
+        if (this.state.name) {
             this.setState({
                 disable: true,
                 loading: true
             })
             e.preventDefault();
-            let editTax = {
-                Id: this.state.Id,
+            let newVariantGroup = {
                 name: this.state.name,
-                percent: this.state.percent
+                variantList: this.state.selectedVariants.map((item) => item.Id)
             };
 
-            let res = await Api.editTax(editTax)
-            let tax = res.data.tax;
+            let res = await Api.createVariantGroup(newVariantGroup)
+            let variantGroup = res.data.variantGroup;
+            let res1 = await Api.getVariantWithoutGroupList()
             this.setState({
-                ...tax,
+                ...variantGroup,
+                variantWithoutGroupList: res1.data.variantList,
+                selectedVariants: variantGroup.variantList,
+                currentVariantGroup: variantGroup,
                 loading: false
             })
+            this.props.history.push("/settings/product-options")
         }
     }
-    onHandleTaxNameChange = (e) => {
+    onHandleVariantGroupNameChange = (e) => {
         this.setState({
             name: e.target.value
         })
     }
-    onHandleTaxPercentChange = (e) => {
-        let regEx = new RegExp("^[0-9]+[0-9]*$|^$")
-        if (regEx.test(e.target.value)) {
-            this.setState({
-                percent: e.target.value
-            })
-        }
-    }
-    handleClickShowPassword = () => {
+
+    onHandleStatusChange = () => {
         this.setState({
-            showPassword: !this.state.showPassword
+            status: 1 - this.state.status
         })
     }
 
-    handlePasswordChange = (e) => {
+    onHandleVariantListChange = (value) => {
         this.setState({
-            password: e.target.value
+            selectedVariants: value
         })
     }
 
     render() {
         return (
             <div className="c-settings-page">
+                <LoadingScreen
+                    open={this.state.loading}
+                />
                 <div className="c-settings-variant-group-info">
                     <SettingNav />
                     <div className="c-settings-variant-group-info-content">
                         <div className="c-setting-variant-group-info-content-header">
-                        <div className="text">
+                            <div className="text">
                                 <div className="title" onClick={() => this.props.history.push("/settings/product-options")}>Product Options </div>
-                                <div> {" / Variant Group"}</div>
+                                <div> {" / New Variant Group" }</div>
                             </div>
                         </div>
                         <div className="c-setting-variant-group-info-content-info">
@@ -150,12 +134,15 @@ class VariantGroupAdd extends Component {
                                         error={this.state.nameErrorMessage ? true : false}
                                         helperText={this.state.nameErrorMessage}
 
-                                        onChange={this.onHandleTaxNameChange}
+                                        onChange={this.onHandleVariantGroupNameChange}
                                     />
 
                                     <div className="c-text-field-name">Variant List</div>
                                     <Tags
                                         disabled={this.state.disable}
+                                        options={this.state.variantWithoutGroupList}
+                                        value={this.state.selectedVariants}
+                                        onSelectedListChange={this.onHandleVariantListChange}
                                     />
                                     <div className="c-setting-variant-group-info-control-form">
                                         <Button

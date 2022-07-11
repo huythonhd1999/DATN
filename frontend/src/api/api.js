@@ -112,5 +112,169 @@ const Api = {
     deleteUserList: (IdList) => {
         return user.post(`${baseUrl}/setting/user/delete-user`, {IdList: IdList})
     },
+
+    //options
+    getVariantList: () => {
+        return guest.get(`${baseUrl}/setting/variant/get-list`)
+    },
+    getVariantGroupList: () => {
+        return guest.get(`${baseUrl}/setting/variant-group/get-list`)
+    },
+    getAddonList: () => {
+        return guest.get(`${baseUrl}/setting/addon/get-list`)
+    },
+    getAddonGroupList: () => {
+        return guest.get(`${baseUrl}/setting/addon-group/get-list`)
+    },
+    searchVariant: (searchString) => {
+        return guest.post(`${baseUrl}/setting/variant/search-variant`, {searchString: searchString})
+    },
+    searchVariantGroup: (searchString) => {
+        return guest.post(`${baseUrl}/setting/variant-group/search-variant-group`, {searchString: searchString})
+    },
+    searchAddon: (searchString) => {
+        return guest.post(`${baseUrl}/setting/addon/search-addon`, {searchString: searchString})
+    },
+    searchAddonGroup: (searchString) => {
+        return guest.post(`${baseUrl}/setting/addon-group/search-addon-group`, {searchString: searchString})
+    },
+    deleteVariantList: (IdList) => {
+        return user.post(`${baseUrl}/setting/variant/delete-variant`, {IdList: IdList})
+    },
+    deleteVariantGroupList: (IdList) => {
+        return user.post(`${baseUrl}/setting/variant-group/delete-variant-group`, {IdList: IdList})
+    },
+    deleteAddonList: (IdList) => {
+        return user.post(`${baseUrl}/setting/addon/delete-addon`, {IdList: IdList})
+    },
+    deleteAddonGroupList: (IdList) => {
+        return user.post(`${baseUrl}/setting/addon-group/delete-addon-group`, {IdList: IdList})
+    },
+    getVariant: (id) => {
+        return guest.get(`${baseUrl}/setting/variant/id/${id}`)
+    },
+    createVariant: (info) => {
+        return user.post(`${baseUrl}/setting/variant/create-variant`, info)
+    },
+    editVariant: (info) => {
+        return user.post(`${baseUrl}/setting/variant/edit-variant`, info)
+    },
+    getVariantGroup: (id) => {
+        return guest.get(`${baseUrl}/setting/variant-group/id/${id}`)
+    },
+    getVariantWithoutGroupList: () => {
+        return guest.get(`${baseUrl}/setting/variant/get-list-without-group`)
+    },
+    createVariantGroup: (info) => {
+        return user.post(`${baseUrl}/setting/variant-group/create-variant-group`, info)
+    },
+    editVariantGroup: (info) => {
+        return user.post(`${baseUrl}/setting/variant-group/edit-variant-group`, info)
+    },
+    getAddon: (id) => {
+        return guest.get(`${baseUrl}/setting/addon/id/${id}`)
+    },
+    createAddon: (info) => {
+        return user.post(`${baseUrl}/setting/addon/create-addon`, info)
+    },
+    editAddon: (info) => {
+        return user.post(`${baseUrl}/setting/addon/edit-addon`, info)
+    },
+    getAddonGroup: (id) => {
+        return guest.get(`${baseUrl}/setting/addon-group/id/${id}`)
+    },
+    getAddonWithoutGroupList: () => {
+        return guest.get(`${baseUrl}/setting/addon/get-list-without-group`)
+    },
+    createAddonGroup: (info) => {
+        return user.post(`${baseUrl}/setting/addon-group/create-addon-group`, info)
+    },
+    editAddonGroup: (info) => {
+        return user.post(`${baseUrl}/setting/addon-group/edit-addon-group`, info)
+    },
+
+    //category
+    getCategoryList: () => {
+        return guest.get(`${baseUrl}/setting/category/get-list`)
+    },
+    getCategory: (id) => {
+        return guest.get(`${baseUrl}/setting/category/id/${id}`)
+    },
+    getProductWithoutCategory: () => {
+        return guest.get(`${baseUrl}/setting/category/get-product-without-category`)
+    },
+    createCategory: (category) => {
+        return user.post(`${baseUrl}/setting/category/create-category`, category)
+    },
+    searchCategory: (searchString) => {
+        return guest.post(`${baseUrl}/setting/category/search-category`, {searchString: searchString})
+    },
+    editCategory: (category) => {
+        return user.post(`${baseUrl}/setting/category/edit-category`, category)
+    },
+    deleteCategoryList: (IdList) => {
+        return user.post(`${baseUrl}/setting/category/delete-category`, {IdList: IdList})
+    },
+
+    //petty-cash
+    getPettyCashList: () => {
+        return guest.get(`${baseUrl}/petty-cash/get-list`)
+    },
+    getPettyCash: (id) => {
+        return guest.get(`${baseUrl}/petty-cash/id/${id}`)
+    },
+    createPettyCash: (pettyCash) => {
+        return user.post(`${baseUrl}/petty-cash/create-petty-cash`, pettyCash)
+    },
+    searchPettyCash: (searchString) => {
+        return guest.post(`${baseUrl}/petty-cash/search-petty-cash`, {searchString: searchString})
+    },
+    editPettyCash: (pettyCash) => {
+        return user.post(`${baseUrl}/petty-cash/edit-petty-cash`, pettyCash)
+    },
+    deletePettyCashList: (IdList) => {
+        return user.post(`${baseUrl}/petty-cash/delete-petty-cash`, {IdList: IdList})
+    },
+
+    //product
+    getProductList: () => {
+        return guest.get(`${baseUrl}/product/get-list`)
+    },
+    getProduct: (id) => {
+        return guest.get(`${baseUrl}/product/id/${id}`)
+    },
+    createProduct: (product) => {
+        return user.post(`${baseUrl}/product/create-product`, product)
+    },
+    searchProduct: (searchString) => {
+        return guest.post(`${baseUrl}/product/search-product`, {searchString: searchString})
+    },
+    editProduct: (product) => {
+        return user.post(`${baseUrl}/product/edit-product`, product)
+    },
+    deleteProductList: (IdList) => {
+        return user.post(`${baseUrl}/product/delete-product`, {IdList: IdList})
+    },
+
+     //customer
+    getCustomerList: () => {
+        return guest.get(`${baseUrl}/customer/get-list`)
+    },
+    getCustomer: (id) => {
+        return guest.get(`${baseUrl}/customer/id/${id}`)
+    },
+    createCustomer: (customer) => {
+        return user.post(`${baseUrl}/customer/create-customer`, customer)
+    },
+    searchCustomer: (searchString) => {
+        return guest.post(`${baseUrl}/customer/search-customer`, {searchString: searchString})
+    },
+    editCustomer: (customer) => {
+        return user.post(`${baseUrl}/customer/edit-customer`, customer)
+    },
+    deleteCustomerList: (IdList) => {
+        return user.post(`${baseUrl}/customer/delete-customer`, {IdList: IdList})
+    },
+
 }
 export default Api;

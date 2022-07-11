@@ -8,7 +8,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { DataGrid } from '@mui/x-data-grid';
 import Api from "../../../../../api/api";
 // import Api from "../../../../../api/api";
-// import * as taxesAction from "../../../../../redux/action/index";
+// import * as useresAction from "../../../../../redux/action/index";
 // import {connect} from 'react-redux';
 import Tab from '@mui/material/Tab';
 import BasicMenu from "../../../../common/menu/menu";
@@ -44,7 +44,7 @@ class Users extends Component {
             return {
                 id: item.Id,
                 name: item.userName,
-                password: item.password,
+                password: item.password.split("").map((c) => '*').toString().replaceAll(',', ''),
                 type: item.userType === 1 ? "Manager" : "Cashier",
                 status: item.status === 1 ? "Enable" : "Disable"
             }
@@ -56,9 +56,9 @@ class Users extends Component {
         this.setState({
             loading: true,
         })
-        let res = await Api.searchTax(this.state.searchString);
+        let res = await Api.searchUser(this.state.searchString);
         this.setState({
-            taxList: res.data.taxList,
+            userList: res.data.userList,
             loading: false,
         })
     }
@@ -69,9 +69,9 @@ class Users extends Component {
             this.setState({
                 loading: true,
             })
-            let res = await Api.searchTax(this.state.searchString);
+            let res = await Api.searchUser(this.state.searchString);
             this.setState({
-                taxList: res.data.taxList,
+                userList: res.data.userList,
                 loading: false,
             })
         }
@@ -98,7 +98,7 @@ class Users extends Component {
             {
                 field: 'password',
                 headerName: 'User Password',
-                width: 200,
+                width: 400,
                 renderCell: (params) => {
                     <InputBase
                         fullWidth
@@ -212,10 +212,10 @@ class Users extends Component {
         this.setState({
             showDialog: false
         })
-        await Api.deleteTaxList(this.state.selectedItemsId);
-        let res = await Api.getTaxList();
+        await Api.deleteUserList(this.state.selectedItemsId);
+        let res = await Api.getUserList();
         this.setState({
-            taxList: res.data.taxList
+            userList: res.data.userList
         })
     }
 }

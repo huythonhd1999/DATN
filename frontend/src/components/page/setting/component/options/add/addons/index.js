@@ -6,6 +6,7 @@ import Api from "../../../../../../../api/api";
 import { connect } from 'react-redux';
 import TextField from '@mui/material/TextField';
 import { withRouter } from "react-router-dom";
+import LoadingScreen from "../../../../../../common/loading";
 // import CircularProgress from '@mui/material/CircularProgress';
 
 class AddonAdd extends Component {
@@ -16,34 +17,17 @@ class AddonAdd extends Component {
             loading: false,
             Id: 1,
             name: "",
-            percent: "",
+            price: "",
             status: 1,
-            currentTax: {},
+            currentAddon: {},
             nameErrorMessage: "",
-            percentErrorMessage: "",
-            showPassword: false,
-            password: "",
-            type: 1,
+            priceErrorMessage: "",
+            addonGroupId: ""
         };
-    }
-    componentDidMount = async () => {
-        let id = this.props.match.params.id
-        this.setState({ loading: true })
-        let res = await Api.getTax(id)
-        let tax = res.data.tax;
-        this.setState({
-            ...tax,
-            currentTax: tax,
-            loading: false
-        })
-        console.log(res)
     }
 
     onHandleCancelClick = () => {
-        this.setState({
-            ...this.state.currentTax,
-            disable: true
-        })
+        this.props.history.push("/settings/product-options")
     }
     onHandleSaveClick = async (e) => {
         e.preventDefault();
@@ -58,71 +42,71 @@ class AddonAdd extends Component {
             })
         }
 
-        if (this.state.percent === "") {
+        if (this.state.price === "") {
             this.setState({
-                percentErrorMessage: "Cannot leave this field empty."
+                priceErrorMessage: "Cannot leave this field empty."
             })
         } else {
             this.setState({
-                percentErrorMessage: ""
+                priceErrorMessage: ""
             })
         }
 
-        if (this.state.percent !== "" && this.state.name) {
+        if (this.state.price !== "" && this.state.name) {
             this.setState({
                 disable: true,
                 loading: true
             })
             e.preventDefault();
-            let editTax = {
-                Id: this.state.Id,
+            let newAddon = {
                 name: this.state.name,
-                percent: this.state.percent
+                price: this.state.price,
+                addonGroupId: null,
             };
 
-            let res = await Api.editTax(editTax)
-            let tax = res.data.tax;
+            let res = await Api.createAddon(newAddon)
+            let addon = res.data.addon;
             this.setState({
-                ...tax,
+                ...addon,
+                currentAddon: addon,
                 loading: false
             })
+            this.props.history.push("/settings/product-options")
         }
     }
-    onHandleTaxNameChange = (e) => {
+    onHandleAddonNameChange = (e) => {
         this.setState({
             name: e.target.value
         })
     }
-    onHandleTaxPercentChange = (e) => {
+    onHandlePriceNameChange = (e) => {
         let regEx = new RegExp("^[0-9]+[0-9]*$|^$")
         if (regEx.test(e.target.value)) {
             this.setState({
-                percent: e.target.value
+                price: e.target.value
             })
         }
     }
-    handleClickShowPassword = () => {
-        this.setState({
-            showPassword: !this.state.showPassword
-        })
-    }
 
-    handlePasswordChange = (e) => {
+    onHandleStatusChange = () => {
         this.setState({
-            password: e.target.value
+            status: 1 - this.state.status
         })
     }
 
     render() {
         return (
             <div className="c-settings-page">
+                <LoadingScreen
+                    open={this.state.loading}
+                />
                 <div className="c-settings-addon-info">
                     <SettingNav />
                     <div className="c-settings-addon-info-content">
                         <div className="c-setting-addon-info-content-header">
-                        <div className="text">
+                            <div className="text">
                                 <div className="title" onClick={() => this.props.history.push("/settings/product-options")}>Product Options </div>
-                                <div> {" / New Addon"}</div>
+                                <div> {" / New Addon" }</div>
                             </div>
                         </div>
                         <div className="c-setting-addon-info-content-info">
@@ -132,7 +116,10 @@ class AddonAdd extends Component {
                                         Setup Addon
                                     </div>
                                     <div className="c-guild-content">
-                                        Create product addons like toppings, group using addon groups and attach to products.
+                                        Create product addons for sizes, flavours etc.
+                                    </div>
+                                    <div className="c-guild-content">
+                                        For example, create addons Small, Medium & Large and group them under a addon group called Size.
                                     </div>
                                 </div>
                             </div>
@@ -148,22 +135,19 @@ class AddonAdd extends Component {
                                         size="small"
                                         error={this.state.nameErrorMessage ? true : false}
                                         helperText={this.state.nameErrorMessage}
-
-                                        onChange={this.onHandleTaxNameChange}
+                                        onChange={this.onHandleAddonNameChange}
                                     />
                                     <div className="c-text-field-name">Price</div>
                                     <TextField
                                         margin="normal"
                                         required
-                                        value={this.state.name}
+                                        value={this.state.price}
                                         fullWidth
                                         disabled={this.state.disable}
                                         size="small"
-                                        error={this.state.nameErrorMessage ? true : false}
-                                        helperText={this.state.nameErrorMessage}
-
-                                        multiline
-                                        onChange={this.onHandleTaxNameChange}
+                                        error={this.state.priceErrorMessage ? true : false}
+                                        helperText={this.state.priceErrorMessage}
+                                        onChange={this.onHandlePriceNameChange}
                                     />
 
                                     <div className="c-setting-addon-info-control-form">
