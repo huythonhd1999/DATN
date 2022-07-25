@@ -54,6 +54,15 @@
             .c-text-field-name {
                 font: normal normal normal 14px/19px Segoe UI;
                 margin-bottom: 20px;
+                display: flex;
+                justify-content: space-between;
+                .action-button {
+                    button {
+                        background-color: white;
+                        border: none;
+                        color: #1565c0
+                    }
+                }
             }
         }
         .coupon-code {

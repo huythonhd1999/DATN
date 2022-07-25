@@ -5,6 +5,7 @@ const Product = require('../models/Product')
 const AddonGroup = require('../models/AddonGroup')
 const VariantGroup = require('../models/VariantGroup')
 const Variant = require('../models/Variant')
+const Addon = require('../models/Addon')
 const Tax = require('../models/Tax')
 const Category = require('../models/Category')
 
@@ -17,6 +18,21 @@ exports.getProductList = async function (req, res) {
             item.addonGroupList = await AddonGroup.getAddonGroupsByProductId(item.Id)
             item.variantGroupList = await VariantGroup.getVariantGroupsByProductId(item.Id)
             item.baseVariantInfo = await Variant.getVariant(item.baseVariantId)
+
+
+            
+            item.addonList = []
+            item.variantList = []
+            for (let addonGroup of item.addonGroupList) {
+                let addonList = await Addon.getAddonListByAddonGroupId(addonGroup.Id)
+                item.addonList = item.addonList.concat(addonList)
+            }
+
+            for (let variantGroup of  item.variantGroupList ) {
+                let variantList = await Variant.getVariantListByVariantGroupId(variantGroup.Id)
+                item.variantList = item.variantList.concat(variantList)
+            }
+
         }
         res.status(200).json({
             productList: productList,
@@ -189,6 +205,19 @@ exports.searchProduct = async function (req, res) {
             item.addonGroupList = await AddonGroup.getAddonGroupsByProductId(item.Id)
             item.variantGroupList = await VariantGroup.getVariantGroupsByProductId(item.Id)
             item.categoryInfo = await Category.getCategory(item.categoryId)
+
+
+            item.addonList = []
+            item.variantList = []
+            for (let addonGroup of item.addonGroupList) {
+                let addonList = await Addon.getAddonListByAddonGroupId(addonGroup.Id)
+                item.addonList = item.addonList.concat(addonList)
+            }
+
+            for (let variantGroup of  item.variantGroupList ) {
+                let variantList = await Variant.getVariantListByVariantGroupId(variantGroup.Id)
+                item.variantList = item.variantList.concat(variantList)
+            }
         }
         res.status(200).json({
             success: true,
@@ -203,3 +232,4 @@ exports.searchProduct = async function (req, res) {
         });
     }
 };
+

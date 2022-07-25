@@ -7,7 +7,13 @@ exports.getAddonList = () => {
 }
 
 exports.getAddonListByAddonGroupId = (addonGroupId) => {
-    return knex.from('Addon').select('*').where('addonGroupId', addonGroupId)
+    return knex.from('Addon').select(
+        '*',
+        knex('Addon_Group')
+            .select('name')
+            .where('Addon_Group.Id', addonGroupId)
+            .as('addonGroupName'),
+    ).where('addonGroupId', addonGroupId)
 }
 
 exports.getAddonListWithoutGroup = () => {

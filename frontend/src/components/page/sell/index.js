@@ -8,6 +8,7 @@ import { withRouter } from "react-router-dom";
 import { Tab, Tabs } from "@mui/material";
 import Current from "./current";
 import Draft from "./draft";
+import * as SellAction from '../../../redux/action/sell/index';
 
 
 class Sell extends Component {
@@ -36,7 +37,7 @@ class Sell extends Component {
         return (
             <div className="c-page">
                 <LoadingScreen
-                    open={this.state.loading}
+                    open={this.props.sellProps.loading}
                 />
                 <div className="c-sell-info">
                     <NavSideBar />
@@ -68,10 +69,14 @@ class Sell extends Component {
 }
 const mapStateToProp = (state) => {
     return {
+        sellProps: state.sellReducer
     }
 }
 const mapDispatchToProp = (dispatch, props) => {
     return {
+        setLoading: (loadingState) => {
+            dispatch(SellAction.setLoading(loadingState))
+        }
     }
 }
 export default connect(mapStateToProp, mapDispatchToProp)(withRouter(Sell));

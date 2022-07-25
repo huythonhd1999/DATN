@@ -23,9 +23,30 @@ export default function SellModal(props) {
             return;
         props.onClose()
     }
-    const [selectedVariant, setSelectedVariant] = React.useState({})
-    const [selectedAddons, setSelectedAddons] = React.useState([])
-    const [quantity, setQuantity] = React.useState(0)
+
+    const [selectedVariant, setSelectedVariant] = React.useState(props.product.selectedVariant || props.product.variantList[0] || props.product.baseVariantInfo)
+    const [selectedAddons, setSelectedAddons] = React.useState(props.product.selectedAddons || [])
+    const [quantity, setQuantity] = React.useState(props.product.quantity || 1)
+
+    const handleSave = () => {
+        const orderItem = {
+            ...props.product,
+            selectedVariant: selectedVariant,
+            selectedAddons: selectedAddons,
+            quantity: quantity
+        }
+        props.onSave(orderItem)
+        props.onClose()
+    }
+
+    const handleRemove = () => {
+        props.onRemove()
+        props.onClose()
+    }
+
+    // React.useEffect(() => {
+    //     setSelectedVariant(props.product.variantList[0])
+    // }, []);
 
     return (
         <div>
@@ -45,11 +66,16 @@ export default function SellModal(props) {
                                 <div className="c-text-field-name-1">Select variants</div>
                                 <Autocomplete
                                     id="variants"
-                                    options={productVariants}
-                                    groupBy={(option) => option.variantGroup}
+                                    options={props.product.variantList}
+                                    groupBy={(option) => option.variantGroupName}
                                     getOptionLabel={(option) => option?.name || ""}
+                                    isOptionEqualToValue={(option, value) =>
+                                        option.Id === value.Id
+                                    }
                                     onChange={(_event, value) => setSelectedVariant(value)}
                                     value={selectedVariant}
+                                    disabled={props.product.variantList.length === 0}
+                                    disableClearable
                                     renderInput={(params) => <TextField {...params} fullWidth size='small' placeholder="Select a variant of product" />}
                                 />
                             </div>
@@ -57,8 +83,11 @@ export default function SellModal(props) {
                                 <div className="c-text-field-name-1">Select addons</div>
                                 <Autocomplete
                                     id="variants"
-                                    options={productAddons}
-                                    groupBy={(option) => option.addonGroup}
+                                    options={props.product.addonList}
+                                    groupBy={(option) => option.addonGroupName}
+                                    isOptionEqualToValue={(option, value) =>
+                                        option.Id === value.Id
+                                    }
                                     getOptionLabel={(option) => option?.name || ""}
                                     filterSelectedOptions
                                     multiple
@@ -75,7 +104,7 @@ export default function SellModal(props) {
                                     size="small"
                                     value={quantity}
                                     onChange={(e) => {
-                                        let regExCheckNumber = /^[0-9]+[0-9]*$|^$/
+                                        let regExCheckNumber = /^[1-9]+[0-9]*$|^$/
                                         const newValue = e.target.value
                                         if (regExCheckNumber.test(newValue) || newValue === undefined) {
                                             setQuantity(newValue)
@@ -93,11 +122,19 @@ export default function SellModal(props) {
                                 >
                                     Cancel
                                 </Button>
+                                {props.onRemove && <Button
+                                    type="cancel"
+                                    variant="outlined"
+                                    sx={{ mt: 3, mb: 2, mr: 1 }}
+                                    onClick={() => handleRemove()}
+                                >
+                                    Remove Item
+                                </Button>}
                                 <Button
                                     type="submit"
                                     variant="contained"
                                     sx={{ mt: 3, mb: 2 }}
-                                    onClick={() => handleClose()}
+                                    onClick={() => handleSave()}
                                 >
                                     Save
                                 </Button>
@@ -109,69 +146,3 @@ export default function SellModal(props) {
         </div>
     );
 }
-
-const productVariants = [
-    {
-        id: 1,
-        name: "variant test",
-        price: 100,
-        variantGroup: "Variant Group 1"
-    },
-    {
-        id: 2,
-        name: "variant test 2",
-        price: 100,
-        variantGroup: "Variant Group 1"
-    },
-    {
-        id: 1,
-        name: "variant test 3",
-        price: 100,
-        variantGroup: "Variant Group 2"
-    },
-    {
-        id: 1,
-        name: "variant test 4",
-        price: 100,
-        variantGroup: "Variant Group 2"
-    },
-    {
-        id: 1,
-        name: "variant test 5",
-        price: 100,
-        variantGroup: "Variant Group 3"
-    },
-]
-
-const productAddons = [
-    {
-        id: 1,
-        name: "addon test",
-        price: 100,
-        addonGroup: "Addon Group 1"
-    },
-    {
-        id: 2,
-        name: "addon test 2",
-        price: 100,
-        addonGroup: "Addon Group 1"
-    },
-    {
-        id: 1,
-        name: "addon test 3",
-        price: 100,
-        addonGroup: "Addon Group 2"
-    },
-    {
-        id: 1,
-        name: "addon test 4",
-        price: 100,
-        addonGroup: "Addon Group 2"
-    },
-    {
-        id: 1,
-        name: "addon test 5",
-        price: 100,
-        addonGroup: "Addon Group 3"
-    },
-]

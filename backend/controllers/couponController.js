@@ -5,7 +5,7 @@ const Coupon = require('../models/Coupon')
 
 exports.getCouponList = async function (req, res) {
     try {
-        var couponList =  await Coupon.getCouponList()
+        var couponList = await Coupon.getCouponList()
         res.status(200).json({
             couponList: couponList,
         })
@@ -21,7 +21,8 @@ exports.getCouponList = async function (req, res) {
 
 exports.getCoupon = async function (req, res) {
     try {
-        var coupon =  await Coupon.getCoupon(req.params.id)
+        var coupon = await Coupon.getCoupon(req.params.id)
+        console.log(coupon)
         res.status(200).json({
             coupon: coupon
         })
@@ -38,8 +39,8 @@ exports.getCoupon = async function (req, res) {
 exports.createCoupon = async function (req, res) {
     try {
         var info = req.body
-        var id =  await Coupon.createCoupon(info)
-        var coupon =  await Coupon.getCoupon(id)
+        var id = await Coupon.createCoupon(info)
+        var coupon = await Coupon.getCoupon(id)
         res.status(200).json({
             coupon: coupon,
             success: true,
@@ -75,7 +76,7 @@ exports.editCoupon = async function (req, res) {
 exports.deleteCoupon = async function (req, res) {
     try {
         var idList = req.body.IdList
-        idList.forEach(async(id) => {
+        idList.forEach(async (id) => {
             await Coupon.deleteCoupon(id)
         });
         res.status(200).json({
@@ -100,6 +101,72 @@ exports.searchCoupon = async function (req, res) {
         res.status(200).json({
             success: true,
             couponList: couponList
+        })
+    }
+    catch (err) {
+        console.log(err)
+        return res.status(500).json({
+            success: false,
+            err,
+        });
+    }
+};
+
+exports.checkCoupon = async function (req, res) {
+    try {
+        var code = req.body.couponCode
+        var totalQuantity = req.body.totalQuantity
+        var coupon = await Coupon.getCouponByCode(code)
+
+        //check coupon có tồn tại hay không
+        if (!coupon) {
+            return res.status(200).json({
+                success: false,
+                message: "The coupon is not exist"
+            })
+        }
+
+
+        //check minimum order value
+        if (totalQuantity < coupon.minimumOrderValue) {
+            return res.status(200).json({
+                success: false,
+                message: "The number of order items is not enough"
+            })
+        }
+
+        //check startTime và endTime
+        var present = new Date()
+        const startTime = new Date(coupon.startTime)
+        const endTime = new Date(coupon.endTime)
+        if (present.getTime() > endTime.getTime() || !coupon.endTime) {
+            return res.status(200).json({
+                success: false,
+                message: "The coupon is out of date"
+            })
+        }
+        if (present.getTime() < startTime.getTime() ) {
+            return res.status(200).json({
+                success: false,
+                message: "Can not use the coupon now"
+            })
+        }
+
+        //check happy hour
+
+
+        //check day of week
+        const dayOfWeek = present.getDay().toString()
+        if(!coupon.dayOfWeek.includes(dayOfWeek) || !coupon.dayOfWeek) {
+            return res.status(200).json({
+                success: false,
+                message: "Can not use the coupon now"
+            })
+        }
+
+        res.status(200).json({
+            success: true,
+            coupon: coupon
         })
     }
     catch (err) {

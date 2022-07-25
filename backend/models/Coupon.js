@@ -10,6 +10,10 @@ exports.getCoupon = (couponId) => {
     return knex.from('Coupon').select('*').where('Id', couponId).first()
 }
 
+exports.getCouponByCode = (code) => {
+    return knex.from('Coupon').select('*').where('code', code).first()
+}
+
 exports.editCoupon = (data, Id) => {
     return knex('Coupon').where('Id', Id).update({
         ...data

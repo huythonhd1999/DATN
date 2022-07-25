@@ -50,7 +50,7 @@ class CouponInfo extends Component {
             setHappyHour: false,
             setDayOfWeek: false,
 
-            keyDayOfWeek: ["Monday", "TuesDay", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+            keyDayOfWeek: ["Sunday", "Monday", "TuesDay", "Wednesday", "Thursday", "Friday", "Saturday"],
             selectedDayOfWeek: [false, false, false, false, false, false, false]
         };
     }

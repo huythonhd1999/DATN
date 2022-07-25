@@ -3,11 +3,17 @@ const bcrypt = require('bcrypt')
 const config = require('../config/config')
 
 exports.getVariantList = () => {
-    return knex.from('Variant').select('*')
+    return knex.from('Variant').select('*').whereNot('status', 2)
 }
 
 exports.getVariantListByVariantGroupId = (variantGroupId) => {
-    return knex.from('Variant').select('*').where('variantGroupId', variantGroupId)
+    return knex.from('Variant').select(
+        '*',
+        knex('Variant_Group')
+            .select('name')
+            .where('Variant_Group.Id', variantGroupId)
+            .as('variantGroupName'),
+    ).where('variantGroupId', variantGroupId).whereNot('status', 2)
 }
 
 exports.getVariantListWithoutGroup = () => {
@@ -41,5 +47,5 @@ exports.deleteVariant = (variantId) => {
 }
 
 exports.searchVariant = (query) => {
-    return knex.from('Variant').select('*').where('name', 'like', `%${query}%`)
+    return knex.from('Variant').select('*').where('name', 'like', `%${query}%`).whereNot('status', 2)
 }

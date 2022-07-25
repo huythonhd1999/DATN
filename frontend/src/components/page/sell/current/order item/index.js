@@ -6,9 +6,11 @@ import Api from '../../../../../api/api';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import SellModal from '../../../../common/modal';
+import { connect } from 'react-redux';
+import * as SellAction from '../../../../../redux/action/sell/index';
 
 
-export default class OrderItems extends Component {
+class OrderItems extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -18,89 +20,17 @@ export default class OrderItems extends Component {
             selectedTax: {},
             draftReceipts: [],
             searchString: "",
-            selectedCategory: {},
+            selectedCategory: {
+                Id: -1,
+                name: "All product",
+                note: "All product",
+                status: 1,
+            },
             selectedProduct: undefined,
+            selectedOrderItem: undefined,
             orderItems: [],
-            categories: [
-                {
-                    id: 1,
-                    name: "variant test 1",
-                    products: [
-                        {
-                            id: 1,
-                            name: "product 1",
-                            price: 100
-                        },
-                        {
-                            id: 2,
-                            name: "product 2",
-                            price: 100
-                        },
-                        {
-                            id: 3,
-                            name: "product 3",
-                            price: 100
-                        },
-                    ]
-                },
-                {
-                    id: 2,
-                    name: "variant test 2",
-                    products: [
-                        {
-                            id: 1,
-                            name: "product 4",
-                            price: 100
-                        },
-                        {
-                            id: 2,
-                            name: "product 5",
-                            price: 100
-                        },
-                        {
-                            id: 3,
-                            name: "product 6",
-                            price: 100
-                        },
-                        {
-                            id: 1,
-                            name: "product 4",
-                            price: 100
-                        },
-                        {
-                            id: 2,
-                            name: "product 5",
-                            price: 100
-                        },
-                        {
-                            id: 3,
-                            name: "product 6",
-                            price: 100
-                        },
-                    ]
-                },
-                {
-                    id: 3,
-                    name: "variant test 3",
-                    products: [
-                        {
-                            id: 1,
-                            name: "product 7",
-                            price: 100
-                        },
-                        {
-                            id: 2,
-                            name: "product 8",
-                            price: 100
-                        },
-                        {
-                            id: 3,
-                            name: "product 9",
-                            price: 100
-                        },
-                    ]
-                },
-            ]
+            categories: [],
+            total: 0,
         };
     }
 
@@ -111,57 +41,123 @@ export default class OrderItems extends Component {
     }
 
     onEnter = async (e) => {
+        this.props.setLoading(true)
         if (e.keyCode === 13) {
-            console.log(this.state.searchString)
             this.setState({
                 loading: true,
             })
-            let res = await Api.searchTax(this.state.searchString);
+            let res = await Api.searchProduct(this.state.searchString);
             this.setState({
-                taxList: res.data.taxList,
-                loading: false,
+                products: res.data.productList,
+                selectedCategory: {
+                    Id: -1,
+                    name: "All product",
+                    note: "All product",
+                    status: 1,
+                },
             })
         }
+        this.props.setLoading(false)
     }
 
     onSearchItems = async () => {
-        console.log(this.state.searchString)
+        this.props.setLoading(true)
+        let res = await Api.searchProduct(this.state.searchString);
         this.setState({
-            loading: true,
+            products: res.data.productList,
+            selectedCategory: {
+                Id: -1,
+                name: "All product",
+                note: "All product",
+                status: 1,
+            },
         })
-        let res = await Api.searchTax(this.state.searchString);
-        this.setState({
-            taxList: res.data.taxList,
-            loading: false,
-        })
+        this.props.setLoading(false)
     }
 
-    componentDidMount = () => {
-        this.setState({
-            selectedCategory: this.state.categories[0]
+    componentDidMount = async () => {
+        this.props.setLoading(true)
+        const productRes = await Api.getProductList()
+        const products = productRes.data.productList
+        const categoryRes = await Api.getCategoryList()
+        let categories = categoryRes.data.categoryList
+        categories.unshift({
+            Id: -1,
+            name: "All product",
+            note: "All product",
+            status: 1,
         })
+        this.setState({
+            products: products,
+            categories: categories,
+        })
+        this.props.setLoading(false)
     }
 
     handleClickProduct = (product) => {
-        console.log(product)
         this.setState({
             selectedProduct: { ...product }
         })
     }
 
-    createData(name, calories, fat, carbs, protein) {
-        return { name, calories, fat, carbs, protein };
+    handleClickOrderItem = (orderItem) => {
+        this.setState({
+            selectedOrderItem: { ...orderItem }
+        })
+    }
+
+    saveOrderItem = (orderItem) => {
+        const newOrderItemList = this.props.sellProps.orderItemList
+        newOrderItemList.push(orderItem)
+        this.props.setOrderItemList(newOrderItemList)
+    }
+
+    checkEditOrderItem(item) {
+        const editingItem = this.state.selectedOrderItem
+        let check = editingItem.quantity === item.quantity && editingItem.selectedVariant === item.selectedVariant && editingItem.selectedAddons === item.selectedAddons
+        return check
+    }
+
+    saveEditedOrderItem = (newOrderItem) => {
+        const newOrderItemList = this.props.sellProps.orderItemList.map((item) => {
+            if(this.checkEditOrderItem(item)) {
+                return newOrderItem
+            } else {
+                return item
+            }
+        })
+        this.props.setOrderItemList(newOrderItemList)
+    }
+
+    removeSelectedItem = () => {
+        const newOrderItemList = this.props.sellProps.orderItemList.filter((item) => (!this.checkEditOrderItem(item) && item))
+        this.props.setOrderItemList(newOrderItemList)
+    }
+
+
+    handleCategoryChange = (value) => {
+        this.setState({ selectedCategory: value })
+    }
+
+    getOrderItemName(orderItem) {
+        let variantName = orderItem.name + " / " + orderItem.selectedVariant.name
+        
+        orderItem.selectedAddons.forEach((addon) => {
+            variantName = variantName + " + " + addon.name
+        })
+        return variantName
+    }
+
+    getOrderItemPrice(orderItem) {
+        let variantPrice = orderItem.selectedVariant.price
+        let taxPercent = orderItem.taxInfo?.percent || 0
+        orderItem.selectedAddons.forEach((addon) => {
+            variantPrice = variantPrice + addon.price * (1 + taxPercent/100)
+        })
+        return variantPrice * orderItem.quantity
     }
 
     render() {
-        const rows = [
-            this.createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-            this.createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-            this.createData('Eclair', 262, 16.0, 24, 6.0),
-            this.createData('Cupcake', 305, 3.7, 67, 4.3),
-            this.createData('Gingerbread', 356, 16.0, 49, 3.9),
-        ];
-
         return (
             <div className='order-element'>
                 <div className='column-1'>
@@ -188,8 +184,12 @@ export default class OrderItems extends Component {
                                 id="variants"
                                 options={this.state.categories}
                                 getOptionLabel={(option) => option?.name || ""}
-                                onChange={(_event, value) => this.setState({ selectedCategory: value })}
+                                isOptionEqualToValue={(option, value) =>
+                                    option.Id === value.Id
+                                }
+                                onChange={(_event, value) => this.handleCategoryChange(value)}
                                 value={this.state.selectedCategory}
+                                disableClearable
                                 defaultValue={this.state.categories[0]}
                                 renderInput={(params) => <TextField {...params} fullWidth size='small' placeholder="Select category" />}
                             />
@@ -199,24 +199,45 @@ export default class OrderItems extends Component {
                                 <SellModal
                                     product={this.state.selectedProduct}
                                     onClose={() => this.setState({ selectedProduct: undefined })}
-                                />}
-                            {this.state.selectedCategory.products?.map((product) => (
-                                <div key = {product.id} className='product' onClick={() => { this.handleClickProduct(product) }}>
-                                    <Card sx={{ width: 120, height: 120 }} key = {product.id}>
-                                        <CardContent>
-                                            <div className='name'>
-                                                {product.name}
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                </div>
-                            ))}
+                                    onSave={this.saveOrderItem}
+                                />
+                            }
+                            {this.state.products?.map((product) => {
+                                if (product.categoryId === this.state.selectedCategory.Id || this.state.selectedCategory.Id === -1) {
+                                    return (
+                                        <div key={product.Id} className='product' onClick={() => { this.handleClickProduct(product) }}>
+                                            <Card sx={{ width: 120, height: 120 }} key={product.id}>
+                                                <CardContent>
+                                                    <div className='name'>
+                                                        {product.name}
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        </div>
+                                    )
+                                } else {
+                                    return <></>
+                                }
+                            })}
                         </div>
                     </div>
                 </div>
                 <div className='column-2'>
                     <div className='order-table'>
-                        <div className="c-text-field-name">Order Details</div>
+                        <div className="c-text-field-name">
+                            Order Details
+                            <div className='action-button'>
+                                <button onClick={() => this.props.setOrderItemList([])}>Clear</button>
+                            </div>
+                        </div>
+                        {this.state.selectedOrderItem &&
+                            <SellModal
+                                product={this.state.selectedOrderItem}
+                                onClose={() => this.setState({ selectedOrderItem: undefined })}
+                                onSave={this.saveEditedOrderItem}
+                                onRemove = {this.removeSelectedItem}
+                            />
+                        }
                         <TableContainer component={Paper}>
                             <Table aria-label="simple table">
                                 <TableHead>
@@ -228,19 +249,29 @@ export default class OrderItems extends Component {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {rows.map((row) => (
-                                        <TableRow onClick={() => { this.handleClickProduct(row) }}
-                                            key={row.name}
-                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                        >
-                                            <TableCell component="th" scope="row">
-                                                {row.name}
+                                    {this.props.sellProps.orderItemList.length > 0 &&
+                                        this.props.sellProps.orderItemList.map((orderItem, index) => (
+                                            <TableRow onClick={() => { this.handleClickOrderItem(orderItem) }}
+                                                key={index}
+                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                            >
+                                                <TableCell component="th" scope="row">
+                                                    {this.getOrderItemName(orderItem)}
+                                                </TableCell>
+                                                <TableCell>{orderItem.quantity}</TableCell>
+                                                <TableCell>{orderItem.taxInfo?.percent || 0}</TableCell>
+                                                <TableCell>{this.getOrderItemPrice(orderItem)}</TableCell>
+                                            </TableRow>
+                                        ))
+                                    }
+                                    {
+                                        this.props.sellProps.orderItemList.length === 0 &&
+                                        <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }} >
+                                            <TableCell className='no-item' colSpan={4} style={{ textAlign: "center" }}>
+                                                No item to show in this view
                                             </TableCell>
-                                            <TableCell>{row.calories}</TableCell>
-                                            <TableCell>{row.fat}</TableCell>
-                                            <TableCell>{row.carbs}</TableCell>
                                         </TableRow>
-                                    ))}
+                                    }
                                 </TableBody>
                             </Table>
                         </TableContainer>
@@ -268,7 +299,7 @@ export default class OrderItems extends Component {
                             sx={{ mt: 1, mb: 1 }}
                             onClick={() => this.props.clickNextStep()}
                         >
-                            Charge {"456"}
+                            Charge {this.props.sellProps.total}
                         </Button>
                     </div>
                 </div>
@@ -276,3 +307,21 @@ export default class OrderItems extends Component {
         )
     }
 }
+
+const mapStateToProp = (state) => {
+    return {
+        sellProps: state.sellReducer
+    }
+}
+const mapDispatchToProp = (dispatch, _props) => {
+    return {
+        setLoading: (loadingState) => {
+            dispatch(SellAction.setLoading(loadingState))
+        },
+        setOrderItemList: (orderItemList) => {
+            dispatch(SellAction.setOrderItemList(orderItemList))
+        }
+    }
+}
+
+export default connect(mapStateToProp, mapDispatchToProp)(OrderItems);
