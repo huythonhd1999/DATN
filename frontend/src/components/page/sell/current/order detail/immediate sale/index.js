@@ -99,8 +99,6 @@ class ImmediateSaleOrderDetail extends Component {
                         value={this.props.sellProps.notes}
                         fullWidth
                         size="small"
-                        error={this.state.nameErrorMessage ? true : false}
-                        helperText={this.state.nameErrorMessage}
                         onChange={this.onHandleNotesChange}
                     />
                 </div>
