@@ -6,13 +6,15 @@ import CircleCheckedFilled from '@material-ui/icons/CheckCircle';
 import CircleUnchecked from '@material-ui/icons/RadioButtonUnchecked';
 import ImmediateSaleOrderDetail from './immediate sale';
 import BookingOrderDetail from './booking';
+import { connect } from 'react-redux';
+import * as SellAction from '../../../../../redux/action/sell/index';
 // import Api from '../../../../../api/api';
 // import Card from '@mui/material/Card';
 // import CardContent from '@mui/material/CardContent';
 // import SellModal from '../../../../common/modal';
 
 
-export default class OrderDetail extends Component {
+class OrderDetail extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -75,6 +77,7 @@ export default class OrderDetail extends Component {
                                 type="cancel"
                                 fullWidth
                                 variant="outlined"
+                                disabled={!this.props.sellProps.canFinishOrder}
                                 sx={{ mr: 1, width: 150}}
                                 onClick={() => this.props.clickPrevStep()}
                             >
@@ -84,9 +87,10 @@ export default class OrderDetail extends Component {
                                 type="submit"
                                 fullWidth
                                 variant="contained"
+                                disabled={!this.props.sellProps.canFinishOrder}
                                 onClick={() => this.props.clickPrevStep()}
                             >
-                                Received {"100"}
+                                Received {this.props.sellProps.total}
                             </Button>
                         </Stack>
                     </div>
@@ -142,7 +146,6 @@ export default class OrderDetail extends Component {
                         size="small"
                         error={this.state.nameErrorMessage ? true : false}
                         helperText={this.state.nameErrorMessage}
-
                         onChange={this.onHandleTaxNameChange}
                     />
                 </div>
@@ -150,3 +153,17 @@ export default class OrderDetail extends Component {
         )
     }
 }
+const mapStateToProp = (state) => {
+    return {
+        sellProps: state.sellReducer
+    }
+}
+const mapDispatchToProp = (dispatch, _props) => {
+    return {
+        setLoading: (loadingState) => {
+            dispatch(SellAction.setLoading(loadingState))
+        },
+    }
+}
+
+export default connect(mapStateToProp, mapDispatchToProp)(OrderDetail);

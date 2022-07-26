@@ -80,6 +80,9 @@ const Api = {
     getCoupon: (id) => {
         return guest.get(`${baseUrl}/setting/coupon/id/${id}`)
     },
+    checkCoupon: (coupon) => {
+        return guest.post(`${baseUrl}/setting/coupon/check-coupon`, coupon)
+    },
     createCoupon: (coupon) => {
         return user.post(`${baseUrl}/setting/coupon/create-coupon`, coupon)
     },

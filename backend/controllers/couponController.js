@@ -1,3 +1,5 @@
+const {format}  = require('date-fns')
+
 const jwtHelper = require('../helpers/jwtToken')
 const bcrypt = require('bcrypt')
 const config = require('../config/config')
@@ -139,12 +141,13 @@ exports.checkCoupon = async function (req, res) {
         var present = new Date()
         const startTime = new Date(coupon.startTime)
         const endTime = new Date(coupon.endTime)
-        if (present.getTime() > endTime.getTime() || !coupon.endTime) {
+        if (present.getTime() > endTime.getTime() && coupon.endTime) {
             return res.status(200).json({
                 success: false,
                 message: "The coupon is out of date"
             })
         }
+
         if (present.getTime() < startTime.getTime() ) {
             return res.status(200).json({
                 success: false,
@@ -153,11 +156,22 @@ exports.checkCoupon = async function (req, res) {
         }
 
         //check happy hour
+        if(coupon.startHappyHour && coupon.endHappyHour) {
+            const timeNow = format(present, "yyyy-MM-dd")
+            const startHappyHourDate = new Date(timeNow + " " + coupon.startHappyHour)
+            const endHappyHourDate = new Date(timeNow + " " + coupon.endHappyHour)
+            if(startHappyHourDate.getTime() > present.getTime() || endHappyHourDate.getTime() < present.getTime()) {
+                return res.status(200).json({
+                    success: false,
+                    message: "Can not use the coupon now" 
+                })
+            }
+        }
 
 
         //check day of week
         const dayOfWeek = present.getDay().toString()
-        if(!coupon.dayOfWeek.includes(dayOfWeek) || !coupon.dayOfWeek) {
+        if(!coupon.dayOfWeek.includes(dayOfWeek) && coupon.dayOfWeek) {
             return res.status(200).json({
                 success: false,
                 message: "Can not use the coupon now"

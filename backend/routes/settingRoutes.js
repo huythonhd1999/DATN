@@ -18,6 +18,7 @@ settingRouter.post('/tax/search-tax', taxController.searchTax)
 settingRouter.get('/coupon/id/:id', couponController.getCoupon)
 settingRouter.get('/coupon/get-list', couponController.getCouponList)
 settingRouter.post('/coupon/search-coupon', couponController.searchCoupon)
+settingRouter.post('/coupon/check-coupon', couponController.checkCoupon)
 
 settingRouter.get('/user/id/:id', userController.getUser)
 settingRouter.get('/user/get-list', userController.getUserList)

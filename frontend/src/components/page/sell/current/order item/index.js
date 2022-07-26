@@ -31,6 +31,8 @@ class OrderItems extends Component {
             orderItems: [],
             categories: [],
             total: 0,
+            couponCode: "",
+            couponErrorMessage: "",
         };
     }
 
@@ -58,6 +60,37 @@ class OrderItems extends Component {
             })
         }
         this.props.setLoading(false)
+    }
+
+    onCouponEnter = async (e) => {
+        this.props.setLoading(true)
+        if (e.keyCode === 13) {
+            this.setState({
+                loading: true,
+            })
+            const coupon = {
+                couponCode: this.state.couponCode,
+                totalQuantity: this.props.sellProps
+            }
+            let res = await Api.checkCoupon(coupon);
+            if (res.data.success) {
+                this.props.setCoupon(res.data.coupon)
+                this.setState({
+                    couponErrorMessage: ""
+                })
+            } else {
+                this.setState({
+                    couponErrorMessage: "Coupon code is invalid"
+                })
+            }
+        }
+        this.props.setLoading(false)
+    }
+
+    onHandleCouponChange = (e) => {
+        this.setState({
+            couponCode: e.target.value
+        })
     }
 
     onSearchItems = async () => {
@@ -90,6 +123,7 @@ class OrderItems extends Component {
         this.setState({
             products: products,
             categories: categories,
+            couponCode: this.props.sellProps?.coupon.code || ""
         })
         this.props.setLoading(false)
     }
@@ -281,14 +315,15 @@ class OrderItems extends Component {
                         <TextField
                             margin="normal"
                             required
-                            value={this.state.percent}
+                            value={this.state.couponCode}
                             fullWidth
                             sx={{ mt: 1, mb: 1 }}
                             placeholder='Enter coupon code'
-                            // error={this.state.percentErrorMessage ? true : false}
-                            // helperText={this.state.percentErrorMessage}
+                            error={this.state.couponErrorMessage ? true : false}
+                            helperText={this.state.couponErrorMessage}
                             size="small"
-                        // onChange={this.onHandleTaxPercentChange}
+                            onChange={this.onHandleCouponChange}
+                            onKeyDown={this.onCouponEnter}
                         />
                     </div>
                     <div className='control-button'>
@@ -296,6 +331,7 @@ class OrderItems extends Component {
                             type="submit"
                             fullWidth
                             variant="contained"
+                            disabled = {!this.props.sellProps.total}
                             sx={{ mt: 1, mb: 1 }}
                             onClick={() => this.props.clickNextStep()}
                         >
@@ -320,6 +356,9 @@ const mapDispatchToProp = (dispatch, _props) => {
         },
         setOrderItemList: (orderItemList) => {
             dispatch(SellAction.setOrderItemList(orderItemList))
+        },
+        setCoupon: (coupon) => {
+            dispatch(SellAction.setCoupon(coupon))
         }
     }
 }

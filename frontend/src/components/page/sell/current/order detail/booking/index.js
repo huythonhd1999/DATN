@@ -45,7 +45,7 @@ export default class BookingOrderDetail extends Component {
                 </div>
                 <div className='payment-detail'>
                     <div className="c-text-field-name">Delivery Date & Time</div>
-                    <Stack direction="row" spacing={2}>
+                    <Stack direction="row" spacing={2} className="delivery-date">
                         <LocalizationProvider dateAdapter={AdapterDateFns}>
                             <DesktopDatePicker
                                 inputFormat="MM/dd/yyyy"
