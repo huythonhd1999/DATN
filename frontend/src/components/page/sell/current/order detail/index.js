@@ -79,11 +79,12 @@ class OrderDetail extends Component {
                     productId: item.Id
                 }
             }),
-            orderType: this.state.orderType,
+            userId: this.props.user?.userId || 1,
+            orderType: this.state.orderType, //2 la booking 1 la immediate sale 3 la canceled
             coupon: this.props.sellProps.coupon || null,
             total: this.props.sellProps.total,
             customer: {
-                phone: this.state.phone,
+                mobilePhone: this.state.phone,
                 name: this.state.name,
                 email: this.state.email, 
                 shippingAddress: this.state.shippingAddress
@@ -239,6 +240,7 @@ class OrderDetail extends Component {
 }
 const mapStateToProp = (state) => {
     return {
+        ...state.authReducer,
         sellProps: state.sellReducer
     }
 }

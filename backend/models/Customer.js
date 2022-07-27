@@ -6,6 +6,10 @@ exports.getCustomerList = () => {
     return knex.from('Customer').select('*')
 }
 
+exports.getCustomerByPhone = (phone) => {
+    return knex.from('Customer').select('*').where('mobilePhone', phone).first()
+}
+
 exports.getCustomer = (customerId) => {
     return knex.from('Customer').select('*').where('Id', customerId).first()
 }

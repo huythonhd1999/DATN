@@ -6,6 +6,7 @@ const adminRouter = require('./adminRoutes')
 const pettyCashRouter = require('./pettyCashRoutes')
 const productRouter = require('./productRoutes')
 const customerRouter = require('./customerRoutes')
+const orderRouter = require('./orderRoutes')
 const notFound = require('./404')
 
 module.exports = function (app) {
@@ -14,6 +15,7 @@ module.exports = function (app) {
     app.use('/petty-cash', pettyCashRouter)
     app.use('/product', productRouter)
     app.use('/customer', customerRouter)
+    app.use('/order', orderRouter)
     app.use('/post', postRouter)
     app.use('/answer', answerRouter)
     app.use('/admin', adminRouter)
