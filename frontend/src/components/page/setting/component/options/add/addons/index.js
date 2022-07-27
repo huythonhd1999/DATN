@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import TextField from '@mui/material/TextField';
 import { withRouter } from "react-router-dom";
 import LoadingScreen from "../../../../../../common/loading";
+import { withSnackbar } from 'notistack';
 // import CircularProgress from '@mui/material/CircularProgress';
 
 class AddonAdd extends Component {
@@ -72,6 +73,7 @@ class AddonAdd extends Component {
                 loading: false
             })
             this.props.history.push("/settings/product-options")
+            this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
         }
     }
     onHandleAddonNameChange = (e) => {
@@ -195,4 +197,4 @@ const mapDispatchToProp = (dispatch, props) => {
     return {
     }
 }
-export default connect(mapStateToProp, mapDispatchToProp)(withRouter(AddonAdd));
+export default connect(mapStateToProp, mapDispatchToProp)(withRouter(withSnackbar(AddonAdd)));

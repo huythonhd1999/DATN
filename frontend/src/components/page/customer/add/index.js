@@ -7,6 +7,7 @@ import Api from "../../../../api/api";
 import { connect } from 'react-redux';
 import LoadingScreen from "../../../common/loading";
 import { withRouter } from "react-router-dom";
+import { withSnackbar } from 'notistack';
 
 // import CircularProgress from '@mui/material/CircularProgress';
 
@@ -62,6 +63,7 @@ class CustomerAdd extends Component {
                 loading: false
             })
             this.props.history.push("/customers")
+            this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
         }
     }
     onHandleNameChange = (e) => {
@@ -237,4 +239,4 @@ const mapDispatchToProp = (dispatch, props) => {
     return {
     }
 }
-export default connect(mapStateToProp, mapDispatchToProp)(withRouter(CustomerAdd));
+export default connect(mapStateToProp, mapDispatchToProp)(withRouter(withSnackbar(CustomerAdd)));

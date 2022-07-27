@@ -17,6 +17,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { withSnackbar } from 'notistack';
 
 // import CircularProgress from '@mui/material/CircularProgress';
 
@@ -86,6 +87,7 @@ class CustomerInfo extends Component {
                 currentCustomer: customer,
                 loading: false
             })
+            this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
         }
     }
     onHandleNameChange = (e) => {
@@ -338,4 +340,4 @@ const mapDispatchToProp = (dispatch, props) => {
     return {
     }
 }
-export default connect(mapStateToProp, mapDispatchToProp)(withRouter(CustomerInfo));
+export default connect(mapStateToProp, mapDispatchToProp)(withRouter(withSnackbar(CustomerInfo)));

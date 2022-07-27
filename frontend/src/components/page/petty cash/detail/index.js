@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import LoadingScreen from "../../../common/loading";
 import { withRouter } from "react-router-dom";
 import { FormControl, MenuItem, Select } from "@mui/material";
+import { withSnackbar } from 'notistack';
 
 class PettyCashInfo extends Component {
     constructor(props) {
@@ -72,7 +73,7 @@ class PettyCashInfo extends Component {
                 type: this.state.type,
                 notes: this.state.notes,
                 amount: this.state.amount,
-                userId: this.props.user.userId,
+                userId: this.props.user?.userId,
             };
 
             let res = await Api.editPettyCash(editPettyCash)
@@ -82,6 +83,7 @@ class PettyCashInfo extends Component {
                 currentPettyCash: pettyCash,
                 loading: false
             })
+            this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
         }
     }
     
@@ -224,4 +226,4 @@ const mapDispatchToProp = (dispatch, props) => {
     return {
     }
 }
-export default connect(mapStateToProp, mapDispatchToProp)(withRouter(PettyCashInfo));
+export default connect(mapStateToProp, mapDispatchToProp)(withRouter(withSnackbar(PettyCashInfo)));

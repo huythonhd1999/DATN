@@ -8,6 +8,7 @@ import Api from "../../../../../api/api";
 import * as storeAction from "../../../../../redux/action/setting/store/index";
 import {connect} from 'react-redux';
 import LoadingScreen from "../../../../common/loading";
+import { withSnackbar } from 'notistack';
 // import CircularProgress from '@mui/material/CircularProgress';
 
 class Shop extends Component {
@@ -73,6 +74,7 @@ class Shop extends Component {
             loading: false
         })
         this.props.setStoreInfo(store);
+        this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
     }
     onHandleResNameChange = (e) => {
         this.setState({
@@ -277,4 +279,4 @@ const mapDispatchToProp = (dispatch, props) => {
         }
     }
 }
-export default connect(mapStateToProp, mapDispatchToProp) (Shop);
+export default connect(mapStateToProp, mapDispatchToProp) (withSnackbar(Shop));

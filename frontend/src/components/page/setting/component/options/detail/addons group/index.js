@@ -10,6 +10,7 @@ import { withRouter } from "react-router-dom";
 import Tags from "../../../../../../common/selected search";
 import Switch from '@mui/material/Switch';
 import LoadingScreen from "../../../../../../common/loading";
+import { withSnackbar } from 'notistack';
 // import CircularProgress from '@mui/material/CircularProgress';
 
 class AddonGroupInfo extends Component {
@@ -89,6 +90,7 @@ class AddonGroupInfo extends Component {
                 currentAddonGroup: addonGroup,
                 loading: false
             })
+            this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
         }
     }
     onHandleAddonGroupNameChange = (e) => {
@@ -217,4 +219,4 @@ const mapDispatchToProp = (dispatch, props) => {
     return {
     }
 }
-export default connect(mapStateToProp, mapDispatchToProp)(withRouter(AddonGroupInfo));
+export default connect(mapStateToProp, mapDispatchToProp)(withRouter(withSnackbar(AddonGroupInfo)));

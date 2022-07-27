@@ -9,6 +9,7 @@ import TextField from '@mui/material/TextField';
 import { withRouter } from "react-router-dom";
 import Tags from "../../../../../common/selected search";
 import LoadingScreen from "../../../../../common/loading";
+import { withSnackbar } from 'notistack';
 // import CircularProgress from '@mui/material/CircularProgress';
 
 class ProductCategoryInfo extends Component {
@@ -89,6 +90,7 @@ class ProductCategoryInfo extends Component {
                 selectedProducts: category.productList,
                 loading: false
             })
+            this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
         }
     }
     onHandleCategoryNameChange = (e) => {
@@ -223,4 +225,4 @@ const mapDispatchToProp = (dispatch, props) => {
     return {
     }
 }
-export default connect(mapStateToProp, mapDispatchToProp)(withRouter(ProductCategoryInfo));
+export default connect(mapStateToProp, mapDispatchToProp)(withRouter(withSnackbar(ProductCategoryInfo)));

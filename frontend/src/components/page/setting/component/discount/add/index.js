@@ -18,6 +18,7 @@ import CircleCheckedFilled from '@material-ui/icons/CheckCircle';
 import CircleUnchecked from '@material-ui/icons/RadioButtonUnchecked';
 import LoadingScreen from "../../../../../common/loading";
 import { format } from "date-fns";
+import { withSnackbar } from 'notistack';
 // import CircularProgress from '@mui/material/CircularProgress';
 
 class CouponAdd extends Component {
@@ -127,6 +128,7 @@ class CouponAdd extends Component {
                 loading: false
             })
             this.props.history.push("/settings/discount-rules")
+            this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
         } else {
             if (!coupon.code) {
                 this.setState({
@@ -567,4 +569,4 @@ class CouponAdd extends Component {
     }
 }
 
-export default withRouter(CouponAdd)
+export default withRouter(withSnackbar(CouponAdd))

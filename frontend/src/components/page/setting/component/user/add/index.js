@@ -16,6 +16,7 @@ import { withRouter } from "react-router-dom";
 import MenuItem from '@mui/material/MenuItem';
 import { FormHelperText } from "@mui/material";
 import LoadingScreen from "../../../../../common/loading";
+import { withSnackbar } from 'notistack';
 // import CircularProgress from '@mui/material/CircularProgress';
 
 class UserAdd extends Component {
@@ -81,6 +82,7 @@ class UserAdd extends Component {
                 showPassword: false
             })
             this.props.history.push("/settings/users")
+            this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
         }
     }
     onHandleUserNameChange = (e) => {
@@ -252,4 +254,4 @@ const mapDispatchToProp = (dispatch, props) => {
     return {
     }
 }
-export default connect(mapStateToProp, mapDispatchToProp)(withRouter(UserAdd));
+export default connect(mapStateToProp, mapDispatchToProp)(withRouter(withSnackbar(UserAdd)));

@@ -8,6 +8,7 @@ import Api from "../../../../../../api/api";
 import { connect } from 'react-redux';
 import LoadingScreen from "../../../../../common/loading";
 import { withRouter } from "react-router-dom";
+import { withSnackbar } from 'notistack';
 // import CircularProgress from '@mui/material/CircularProgress';
 
 class TaxInfo extends Component {
@@ -88,6 +89,7 @@ class TaxInfo extends Component {
                 ...tax,
                 loading: false
             })
+            this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
         }
     }
     onHandleTaxNameChange = (e) => {
@@ -210,4 +212,4 @@ const mapDispatchToProp = (dispatch, props) => {
     return {
     }
 }
-export default connect(mapStateToProp, mapDispatchToProp)(withRouter(TaxInfo));
+export default connect(mapStateToProp, mapDispatchToProp)(withRouter(withSnackbar(TaxInfo)));

@@ -9,6 +9,7 @@ import TextField from '@mui/material/TextField';
 import { withRouter } from "react-router-dom";
 import Switch from '@mui/material/Switch';
 import LoadingScreen from "../../../../../../common/loading";
+import { withSnackbar } from 'notistack';
 // import CircularProgress from '@mui/material/CircularProgress';
 
 class VariantInfo extends Component {
@@ -93,6 +94,7 @@ class VariantInfo extends Component {
                 currentVariant: variant,
                 loading: false
             })
+            this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
         }
     }
     onHandleVariantNameChange = (e) => {
@@ -230,4 +232,4 @@ const mapDispatchToProp = (dispatch, props) => {
     return {
     }
 }
-export default connect(mapStateToProp, mapDispatchToProp)(withRouter(VariantInfo));
+export default connect(mapStateToProp, mapDispatchToProp)(withRouter(withSnackbar(VariantInfo)));

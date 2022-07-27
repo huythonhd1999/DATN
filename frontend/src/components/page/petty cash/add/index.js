@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import LoadingScreen from "../../../common/loading";
 import { withRouter } from "react-router-dom";
 import { FormControl, MenuItem, Select } from "@mui/material";
+import { withSnackbar } from 'notistack';
 
 class PettyCashAdd extends Component {
     constructor(props) {
@@ -62,6 +63,7 @@ class PettyCashAdd extends Component {
                 loading: false
             })
             this.props.history.push("/expenses")
+            this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
         }
     }
     
@@ -197,4 +199,4 @@ const mapDispatchToProp = (dispatch, props) => {
     return {
     }
 }
-export default connect(mapStateToProp, mapDispatchToProp)(withRouter(PettyCashAdd));
+export default connect(mapStateToProp, mapDispatchToProp)(withRouter(withSnackbar(PettyCashAdd)));

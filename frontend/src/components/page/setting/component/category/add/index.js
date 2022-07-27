@@ -9,6 +9,7 @@ import { withRouter } from "react-router-dom";
 import Tags from "../../../../../common/selected search";
 import LoadingScreen from "../../../../../common/loading";
 // import CircularProgress from '@mui/material/CircularProgress';
+import { withSnackbar } from 'notistack';
 
 class ProductCategoryAdd extends Component {
     constructor(props) {
@@ -74,6 +75,7 @@ class ProductCategoryAdd extends Component {
                 loading: false
             })
             this.props.history.push("/settings/product-categories")
+            this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
         }
     }
     onHandleCategoryNameChange = (e) => {
@@ -201,4 +203,4 @@ const mapDispatchToProp = (dispatch, props) => {
     return {
     }
 }
-export default connect(mapStateToProp, mapDispatchToProp)(withRouter(ProductCategoryAdd));
+export default connect(mapStateToProp, mapDispatchToProp)(withRouter(withSnackbar(ProductCategoryAdd)));

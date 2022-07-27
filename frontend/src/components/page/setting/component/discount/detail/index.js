@@ -20,6 +20,7 @@ import CircleUnchecked from '@material-ui/icons/RadioButtonUnchecked';
 import LoadingScreen from "../../../../../common/loading";
 import { format } from "date-fns";
 import Switch from '@mui/material/Switch';
+import { withSnackbar } from 'notistack';
 // import CircularProgress from '@mui/material/CircularProgress';
 
 class CouponInfo extends Component {
@@ -149,6 +150,7 @@ class CouponInfo extends Component {
                 currentCoupon: formatCoupon,
                 loading: false
             })
+            this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
         }
     }
     onHandleCodeChange = (e) => {
@@ -594,4 +596,4 @@ class CouponInfo extends Component {
     }
 }
 
-export default withRouter(CouponInfo)
+export default withRouter(withSnackbar(CouponInfo))

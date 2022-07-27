@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { withRouter } from "react-router-dom";
 // import CustomizedSnackbars from "../../../../../common/notification/index"
 // import CircularProgress from '@mui/material/CircularProgress';
+import { withSnackbar } from 'notistack';
 
 class TaxAdd extends Component {
     constructor(props) {
@@ -73,6 +74,7 @@ class TaxAdd extends Component {
                 showNotification: true,
             })
             this.props.history.push('/settings/taxes')
+            this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
         }
     }
     onHandleTaxNameChange = (e) => {
@@ -181,4 +183,4 @@ const mapDispatchToProp = (dispatch, props) => {
     return {
     }
 }
-export default connect(mapStateToProp, mapDispatchToProp)(withRouter(TaxAdd));
+export default connect(mapStateToProp, mapDispatchToProp)(withRouter(withSnackbar(TaxAdd)));

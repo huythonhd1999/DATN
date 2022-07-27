@@ -2,16 +2,102 @@
     .dashboard-content {
         padding-left: 220px;
         .header {
-            display: flex;
-            align-items: center;
+            font: normal normal normal 16px/21px Segoe UI;
+            box-shadow: 0.5px 0.866px 1.5px 0.8px rgba(0, 0, 0, 0.15);
             height: 70px;
             padding-left: 20px;
+            display: flex;
+            align-items: center;
             position: sticky;
-            box-shadow: 0.5px 0.866px 1.5px 0.8px rgba(0, 0, 0, 0.15);
-            font: normal normal normal 16px/21px Segoe UI;
+            background-color: white;
+            z-index: 1;
         }
         .dashboard-detail {
-            
+            display: flex;
+            .column-1 {
+                width: 50%;
+                padding-left: 20px;
+                padding-bottom: 10px;
+                .hello-message {
+                    padding-top: 30px;
+                    padding-bottom: 30px;
+                    font: normal normal normal 21px/25px Segoe UI;
+                }
+                .analysis-today-cards {
+                    display: flex;
+                    justify-content: space-between;
+                    .summary {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        height: 60px;
+                        .title {
+                            font: normal normal normal 19px/22px Segoe UI;
+                            padding-bottom: 5px;
+                        }
+                        .value {
+                            font: normal normal normal 19px/22px Segoe UI;
+                        }
+                    }
+                }
+                .top-selling {
+                    padding-top: 50px;
+                    .title {
+                        font: normal normal normal 21px/25px Segoe UI;
+                        padding-bottom: 20px;
+                    }
+                }
+                .need-help {
+                    padding-top: 40px;
+                    .title {
+                        font: normal normal normal 21px/25px Segoe UI;
+                        padding-bottom: 20px;
+                    }
+                    .help-link-list {
+                        display: flex;
+                        .column {
+                            width: 50%;
+                            .title {
+                                font: normal normal normal 16px/21px Segoe UI;
+                                padding: 0;
+                            }
+                            .link-list {
+                                ul {
+                                    li {
+                                        padding: 5px 0px;
+                                        color: blue
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            .column-2 {
+                padding-left: 20px;
+                padding-right: 20px;
+                flex-grow: 1;
+                .title {
+                    padding-top: 20px;
+                    padding-bottom: 20px;
+                    font: normal normal normal 21px/25px Segoe UI;
+                }
+                .graph {
+                    width: 100%;
+                    .drop-down-option {
+                        .scope-selection {
+                            width: 130px;
+                        }
+                    }
+                }
+                .payment-summary {
+                    padding-top: 20px;
+                    .title {
+                        padding-top: 10px;
+                    }
+                }
+            }
         }
     }
 }

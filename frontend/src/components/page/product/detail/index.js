@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import LoadingScreen from "../../../common/loading";
 import { withRouter } from "react-router-dom";
 import Autocomplete from '@mui/material/Autocomplete';
+import { withSnackbar } from 'notistack';
 
 // import CircularProgress from '@mui/material/CircularProgress';
 
@@ -128,6 +129,7 @@ class ProductInfo extends Component {
                 currentProduct: product,
                 loading: false
             })
+            this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
         }
     }
     onHandleNameChange = (e) => {
@@ -336,4 +338,4 @@ const mapDispatchToProp = (dispatch, props) => {
     return {
     }
 }
-export default connect(mapStateToProp, mapDispatchToProp)(withRouter(ProductInfo));
+export default connect(mapStateToProp, mapDispatchToProp)(withRouter(withSnackbar(ProductInfo)));
