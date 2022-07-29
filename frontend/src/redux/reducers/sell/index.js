@@ -1,6 +1,6 @@
 import * as types from "../../data/index"
 
-var initState = {
+const initState = {
     loading: true,
     orderItemList: [],
     total: 0,
@@ -49,7 +49,7 @@ function getTotalQuantity(orderItemList) {
     return total
 }
 
-var sellReducer = (state = initState, action) => {
+const sellReducer = (state = initState, action) => {
     switch (action.type) {
         case types.SET_LOADING:
             return {
@@ -111,7 +111,6 @@ var sellReducer = (state = initState, action) => {
             }
         case types.RESET_STATE:
             return {
-                orderItemList: [],
                 ...initState,
             }
         default:

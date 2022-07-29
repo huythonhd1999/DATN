@@ -142,8 +142,8 @@ class OrderItems extends Component {
 
     saveOrderItem = (orderItem) => {
         const newOrderItemList = this.props.sellProps.orderItemList
-        newOrderItemList.push(orderItem)
-        this.props.setOrderItemList(newOrderItemList)
+        // newOrderItemList.push(orderItem)
+        this.props.setOrderItemList([...newOrderItemList,orderItem])
     }
 
     checkEditOrderItem(item) {
