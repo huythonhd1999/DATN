@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 import './index.scss';
 // import SearchIcon from '@mui/icons-material/Search';
-import { FormControl, MenuItem, Select, Stack, TextField } from '@mui/material';
+import { Checkbox, FormControl, FormControlLabel, MenuItem, Select, Stack, TextField } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DesktopDatePicker, LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
+import CircleUnchecked from '@material-ui/icons/RadioButtonUnchecked';
+import CircleCheckedFilled from '@material-ui/icons/CheckCircle';
 // import Api from '../../../../../api/api';
 // import Card from '@mui/material/Card';
 // import CardContent from '@mui/material/CardContent';
@@ -25,7 +27,7 @@ class BookingOrderDetail extends Component {
         this.props.setPaymentType(e.target.value)
     }
 
-    onHandleBookingAdvanceChange= (e) => {
+    onHandleBookingAdvanceChange = (e) => {
         let regEx = new RegExp("^[0-9]+[0-9]*$|^$")
         if (regEx.test(e.target.value)) {
             this.props.setBookingAdvance(e.target.value)
@@ -86,6 +88,18 @@ class BookingOrderDetail extends Component {
                             />
                         </LocalizationProvider>
                     </Stack>
+                    <FormControlLabel className='is-door-delivery'
+                        label={<div className="c-text-field-name">Is Door Delivery</div>}
+                        control={
+                            <Checkbox
+                                icon={<CircleUnchecked />}
+                                size="small"
+                                checkedIcon={<CircleCheckedFilled />}
+                                checked={this.props.sellProps.isDoorDelivery === 1}
+                                onChange={() => this.props.setIsDoorDelivery(1 - this.props.sellProps.isDoorDelivery)}
+                            />
+                        }
+                    />
                     <div className="c-text-field-name">Booking Advance</div>
                     <TextField
                         margin="normal"
@@ -137,6 +151,9 @@ const mapDispatchToProp = (dispatch, _props) => {
         setBookingAdvance: (bookingAdvance) => {
             dispatch(SellAction.setBookingAdvance(bookingAdvance))
         },
+        setIsDoorDelivery: (isDoorDelivery) => {
+            dispatch(SellAction.setIsDoorDelivery(isDoorDelivery))
+        }
     }
 }
 

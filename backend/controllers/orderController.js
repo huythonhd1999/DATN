@@ -5,11 +5,30 @@ const OrderItemAddon = require('../models/OrderItemAddon')
 const BookingOrder = require('../models/BookingOrder')
 const ImmediateSaleOrder = require('../models/ImmediateSaleOrder')
 const CanceledOrder = require('../models/CanceledOrder')
+const Product = require('../models/Product')
+const Tax = require('../models/Tax')
+const Addon = require('../models/Addon')
+const Variant = require('../models/Variant')
+const User = require('../models/User')
 
 
 exports.getOrderList = async function (req, res) {
     try {
         var orderList = await Order.getOrderList()
+        for (var order of orderList) {
+            order.customerInfo = await Customer.getCustomer(order.customerId)
+            switch (order.status) {
+                case 2: // booking
+                    order.bookingInfo = await BookingOrder.getBookingOrderByOrderId(order.Id)
+                    break
+                case 1: //immediate sale
+                    order.immediateSaleInfo = await ImmediateSaleOrder.getImmediateSaleOrderByOrderId(order.Id)
+                    break
+                default:
+                    break
+            }
+            order.canceledOrderInfo = await CanceledOrder.getCanceledOrderByOrderId(order.Id)
+        }
         res.status(200).json({
             orderList: orderList,
         })
@@ -25,8 +44,35 @@ exports.getOrderList = async function (req, res) {
 
 exports.getOrder = async function (req, res) {
     try {
-        console.log(req.body)
         var order = await Order.getOrder(req.params.id)
+        order.customerInfo = await Customer.getCustomer(order.customerId)
+
+        //lấy thông tin chi tiết về loại order
+        switch (order.status) {
+            case 2: // booking
+                order.bookingInfo = await BookingOrder.getBookingOrderByOrderId(order.Id)
+                break
+            case 1: //immediate sale
+                order.immediateSaleInfo = await ImmediateSaleOrder.getImmediateSaleOrderByOrderId(order.Id)
+                break
+            default:
+                break
+        }
+        order.canceledOrderInfo = await CanceledOrder.getCanceledOrderByOrderId(order.Id)
+        order.userInfo = await User.getUser(order.userId)
+
+        //lấy thông tin về các item trong order
+        order.orderItemList = await OrderItem.getOrderItemListByOrderId(order.Id)
+        for (var orderItem of order.orderItemList) {
+            orderItem.productInfo = await Product.getProduct(orderItem.productId)
+            orderItem.taxInfo = await Tax.getTax(orderItem.productInfo.taxId) || null
+            orderItem.selectedVariant = await Variant.getVariant(orderItem.variantId)
+            orderItem.selectedAddons = await OrderItemAddon.getOrderItemAddonListByOrderItemId(orderItem.Id)
+            for(var orderItemAddon of orderItem.selectedAddons) {
+                orderItemAddon.addonInfo = await Addon.getAddon(orderItemAddon.addonId)
+            }
+        }
+
         res.status(200).json({
             order: order
         })

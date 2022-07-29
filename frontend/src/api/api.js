@@ -279,5 +279,11 @@ const Api = {
         return user.post(`${baseUrl}/customer/delete-customer`, {IdList: IdList})
     },
 
+
+    //order
+    createOrder: (order) => {
+        return user.post(`${baseUrl}/order/create-order`, order)
+    },
+
 }
 export default Api;

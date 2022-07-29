@@ -8,7 +8,7 @@ exports.getCanceledOrderList = () => {
 }
 
 exports.getCanceledOrderByOrderId = (orderId) => {
-    return knex.from('orderId').select('*').where('orderId', orderId).first()
+    return knex.from('Canceled_Order').select('*').where('orderId', orderId).first()
 }
 
 exports.editCanceledOrder = (data, Id) => {

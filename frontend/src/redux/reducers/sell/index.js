@@ -13,6 +13,7 @@ var initState = {
     notes: "",
     canFinishOrder: false,
     cashTendered: 0,
+    isDoorDelivery: 1,
 }
 
 function getOrderItemPrice(orderItem) {
@@ -102,6 +103,16 @@ var sellReducer = (state = initState, action) => {
             return {
                 ...state,
                 cashTendered: action.cashTendered,
+            }
+        case types.SET_IS_DOOR_DELIVERY:
+            return {
+                ...state,
+                isDoorDelivery: action.isDoorDelivery,
+            }
+        case types.RESET_STATE:
+            return {
+                orderItemList: [],
+                ...initState,
             }
         default:
             return {

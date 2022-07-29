@@ -10,6 +10,9 @@ import { connect } from 'react-redux';
 import * as SellAction from '../../../../../redux/action/sell/index';
 import Api from '../../../../../api/api';
 import { format } from "date-fns";
+import { withSnackbar } from 'notistack';
+import { withRouter } from "react-router-dom";
+import { LoadingButton } from '@mui/lab';
 // import Card from '@mui/material/Card';
 // import CardContent from '@mui/material/CardContent';
 // import SellModal from '../../../../common/modal';
@@ -21,7 +24,7 @@ class OrderDetail extends Component {
         this.state = {
             orderType: 1, //1 la immediate sale, 2 la booking
             customers: [],
-            phone:"",
+            phone: "",
             name: "",
             email: "",
             shippingAddress: "",
@@ -29,12 +32,14 @@ class OrderDetail extends Component {
             nameErrorMessage: "",
             emailErrorMessage: "",
             shippingAddressErrorMessage: "",
+            completeLoading: false,
+            receiveLoading: false,
         };
     }
 
-    componentDidMount = async() => {
+    componentDidMount = async () => {
         const res = await Api.getCustomerList()
-        this.setState({customers: res.data.customerList})
+        this.setState({ customers: res.data.customerList })
     }
 
 
@@ -53,19 +58,19 @@ class OrderDetail extends Component {
     }
 
     onHandlePhoneChange = (e) => {
-        this.setState({phone: e.target.value})
+        this.setState({ phone: e.target.value })
     }
 
     onHandleNameChange = (e) => {
-        this.setState({name: e.target.value})
+        this.setState({ name: e.target.value })
     }
 
     onHandleEmailChange = (e) => {
-        this.setState({email: e.target.value})
+        this.setState({ email: e.target.value })
     }
 
     onHandleShippingAddressChange = (e) => {
-        this.setState({shippingAddress: e.target.value})
+        this.setState({ shippingAddress: e.target.value })
     }
 
     getOrderDetail() {
@@ -75,7 +80,7 @@ class OrderDetail extends Component {
                     quantity: item.quantity,
                     selectedVariant: item.selectedVariant,
                     selectedAddons: item.selectedAddons,
-                    taxId: item.taxId, 
+                    taxId: item.taxId,
                     productId: item.Id
                 }
             }),
@@ -86,7 +91,7 @@ class OrderDetail extends Component {
             customer: {
                 mobilePhone: this.state.phone,
                 name: this.state.name,
-                email: this.state.email, 
+                email: this.state.email,
                 shippingAddress: this.state.shippingAddress
             },
             bookingAdvance: Number(this.props.sellProps.bookingAdvance),
@@ -94,13 +99,27 @@ class OrderDetail extends Component {
             deliveryDate: format(new Date(this.props.sellProps.deliveryDate), "yyyy-MM-dd HH:mm:ss"),
             notes: this.props.sellProps.notes
         }
-        console.log(model)
         return model
     }
 
-    onHandleComplete = () => {
+    onHandleComplete = async () => {
         // không in hoá đơn
-        this.getOrderDetail()
+        const model = this.getOrderDetail()
+
+        this.setState({
+            completeLoading: true
+        })
+        const res = await Api.createOrder(model)
+
+        if (res.data.success) {
+            //thông báo tạo thành công và chuyển hướng về trang chủ, xoá state redux
+            this.props.enqueueSnackbar('Successfully to create an order.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' } })
+            this.props.resetState()
+            this.props.clickPrevStep()
+        }
+        this.setState({
+            completeLoading: false
+        })
     }
 
     render() {
@@ -154,25 +173,45 @@ class OrderDetail extends Component {
                             >
                                 Back
                             </Button>
-                            <Button
-                                type="cancel"
-                                fullWidth
-                                variant="outlined"
-                                disabled={!this.props.sellProps.canFinishOrder}
-                                sx={{ mr: 1, width: 150 }}
-                                onClick={this.onHandleComplete}
-                            >
-                                Complete
-                            </Button>
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                disabled={!this.props.sellProps.canFinishOrder}
-                                onClick={() => this.props.clickPrevStep()}
-                            >
-                                Received {this.getReceived()}
-                            </Button>
+                            {!this.state.completeLoading ?
+                                <Button
+                                    type="cancel"
+                                    fullWidth
+                                    variant="outlined"
+                                    disabled={!this.props.sellProps.canFinishOrder}
+                                    sx={{ mr: 1, width: 150 }}
+                                    onClick={this.onHandleComplete}
+                                >
+                                    Complete
+                                </Button>
+                                :
+                                (<LoadingButton
+                                    loading
+                                    variant="contained"
+                                    sx={{ mr: 1, width: 150 }}
+                                >
+                                    Complete
+                                </LoadingButton>)
+                            }
+                            {!this.state.receiveLoading ?
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    disabled={!this.props.sellProps.canFinishOrder}
+                                    onClick={() => this.props.clickPrevStep()}
+                                >
+                                    Received {this.getReceived()}
+                                </Button>
+                                :
+                                <LoadingButton
+                                    loading
+                                    variant="contained"
+                                    fullWidth
+                                >
+                                    Complete
+                                </LoadingButton>
+                            }
                         </Stack>
                     </div>
                 </div>
@@ -252,7 +291,13 @@ const mapDispatchToProp = (dispatch, _props) => {
         setCanFinishOrder: (canFinishOrder) => {
             dispatch(SellAction.setCanFinishOrder(canFinishOrder))
         },
+        resetState: () => {
+            dispatch(SellAction.resetSate())
+        },
+        setOrderItemList: (orderItemList) => {
+            dispatch(SellAction.setOrderItemList(orderItemList))
+        },
     }
 }
 
-export default connect(mapStateToProp, mapDispatchToProp)(OrderDetail);
+export default connect(mapStateToProp, mapDispatchToProp)(withRouter(withSnackbar(OrderDetail)));

@@ -63,6 +63,13 @@ export const setNotes = (notes) => {
     }
 }
 
+export const setIsDoorDelivery = (isDoorDelivery) => {
+    return {
+        type: types.SET_IS_DOOR_DELIVERY,
+        isDoorDelivery,
+    }
+}
+
 export const setCanFinishOrder = (canFinishOrder) => {
     return {
         type: types.SET_CAN_FINISH_ORDER,
@@ -74,5 +81,11 @@ export const setCashTendered = (cashTendered) => {
     return {
         type: types.SET_CASH_TENDERED,
         cashTendered,
+    }
+}
+
+export const resetSate = () => {
+    return {
+        type: types.RESET_STATE,
     }
 }
