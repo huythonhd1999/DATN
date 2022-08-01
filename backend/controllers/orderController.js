@@ -14,7 +14,7 @@ const User = require('../models/User')
 
 exports.getOrderList = async function (req, res) {
     try {
-        var orderList = await Order.getOrderList()
+        var orderList = await Order.getOrderList() // 1 là immediate sale 2 là booking 3 là cancel
         for (var order of orderList) {
             order.customerInfo = await Customer.getCustomer(order.customerId)
             switch (order.status) {
@@ -205,11 +205,23 @@ exports.deleteOrder = async function (req, res) {
 exports.searchOrder = async function (req, res) {
     try {
         var searchString = req.body.searchString
-        console.log(searchString)
         var orderList = await Order.searchOrder(searchString)
+        for (var order of orderList) {
+            order.customerInfo = await Customer.getCustomer(order.customerId)
+            switch (order.status) {
+                case 2: // booking
+                    order.bookingInfo = await BookingOrder.getBookingOrderByOrderId(order.Id)
+                    break
+                case 1: //immediate sale
+                    order.immediateSaleInfo = await ImmediateSaleOrder.getImmediateSaleOrderByOrderId(order.Id)
+                    break
+                default:
+                    break
+            }
+            order.canceledOrderInfo = await CanceledOrder.getCanceledOrderByOrderId(order.Id)
+        }
         res.status(200).json({
-            success: true,
-            orderList: orderList
+            orderList: orderList,
         })
     }
     catch (err) {

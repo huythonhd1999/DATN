@@ -284,6 +284,12 @@ const Api = {
     createOrder: (order) => {
         return user.post(`${baseUrl}/order/create-order`, order)
     },
+    getOrderList: () => {
+        return guest.get(`${baseUrl}/order/get-list`)
+    },
+    searchOrder: (searchString) => {
+        return guest.post(`${baseUrl}/order/search-order`, {searchString: searchString})
+    },
 
 }
 export default Api;

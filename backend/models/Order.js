@@ -28,5 +28,5 @@ exports.deleteOrder = (orderId) => {
 }
 
 exports.searchOrder = (query) => {
-    return knex.from('Order').select('*').where('name', 'like', `%${query}%`)
+    return knex.from('Order').select('*').where('Id', 'like', `%${query}%`)
 }

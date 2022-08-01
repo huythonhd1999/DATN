@@ -6,11 +6,12 @@ import SearchIcon from '@mui/icons-material/Search';
 import { DataGrid } from '@mui/x-data-grid';
 import Tab from '@mui/material/Tab';
 import Api from "../../../api/api";
-import BasicMenu from "../../common/menu/menu";
 import LoadingScreen from "../../common/loading";
 import AlertDialog from "../../common/dialog";
 import NavSideBar from "../../common/navigation bar/navSideBar";
 import Tabs from '@mui/material/Tabs';
+import * as OrderAction from '../../../redux/action/order/index';
+import { connect } from 'react-redux';
 
 class Receipts extends Component {
     constructor(props) {
@@ -18,7 +19,8 @@ class Receipts extends Component {
         this.state = {
             selectedItemsId: [],
             showDialog: false,
-            taxList: [],
+            allOrder: [],
+            orderList: [],
             loading: true,
             searchString: ""
         };
@@ -28,21 +30,49 @@ class Receipts extends Component {
         this.setState({
             loading: true,
         })
-        let res = await Api.getTaxList();
+        let res = await Api.getOrderList();
         this.setState({
-            taxList: res.data.taxList,
+            orderList: res.data.orderList,
+            allOrder: res.data.orderList,
             loading: false,
         })
     }
 
     getRowData = () => {
-        return this.state.taxList.map(item => {
+        return this.state.orderList.map(item => {
             return {
                 id: item.Id,
-                name: item.name,
-                percent: item.percent,
+                createDate: (new Date (item.createDate)).toLocaleString(),
+                mobilePhone: item.customerInfo?.mobilePhone,
+                orderType: this.getOrderType(item.status),
+                total: item.total,
+                status: this.getStatus(item)
             }
         })
+    }
+
+    getOrderType(status)  {
+        switch(status) {
+            case 1:
+                return "Immediate Sale"
+            case 2: 
+                return "Booking"
+            case 3:
+                return "Canceled"
+            default:
+                return ""
+        }
+    }
+
+    getStatus(item) {
+        if(item.immediateSaleInfo) {
+            return "Finished"
+        }
+        if (item.bookingInfo.bookingAdvance < item.total) {
+            return "Unfinished"
+        } else {
+            return "Finished"
+        }
     }
 
     onSearchItems = async () => {
@@ -50,9 +80,9 @@ class Receipts extends Component {
         this.setState({
             loading: true,
         })
-        let res = await Api.searchTax(this.state.searchString);
+        let res = await Api.searchOrder(this.state.searchString);
         this.setState({
-            taxList: res.data.taxList,
+            orderList: res.data.orderList,
             loading: false,
         })
     }
@@ -63,9 +93,9 @@ class Receipts extends Component {
             this.setState({
                 loading: true,
             })
-            let res = await Api.searchTax(this.state.searchString);
+            let res = await Api.searchOrder(this.state.searchString);
             this.setState({
-                taxList: res.data.taxList,
+                orderList: res.data.orderList,
                 loading: false,
             })
         }
@@ -107,11 +137,11 @@ class Receipts extends Component {
                         <div className="c-receipts-content-info">
                             <div className="c-receipts-detail-header">
                                 <div className="tag-list">
-                                    <Tabs  value = {1}>
-                                        <Tab label="All" value={1} />
-                                        <Tab label="Immediate Sale" value={2} />
-                                        <Tab label="Booking" value={3} />
-                                        <Tab label="Canceled" value={4} />
+                                    <Tabs  value = {this.props.orderOptions.selectedOrderType} onChange={this.setSelectedOrderType}>
+                                        <Tab label="All" value={0} />
+                                        <Tab label="Immediate Sale" value={1} />
+                                        <Tab label="Booking" value={2} />
+                                        <Tab label="Canceled" value={3} />
                                     </Tabs>
                                 </div>
                                 <div className="search-bar">
@@ -132,9 +162,6 @@ class Receipts extends Component {
                                     />
                                 </div>
                             </div>
-                            <div className="action-button">
-                                <BasicMenu onDeleteSelectedItems={this.onDeleteSelectedItems} />
-                            </div>
                             <div className="c-receipts-detail-list" style={{ height: 400, width: '95%' }}>
                                 <DataGrid
                                     rows={this.getRowData()}
@@ -154,6 +181,21 @@ class Receipts extends Component {
             </div>
         );
     }
+    setSelectedOrderType = (_e, newValue) => {
+        switch(newValue) {
+            case 0:
+                this.setState({
+                    orderList: this.state.allOrder
+                })
+                break
+            default:
+                this.setState({
+                    orderList: this.state.allOrder.filter((item) => item.status === newValue)
+                })
+        }
+        this.props.setSelectedOrderType(newValue)
+    }
+
     onRowClick = (params) => {
         this.props.history.push(`receipts/${params.id}`);
     }
@@ -162,28 +204,20 @@ class Receipts extends Component {
             selectedItemsId: [...selectedItems]
         })
     }
+}
 
-    onDeleteSelectedItems = () => {
-        this.setState({
-            showDialog: true
-        })
-    }
-    onCancelDialog = () => {
-        this.setState({
-            showDialog: false
-        })
-    }
-    onConfirmDeleteItems = async () => {
-        this.setState({
-            showDialog: false,
-            loading: true
-        })
-        await Api.deleteTaxList(this.state.selectedItemsId);
-        let res = await Api.getTaxList();
-        this.setState({
-            taxList: res.data.taxList,
-            loading: false
-        })
+const mapStateToProp = (state) => {
+    return {
+        ...state.authReducer,
+        orderOptions: state.orderOptions
     }
 }
-export default withRouter(Receipts);
+const mapDispatchToProp = (dispatch, _props) => {
+    return {
+        setSelectedOrderType: (selectedOrderType) => {
+            dispatch(OrderAction.setSelectedOrderType(selectedOrderType))
+        },
+    }
+}
+
+export default connect(mapStateToProp, mapDispatchToProp)(withRouter(Receipts));
