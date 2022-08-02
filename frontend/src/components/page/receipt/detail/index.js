@@ -25,9 +25,6 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
 
 
 class ReceiptDetail extends Component {
@@ -36,13 +33,7 @@ class ReceiptDetail extends Component {
         this.state = {
             disable: true,
             loading: false,
-            Id: 1,
-            name: "",
-            percent: "",
-            status: 1,
-            currentTax: {},
-            nameErrorMessage: "",
-            percentErrorMessage: "",
+            currentOrder: {},
             type: 1,
             fulFill: false
         };
@@ -50,11 +41,11 @@ class ReceiptDetail extends Component {
     componentDidMount = async () => {
         let id = this.props.match.params.id
         this.setState({ loading: true })
-        let res = await Api.getTax(id)
-        let tax = res.data.tax;
+        let res = await Api.getOrder(id)
+        let order = res.data.order;
         this.setState({
-            ...tax,
-            currentTax: tax,
+            ...order,
+            currentOrder: order,
             loading: false
         })
     }
@@ -136,14 +127,108 @@ class ReceiptDetail extends Component {
         return { name, calories, fat, carbs, protein };
     }
 
+    getOrderType() {
+        if (this.state.currentOrder?.canceledOrderInfo) return "Canceled"
+        switch (this.state.status) {
+            case 1:
+                return "Immediate Sale"
+            case 2:
+                return "Booking"
+            default:
+                return "Booking"
+        }
+    }
+    getPaymentStatus() {
+        if (this.state.immediateSaleInfo) {
+            return "Finished"
+        }
+        if (this.state.bookingInfo?.bookingAdvance < this.state.total) {
+            return "Unfinished"
+        } else {
+            return "Finished"
+        }
+    }
+
+    getOrderItemName(orderItem) {
+        let orderItemName = orderItem.productInfo.name + " / " + orderItem.selectedVariant.name
+
+        orderItem.selectedAddons.forEach((addon) => {
+            orderItemName = orderItemName + " + " + addon.addonInfo.name
+        })
+        return orderItemName
+    }
+
+    getOrderItemPrice(orderItem) {
+        let variantPrice = orderItem.selectedVariant.price
+        let taxPercent = orderItem.taxInfo?.percent || 0
+        orderItem.selectedAddons.forEach((addon) => {
+            variantPrice = variantPrice + addon.addonInfo.price * (1 + taxPercent / 100)
+        })
+        return variantPrice * orderItem.quantity
+    }
+    getSubTotal() {
+        let subTotal = 0
+        this.state.currentOrder?.orderItemList?.forEach((orderItem) => {
+            subTotal = subTotal + this.getOrderItemPrice(orderItem)
+        })
+        return subTotal
+    }
+    getDiscountValue() {
+        const coupon = this.state.currentOrder?.couponInfo
+        if (coupon) {
+            if (coupon.type === 0) { //giảm theo phần trăm
+                return coupon.amount + " %"
+            }
+            return coupon.amount
+        }
+        return 0
+    }
+    getNotes() {
+        switch (this.state.currentOrder?.status) {
+            case 1: //immediate sale 
+                return this.state.currentOrder?.immediateSaleInfo?.notes
+            case 2: //booking
+                return this.state.currentOrder?.bookingInfo?.notes
+            case 3: // cancel 
+                return this.state.currentOrder?.canceledOrderInfo?.notes
+            default:
+                return ""
+        }
+    }
+    getPaymentType() {
+        switch (this.state.currentOrder?.paymentType) {
+            case 1: //Cash 
+                return "Cash"
+            case 2: //Credit Card
+                return "Credit Card"
+            case 3: // Other 
+                return "Other"
+            default:
+                return ""
+        }
+    }
+    getPaymentDetail() {
+        var detail = ""
+        switch (this.state.currentOrder?.status) {
+            case 1: //immediate sale 
+                detail = this.state.currentOrder?.total
+                break
+            case 2: //booking
+                detail = this.state.currentOrder?.bookingInfo?.bookingAdvance
+                break
+            default:
+                detail = ""
+        }
+        return detail + "$ on " + this.getPaymentType()
+    }
+
+    getPaymentTitle() {
+        if (this.state.currentOrder?.status === 2) {
+            return `Pending Payment ${this.state.currentOrder?.total - this.state.currentOrder?.bookingInfo?.bookingAdvance}$`
+        }
+    }
+
     render() {
-        const rows = [
-            this.createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-            this.createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-            this.createData('Eclair', 262, 16.0, 24, 6.0),
-            this.createData('Cupcake', 305, 3.7, 67, 4.3),
-            this.createData('Gingerbread', 356, 16.0, 49, 3.9),
-        ];
         return (
             <div className="c-page">
                 <LoadingScreen
@@ -155,7 +240,7 @@ class ReceiptDetail extends Component {
                         <div className="c-receipt-info-content-header">
                             <div className="text">
                                 <div className="title" onClick={() => this.props.history.push("/receipts")}>Receipts </div>
-                                <div> {" / " + this.state.name}</div>
+                                <div> {" / " + this.state.currentOrder.Id}</div>
                             </div>
                             <Button
                                 variant="contained"
@@ -173,10 +258,10 @@ class ReceiptDetail extends Component {
                                     </div>
                                     {/* đổi state chỗ này */}
                                     <div className="c-guild-content">
-                                        Prepared by Huy
+                                        Prepared by {this.state.currentOrder.userInfo?.userName}
                                     </div>
                                     <div className="c-guild-content">
-                                        on Jul 2, 2022 12:47 AM
+                                        on {!this.state.loading ? (new Date(this.state.currentOrder?.createDate)).toLocaleString() : ""}
                                     </div>
                                 </div>
                             </div>
@@ -185,8 +270,8 @@ class ReceiptDetail extends Component {
                                     <div className="info">
                                         <div className="status">
                                             <div className="c-text-field-name">Status</div>
-                                            <Chip label="success" color="success" />
-                                            <Chip label="warning" color="warning" />
+                                            <Chip label={this.getOrderType()} color="success" />
+                                            <Chip label={this.getPaymentStatus()} color="warning" />
                                         </div>
                                         <div className="action-buttons">
                                             <button className="action-button">Print</button>
@@ -206,19 +291,30 @@ class ReceiptDetail extends Component {
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
-                                                {rows.map((row) => (
-                                                    <TableRow
-                                                        key={row.name}
-                                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                    >
-                                                        <TableCell component="th" scope="row">
-                                                            {row.name}
+                                                {
+                                                    !this.state.loading &&
+                                                    this.state.currentOrder?.orderItemList?.map((orderItem, index) => (
+                                                        <TableRow onClick={() => { this.handleClickOrderItem(orderItem) }}
+                                                            key={index}
+                                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                        >
+                                                            <TableCell component="th" scope="row">
+                                                                {this.getOrderItemName(orderItem)}
+                                                            </TableCell>
+                                                            <TableCell>{orderItem.quantity}</TableCell>
+                                                            <TableCell>{orderItem.taxInfo?.percent || 0}</TableCell>
+                                                            <TableCell>{this.getOrderItemPrice(orderItem)}</TableCell>
+                                                        </TableRow>
+                                                    ))
+                                                }
+                                                {
+                                                    this.state.loading &&
+                                                    <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }} >
+                                                        <TableCell className='no-item' colSpan={4} style={{ textAlign: "center" }}>
+                                                            No item to show in this view
                                                         </TableCell>
-                                                        <TableCell>{row.calories}</TableCell>
-                                                        <TableCell>{row.fat}</TableCell>
-                                                        <TableCell>{row.carbs}</TableCell>
                                                     </TableRow>
-                                                ))}
+                                                }
                                                 <TableRow
                                                     key={"subTotal"}
                                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -226,7 +322,16 @@ class ReceiptDetail extends Component {
                                                     <TableCell></TableCell>
                                                     <TableCell></TableCell>
                                                     <TableCell>{"Sub Total"}</TableCell>
-                                                    <TableCell>{250}</TableCell>
+                                                    <TableCell>{this.getSubTotal()}</TableCell>
+                                                </TableRow>
+                                                <TableRow
+                                                    key={"discount"}
+                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                >
+                                                    <TableCell></TableCell>
+                                                    <TableCell></TableCell>
+                                                    <TableCell>{"Discount"}</TableCell>
+                                                    <TableCell>{this.getDiscountValue()}</TableCell>
                                                 </TableRow>
                                                 <TableRow
                                                     key={"total"}
@@ -235,162 +340,144 @@ class ReceiptDetail extends Component {
                                                     <TableCell></TableCell>
                                                     <TableCell></TableCell>
                                                     <TableCell>{"Total"}</TableCell>
-                                                    <TableCell>{250}</TableCell>
+                                                    <TableCell>{this.state.currentOrder?.total}</TableCell>
                                                 </TableRow>
                                             </TableBody>
                                         </Table>
                                     </TableContainer>
                                     <div className="element">
-                                        <div className="c-text-field-name-1">Delivery Date & Time</div>
-                                        <Stack direction="row" spacing={2}>
-                                            <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                                <DesktopDatePicker
-                                                    inputFormat="MM/dd/yyyy"
-                                                    value={this.state.endTime}
-                                                    disabled={this.state.disable}
-                                                    onChange={() => true}
-                                                    minDate={new Date(this.state.startTime)}
-                                                    renderInput={(params) => <TextField fullWidth size="small" {...params} />}
-                                                />
-                                                <TimePicker
-                                                    value={this.state.startHappyHour}
-                                                    ampm={false}
-                                                    onChange={() => true}
-                                                    disabled={this.state.disable}
-                                                    renderInput={(params) => <TextField size="small" {...params} />}
-                                                />
-                                            </LocalizationProvider>
-                                        </Stack>
+                                        {this.state.currentOrder?.bookingInfo &&
+                                            <>
+                                                <div className="c-text-field-name-1">Delivery Date & Time</div>
+                                                <Stack direction="row" spacing={2}>
+                                                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                                        <DesktopDatePicker
+                                                            inputFormat="MM/dd/yyyy"
+                                                            value={this.state.currentOrder?.bookingInfo?.deliveryDate}
+                                                            disabled={true}
+                                                            onChange={() => true}
+                                                            minDate={new Date(this.state.startTime)}
+                                                            renderInput={(params) => <TextField fullWidth size="small" {...params} />}
+                                                        />
+                                                        <TimePicker
+                                                            value={this.state.currentOrder?.bookingInfo?.deliveryDate}
+                                                            ampm={false}
+                                                            disabled={true}
+                                                            onChange={() => true}
+                                                            renderInput={(params) => <TextField size="small" {...params} />}
+                                                        />
+                                                    </LocalizationProvider>
+                                                </Stack>
+                                            </>
+                                        }
                                         <div className="c-text-field-name">Notes</div>
                                         <TextField
                                             margin="normal"
                                             required
-                                            value={this.state.code}
+                                            value={this.getNotes()}
                                             fullWidth
-                                            disabled={this.state.disable}
+                                            disabled={true}
                                             size="small"
-                                            error={this.state.codeErrorMessage ? true : false}
-                                            helperText={this.state.codeErrorMessage}
                                             multiline
-                                            onChange={this.onHandleCodeChange}
                                         />
-                                        <FormControlLabel
-                                            disabled={this.state.disable}
-                                            label={<div className="c-text-field-name-1">Is Door Delivery?</div>}
-                                            control={
-                                                <Checkbox
-                                                    icon={<CircleUnchecked />}
-                                                    size="small"
-                                                    checkedIcon={<CircleCheckedFilled />}
-                                                    checked={this.state.setEndDate}
-                                                    onChange={() => this.setState({
-                                                        setEndDate: !this.state.setEndDate
-                                                    })}
-                                                />
-                                            }
-                                        />
+                                        {
+                                            this.state.currentOrder?.bookingInfo &&
+                                            <FormControlLabel
+                                                disabled={true}
+                                                label={<div className="c-text-field-name-1">Is Door Delivery?</div>}
+                                                control={
+                                                    <Checkbox
+                                                        icon={<CircleUnchecked />}
+                                                        size="small"
+                                                        checkedIcon={<CircleCheckedFilled />}
+                                                        checked={this.state.currentOrder?.bookingInfo?.isDoorDelivery === 1}
+                                                    />
+                                                }
+                                            />
+                                        }
                                     </div>
                                     <div className="element">
                                         <div className="c-text-field-name">Customer Name</div>
                                         <TextField
                                             margin="normal"
                                             required
-                                            value={this.state.name}
+                                            value={this.state.currentOrder?.customerInfo?.name}
                                             fullWidth
-                                            disabled={this.state.disable}
+                                            disabled={true}
                                             size="small"
-                                            error={this.state.nameErrorMessage ? true : false}
-                                            helperText={this.state.nameErrorMessage}
-                                            onChange={this.onHandleTaxNameChange}
                                         />
                                         <div className="c-text-field-name">Customer Phone</div>
                                         <TextField
                                             margin="normal"
                                             required
-                                            value={this.state.name}
+                                            value={this.state.currentOrder?.customerInfo?.mobilePhone}
                                             fullWidth
-                                            disabled={this.state.disable}
+                                            disabled={true}
                                             size="small"
-                                            error={this.state.nameErrorMessage ? true : false}
-                                            helperText={this.state.nameErrorMessage}
-                                            onChange={this.onHandleTaxNameChange}
                                         />
                                         <div className="c-text-field-name">Customer Email</div>
                                         <TextField
                                             margin="normal"
                                             required
-                                            value={this.state.name}
+                                            value={this.state.currentOrder?.customerInfo?.email}
                                             fullWidth
-                                            disabled={this.state.disable}
+                                            disabled={true}
                                             size="small"
-                                            error={this.state.nameErrorMessage ? true : false}
-                                            helperText={this.state.nameErrorMessage}
-                                            onChange={this.onHandleTaxNameChange}
                                         />
                                         <div className="c-text-field-name">Shipping Address</div>
                                         <TextField
                                             margin="normal"
                                             required
-                                            value={this.state.name}
+                                            value={this.state.currentOrder?.customerInfo?.shippingAddress}
                                             fullWidth
                                             multiline
-                                            disabled={this.state.disable}
+                                            disabled={true}
                                             size="small"
-                                            error={this.state.nameErrorMessage ? true : false}
-                                            helperText={this.state.nameErrorMessage}
-                                            onChange={this.onHandleTaxNameChange}
                                         />
                                     </div>
                                     <div className="element">
-                                        <div className="c-text-field-name">Payment Details: {"Pending Payment 215.00"}</div>
-                                        <div className="detail">
-                                            <div className="c-amount">{"10.00 on Cash"} </div>
-                                            <div className="c-date"> {"Jul 2, 2022, 12:47 AM"}</div>
-                                        </div>
-                                    </div>
-                                    <div className="payment">
-                                        {this.state.fulFill &&
+                                        {
+                                            this.state.currentOrder?.canceledOrderInfo &&
                                             <>
-                                                <div className="c-text-field-name-1">Payment Type</div>
-                                                <FormControl variant="outlined" size="small" fullWidth disabled={this.state.disable}>
-                                                    <Select
-                                                        value={this.state.type}
-                                                        // onChange={handleChange}
-                                                        fullWidth
-                                                    >
-                                                        <MenuItem value={-1} disabled>
-                                                            <em>Select type of payment</em>
-                                                        </MenuItem>
-                                                        <MenuItem value={2}>Other</MenuItem>
-                                                        <MenuItem value={1}>Credit/Debit Card</MenuItem>
-                                                        <MenuItem value={0}>Cash</MenuItem>
-                                                    </Select>
-                                                </FormControl>
-                                                <div className="c-text-field-name">Notes</div>
+                                                <div className="c-text-field-name">Cancelation Notes</div>
                                                 <TextField
                                                     margin="normal"
                                                     required
-                                                    value={this.state.name}
+                                                    value={this.state.currentOrder?.canceledOrderInfo?.notes}
                                                     fullWidth
-                                                    multiline
-                                                    disabled={this.state.disable}
+                                                    disabled={true}
                                                     size="small"
-                                                    error={this.state.nameErrorMessage ? true : false}
-                                                    helperText={this.state.nameErrorMessage}
-                                                    onChange={this.onHandleTaxNameChange}
+                                                    multiline
                                                 />
-                                            </>}
-
+                                            </>
+                                        }
+                                        <div className="c-text-field-name">Payment Details: {this.getPaymentTitle()}</div>
+                                        <div className="detail">
+                                            <div className="c-amount">{this.getPaymentDetail()} </div>
+                                            <div className="c-date">  {!this.state.loading ? (new Date(this.state.currentOrder?.createDate)).toLocaleString() : ""}</div>
+                                        </div>
                                     </div>
-                                    {!this.state.fulFill && <Button
-                                        type="cancel"
-                                        variant="outlined"
-                                        disabled={this.state.disable}
-                                        sx={{ mt: 3, mb: 2 }}
-                                        onClick={() => this.onHandleFulFill()}
-                                    >
-                                        Fulfill
-                                    </Button>}
+                                    <div className="payment">
+                                        {
+                                            this.state.currentOrder?.status === 2 &&
+                                            !this.state.currentOrder?.canceledOrderInfo &&
+                                            this.state.currentOrder?.total - this.state.currentOrder?.bookingInfo?.bookingAdvance > 0 &&
+                                            <FormControlLabel
+                                                disabled={this.state.disable}
+                                                label={<div className="c-text-field-name-1">Fulfill</div>}
+                                                control={
+                                                    <Checkbox
+                                                        icon={<CircleUnchecked />}
+                                                        size="small"
+                                                        checkedIcon={<CircleCheckedFilled />}
+                                                        checked={this.state.fulFill}
+                                                        onClick={() => this.onHandleFulFill()}
+                                                    />
+                                                }
+                                            />
+                                        }
+                                    </div>
+
                                     <div className="c-receipt-info-control-form">
                                         <Button
                                             type="cancel"

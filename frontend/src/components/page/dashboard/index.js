@@ -20,7 +20,7 @@ class DashBoard extends Component {
                     id: 'apexchart-example'
                 },
                 xaxis: {
-                    categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
+                    categories: ["1 Jul", "2 Jul", "3 Jul", "4 Jul", "5 Jul", "6 Jul", "7 Jul", "8 Jul", "9 Jul", "10 Jul", "11 Jul", "12 Jul", "13 Jul", "14 Jul", "15 Jul", "16 Jul", "17 Jul", "18 Jul"]
                 }
             },
             series: [{

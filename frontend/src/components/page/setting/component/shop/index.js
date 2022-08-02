@@ -51,7 +51,6 @@ class Shop extends Component {
     }
     onHandleSaveClick = async (e) => {
         e.preventDefault();
-        console.log(this.state)
         this.setState({
             disable: true,
             loading: true

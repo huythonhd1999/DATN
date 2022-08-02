@@ -278,7 +278,6 @@ class CouponInfo extends Component {
     }
 
     render() {
-        console.log(this.state)
         return (
             <div className="c-settings-page">
                 <LoadingScreen

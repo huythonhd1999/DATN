@@ -11,8 +11,10 @@ orderRouter.use(authMiddleware.isAuth)
 
 //order route
 orderRouter.post('/create-order', orderController.createOrder)
-orderRouter.post('/edit-order', orderController.editOrder)
-orderRouter.post('/delete-order', orderController.deleteOrder)
+orderRouter.post('/create-canceled-order', orderController.createCanceledOrder)
+orderRouter.post('/edit-booking-border', orderController.editBookingOrder)
+// orderRouter.post('/delete-order', orderController.deleteOrder)
+
 
 orderRouter.use(notFound)
 

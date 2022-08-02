@@ -265,8 +265,7 @@ class CouponAdd extends Component {
         })
     }
 
-    render() {
-        console.log(this.state)
+    render() { 
         return (
             <div className="c-settings-page">
                 <LoadingScreen

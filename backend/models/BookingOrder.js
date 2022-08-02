@@ -12,7 +12,7 @@ exports.getBookingOrderByOrderId = (orderId) => {
 }
 
 exports.editBookingOrder = (data, Id) => {
-    return knex('Booking_Order').where('Id', Id).update({
+    return knex('Booking_Order').where('orderId', Id).update({
         ...data
     })
 }

@@ -44,15 +44,18 @@ class Receipts extends Component {
                 id: item.Id,
                 createDate: (new Date (item.createDate)).toLocaleString(),
                 mobilePhone: item.customerInfo?.mobilePhone,
-                orderType: this.getOrderType(item.status),
+                orderType: this.getOrderType(item),
                 total: item.total,
                 status: this.getStatus(item)
             }
         })
     }
 
-    getOrderType(status)  {
-        switch(status) {
+    getOrderType(item)  {
+        if (item.canceledOrderInfo) {
+            return "Canceled" 
+        }
+        switch(item.status) {
             case 1:
                 return "Immediate Sale"
             case 2: 
@@ -68,7 +71,7 @@ class Receipts extends Component {
         if(item.immediateSaleInfo) {
             return "Finished"
         }
-        if (item.bookingInfo.bookingAdvance < item.total) {
+        if (item.bookingInfo?.bookingAdvance < item.total) {
             return "Unfinished"
         } else {
             return "Finished"

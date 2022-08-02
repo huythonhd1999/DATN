@@ -7,6 +7,7 @@ const ImmediateSaleOrder = require('../models/ImmediateSaleOrder')
 const CanceledOrder = require('../models/CanceledOrder')
 const Product = require('../models/Product')
 const Tax = require('../models/Tax')
+const Coupon = require('../models/Coupon')
 const Addon = require('../models/Addon')
 const Variant = require('../models/Variant')
 const User = require('../models/User')
@@ -60,6 +61,9 @@ exports.getOrder = async function (req, res) {
         }
         order.canceledOrderInfo = await CanceledOrder.getCanceledOrderByOrderId(order.Id)
         order.userInfo = await User.getUser(order.userId)
+        if (order.couponId) {
+            order.couponInfo = await Coupon.getCoupon(order.couponId)
+        }
 
         //lấy thông tin về các item trong order
         order.orderItemList = await OrderItem.getOrderItemListByOrderId(order.Id)
@@ -68,7 +72,7 @@ exports.getOrder = async function (req, res) {
             orderItem.taxInfo = await Tax.getTax(orderItem.productInfo.taxId) || null
             orderItem.selectedVariant = await Variant.getVariant(orderItem.variantId)
             orderItem.selectedAddons = await OrderItemAddon.getOrderItemAddonListByOrderItemId(orderItem.Id)
-            for(var orderItemAddon of orderItem.selectedAddons) {
+            for (var orderItemAddon of orderItem.selectedAddons) {
                 orderItemAddon.addonInfo = await Addon.getAddon(orderItemAddon.addonId)
             }
         }
@@ -163,14 +167,34 @@ exports.createOrder = async function (req, res) {
     }
 };
 
-exports.editOrder = async function (req, res) {
+exports.createCanceledOrder = async function (req, res) {
+    try {
+        var info = req.body
+        await CanceledOrder.createCanceledOrder(info)
+        // await Order.editOrder({ status: 3 }, info.orderId) //set lại  loại order là canceled
+        var canceledOrder = await CanceledOrder.getCanceledOrderByOrderId(info.orderId)
+        res.status(200).json({
+            canceledOrder: canceledOrder,
+            success: true,
+        })
+    }
+    catch (err) {
+        console.log(err)
+        return res.status(500).json({
+            success: false,
+            err,
+        });
+    }
+};
+
+exports.editBookingOrder = async function (req, res) {
     try {
         var data = req.body
-        var id = req.body.Id
-        await Order.editOrder(data, id)
-        var order = await Order.getOrder(id)
+        var id = req.body.orderId
+        await BookingOrder.editBookingOrder(data, id)
+        var bookingOrder = await BookingOrder.getBookingOrderByOrderId(id)
         res.status(200).json({
-            order: order
+            bookingOrder: bookingOrder
         })
     }
     catch (err) {
