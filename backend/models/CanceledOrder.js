@@ -30,3 +30,13 @@ exports.deleteCanceledOrder = (canceledOrderId) => {
 exports.searchCanceledOrder = (query) => {
     return knex.from('Canceled_Order').select('*').where('name', 'like', `%${query}%`)
 }
+
+exports.getTotalCanceledOrderToday = () => { //lay tong so tien ma khach hang da duoc tra lai
+    const now = new Date()
+    const startTime = new Date(now.setHours(0,0,0,0));
+    const endTime = new Date(now.setHours(23,59,59,999));
+    return knex("Canceled_Order").sum("refundAmount", {as: 'totalRefundAmountToday'})
+    .where("createDate",">=", startTime)
+    .where("createDate","<=", endTime)
+    .first()
+}

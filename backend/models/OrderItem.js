@@ -30,3 +30,16 @@ exports.deleteOrderItem = (orderItemId) => {
 exports.searchOrderItem = (query) => {
     return knex.from('Order_Item').select('*').where('name', 'like', `%${query}%`)
 }
+
+exports.getTopVariantToday = () => {
+    const now = new Date()
+    const startTime = new Date(now.setHours(0, 0, 0, 0));
+    const endTime = new Date(now.setHours(23, 59, 59, 999));
+
+    return knex.from('Order_Item').select('variantId',)
+        .count("variantId", { as: 'numVariant' })
+        .groupBy('variantId')
+        .whereIn('orderId', function () {
+            this.select('Id').from('Order').where("createDate", ">=", startTime).where("createDate", "<=", endTime)
+        });
+}

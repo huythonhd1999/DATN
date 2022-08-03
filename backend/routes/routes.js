@@ -7,6 +7,7 @@ const pettyCashRouter = require('./pettyCashRoutes')
 const productRouter = require('./productRoutes')
 const customerRouter = require('./customerRoutes')
 const orderRouter = require('./orderRoutes')
+const dashboardRouter = require('./dashboardRoutes')
 const notFound = require('./404')
 
 module.exports = function (app) {
@@ -19,5 +20,6 @@ module.exports = function (app) {
     app.use('/post', postRouter)
     app.use('/answer', answerRouter)
     app.use('/admin', adminRouter)
+    app.use('/dashboard', dashboardRouter)
     app.use(notFound)
 }
