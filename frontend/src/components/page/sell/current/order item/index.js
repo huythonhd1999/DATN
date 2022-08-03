@@ -191,6 +191,10 @@ class OrderItems extends Component {
         return variantPrice * orderItem.quantity
     }
 
+    onHandleClickHold = () => {
+        this.props.setIsShowDraftModal(true)
+    }
+
     render() {
         return (
             <div className='order-element'>
@@ -261,6 +265,7 @@ class OrderItems extends Component {
                         <div className="c-text-field-name">
                             Order Details
                             <div className='action-button'>
+                                <button onClick={() => this.onHandleClickHold()}>Hold</button>
                                 <button onClick={() => this.props.setOrderItemList([])}>Clear</button>
                             </div>
                         </div>
@@ -359,6 +364,9 @@ const mapDispatchToProp = (dispatch, _props) => {
         },
         setCoupon: (coupon) => {
             dispatch(SellAction.setCoupon(coupon))
+        },
+        setIsShowDraftModal: (isShow) => {
+            dispatch(SellAction.setIsShowDraftModal(isShow))
         }
     }
 }

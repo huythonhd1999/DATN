@@ -194,6 +194,7 @@ exports.editBookingOrder = async function (req, res) {
         await BookingOrder.editBookingOrder(data, id)
         var bookingOrder = await BookingOrder.getBookingOrderByOrderId(id)
         res.status(200).json({
+            success: true,
             bookingOrder: bookingOrder
         })
     }

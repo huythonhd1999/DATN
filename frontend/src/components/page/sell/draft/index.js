@@ -8,6 +8,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
+import { format } from "date-fns";
+import SaveOrderToDraftModal from '../../../common/draft modal';
 
 export default class Draft extends Component {
     constructor(props) {
@@ -15,33 +17,27 @@ export default class Draft extends Component {
         this.state = {
             disable: true,
             loading: false,
-            Id: 1,
-            name: "",
-            percent: "",
-            status: 1,
-            currentTax: {},
-            nameErrorMessage: "",
-            percentErrorMessage: "",
-            type: 1,
-            fulFill: false
+            draftOrders: [],
+            isShowDraftModel: false,
         };
     }
 
-    createData(name, calories, fat, carbs, protein) {
-        return { name, calories, fat, carbs, protein };
+    componentDidMount = () => {
+        let draftOrders = JSON.parse(localStorage.getItem("draftOrders"))
+        this.setState({
+            draftOrders: draftOrders
+        })
     }
 
     render() {
-        const rows = [
-            this.createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-            this.createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-            this.createData('Eclair', 262, 16.0, 24, 6.0),
-            this.createData('Cupcake', 305, 3.7, 67, 4.3),
-            this.createData('Gingerbread', 356, 16.0, 49, 3.9),
-        ];
-
         return (
             <div className='draft-order-table'>
+                {this.state.isShowDraftModel && 
+                    <SaveOrderToDraftModal
+                        open = {this.state.isShowDraftModel}
+                        onRemove = {() => true}
+                    />
+                }
                 <TableContainer component={Paper}>
                     <Table aria-label="simple table">
                         <TableHead>
@@ -53,18 +49,18 @@ export default class Draft extends Component {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {rows.map((row) => (
+                            {this.state.draftOrders.map((order, index) => (
                                 <TableRow
-                                    key={row.name}
+                                    key={index}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
-                                    <TableCell component="th" scope="row" sx={{color: "blue"}} onClick={() => this.props.onClickDraftOrder()}>
-                                        {row.name}
+                                    <TableCell component="th" scope="row" sx={{color: "blue"}} >
+                                        {format(new Date(order.createDate), "yyyy-MM-dd HH:mm:ss")}
                                     </TableCell>
-                                    <TableCell>{row.calories}</TableCell>
-                                    <TableCell>{row.fat}</TableCell>
+                                    <TableCell>{order.notes}</TableCell>
+                                    <TableCell>{order.detail.total}</TableCell>
                                     <TableCell>
-                                        <div className='action-button'>
+                                        <div className='action-button' onClick={() => this.setState({isShowDraftModel: true})}>
                                             <ModeEditOutlineOutlinedIcon />
                                         </div>
                                     </TableCell>

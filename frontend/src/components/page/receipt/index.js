@@ -42,7 +42,7 @@ class Receipts extends Component {
         return this.state.orderList.map(item => {
             return {
                 id: item.Id,
-                createDate: (new Date (item.createDate)).toLocaleString(),
+                createDate: (new Date(item.createDate)).toLocaleString(),
                 mobilePhone: item.customerInfo?.mobilePhone,
                 orderType: this.getOrderType(item),
                 total: item.total,
@@ -51,14 +51,14 @@ class Receipts extends Component {
         })
     }
 
-    getOrderType(item)  {
+    getOrderType(item) {
         if (item.canceledOrderInfo) {
-            return "Canceled" 
+            return "Canceled"
         }
-        switch(item.status) {
+        switch (item.status) {
             case 1:
                 return "Immediate Sale"
-            case 2: 
+            case 2:
                 return "Booking"
             case 3:
                 return "Canceled"
@@ -68,7 +68,7 @@ class Receipts extends Component {
     }
 
     getStatus(item) {
-        if(item.immediateSaleInfo) {
+        if (item.immediateSaleInfo) {
             return "Finished"
         }
         if (item.bookingInfo?.bookingAdvance < item.total) {
@@ -140,7 +140,7 @@ class Receipts extends Component {
                         <div className="c-receipts-content-info">
                             <div className="c-receipts-detail-header">
                                 <div className="tag-list">
-                                    <Tabs  value = {this.props.orderOptions.selectedOrderType} onChange={this.setSelectedOrderType}>
+                                    <Tabs value={this.props.orderOptions.selectedOrderType} onChange={this.setSelectedOrderType}>
                                         <Tab label="All" value={0} />
                                         <Tab label="Immediate Sale" value={1} />
                                         <Tab label="Booking" value={2} />
@@ -185,12 +185,18 @@ class Receipts extends Component {
         );
     }
     setSelectedOrderType = (_e, newValue) => {
-        switch(newValue) {
+        switch (newValue) {
             case 0:
                 this.setState({
                     orderList: this.state.allOrder
                 })
                 break
+            case 3:
+                this.setState({
+                    orderList: this.state.allOrder.filter((item) => item.canceledOrderInfo)
+                })
+                break
+
             default:
                 this.setState({
                     orderList: this.state.allOrder.filter((item) => item.status === newValue)

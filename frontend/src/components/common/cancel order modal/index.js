@@ -1,9 +1,9 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
-import { Box } from '@mui/material';
+import { Box, FormControl, MenuItem, Select } from '@mui/material';
 import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
+
 
 const style = {
     position: 'absolute',
@@ -24,34 +24,46 @@ export default function CancelOrderModal(props) {
         props.onClose()
     }
 
-    const [selectedVariant, setSelectedVariant] = React.useState(props.product.selectedVariant || props.product.variantList[0] || props.product.baseVariantInfo)
-    const [selectedAddons, setSelectedAddons] = React.useState(props.product.selectedAddons || [])
-    const [quantity, setQuantity] = React.useState(props.product.quantity || 1)
+    const [paymentType, setPaymentType] = React.useState(1)
+    const [refundAmount, setRefundAmount] = React.useState(0)
+    const [notes, setNotes] = React.useState("")
+    const [refundAmountError, setRefundAmountError] = React.useState("")
 
-    const handleSave = () => {
-        const orderItem = {
-            ...props.product,
-            selectedVariant: selectedVariant,
-            selectedAddons: selectedAddons,
-            quantity: quantity
+
+    const handelRefundAmountChange = (e) => {
+        let regEx = new RegExp("^[1-9]+[0-9]*$|^$")
+        if (regEx.test(e.target.value)) {
+            setRefundAmount(e.target.value)
+            if (e.target.value > props.orderDetail.total) {
+                setRefundAmountError("Can not set the refund amount greater than the total order value")
+            } else if (e.target.value > props.orderDetail?.bookingInfo?.bookingAdvance) {
+                setRefundAmountError("Can not set the refund amount greater than the booking advance")
+            } else if (!!!e.target.value) {
+                setRefundAmountError("Can not let this field empty")
+            }
+            else {
+                setRefundAmountError("")
+            }
         }
-        props.onSave(orderItem)
+    }
+    const handleClickSave =  () => {
+        if (refundAmountError) {
+            return
+        }
+        const canceledOrderInfo = {
+            orderId: props.orderDetail?.Id,
+            refundAmount: refundAmount,
+            paymentType: paymentType,
+            notes: notes
+        }
+        props.onClickSave(canceledOrderInfo)
         props.onClose()
     }
-
-    const handleRemove = () => {
-        props.onRemove()
-        props.onClose()
-    }
-
-    // React.useEffect(() => {
-    //     setSelectedVariant(props.product.variantList[0])
-    // }, []);
 
     return (
-        <div>
+        <div className='canceled-order-model'>
             <Modal
-                open={!!props.product}
+                open={!!props.open}
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
@@ -59,15 +71,15 @@ export default function CancelOrderModal(props) {
                 <Box sx={style}>
                     <div className='modal-content'>
                         <div className='modal-header'>
-                            Select options for {props.product.name}
+                            Confirm Cancel Order
                         </div>
                         <div className='modal-info'>
                             <div className='groups'>
-                                <div className="c-text-field-name-1">Select variants</div>
+                                <div className="c-text-field-name-1">Refund Payment Type</div>
                                 <FormControl variant="outlined" size="small" fullWidth>
                                     <Select
-                                        value={this.props.sellProps.paymentType}
-                                        onChange={(e) => this.handlePaymentTypeChange(e)}
+                                        value={paymentType}
+                                        onChange={(e) => setPaymentType(e.target.value)}
                                         fullWidth
                                     >
                                         <MenuItem value={1}>Cash</MenuItem>
@@ -77,34 +89,30 @@ export default function CancelOrderModal(props) {
                                 </FormControl>
                             </div>
                             <div className='groups'>
-                                <div className="c-text-field-name-1">Select addons</div>
+                                <div className="c-text-field-name-1">Enter Refund Amount</div>
                                 <TextField
-                                        margin="normal"
-                                        required
-                                        value={this.state.name}
-                                        fullWidth
-                                        disabled={this.state.disable}
-                                        size="small"
-                                        error={this.state.nameErrorMessage ? true : false}
-                                        helperText={this.state.nameErrorMessage}
-
-                                        onChange={this.onHandleTaxNameChange}
-                                    />
+                                    margin="normal"
+                                    required
+                                    value={refundAmount}
+                                    fullWidth
+                                    sx={{marginBottom: 0, marginTop: 0}}
+                                    size="small"
+                                    error={refundAmountError === "" ? false : true}
+                                    helperText={refundAmountError}
+                                    onChange={(e) => handelRefundAmountChange(e)}
+                                />
                             </div>
                             <div className='groups'>
-                                <div className="c-text-field-name-1">Quantity</div>
+                                <div className="c-text-field-name-1">Cancellation Notes</div>
                                 <TextField
-                                        margin="normal"
-                                        required
-                                        value={this.state.name}
-                                        fullWidth
-                                        disabled={this.state.disable}
-                                        size="small"
-                                        error={this.state.nameErrorMessage ? true : false}
-                                        helperText={this.state.nameErrorMessage}
-
-                                        onChange={this.onHandleTaxNameChange}
-                                    />
+                                    margin="normal"
+                                    required
+                                    sx={{marginBottom: 0, marginTop: 0}}
+                                    value={notes}
+                                    fullWidth
+                                    size="small"
+                                    onChange={(e) => setNotes(e.target.value)}
+                                />
                             </div>
                             <div className='controller'>
                                 <Button
@@ -115,19 +123,11 @@ export default function CancelOrderModal(props) {
                                 >
                                     Cancel
                                 </Button>
-                                {props.onRemove && <Button
-                                    type="cancel"
-                                    variant="outlined"
-                                    sx={{ mt: 3, mb: 2, mr: 1 }}
-                                    onClick={() => handleRemove()}
-                                >
-                                    Remove Item
-                                </Button>}
                                 <Button
                                     type="submit"
                                     variant="contained"
                                     sx={{ mt: 3, mb: 2 }}
-                                    onClick={() => handleSave()}
+                                    onClick={() => handleClickSave()}
                                 >
                                     Save
                                 </Button>

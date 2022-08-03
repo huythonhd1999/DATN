@@ -29,8 +29,13 @@ import {
 //import sidebar css from react-pro-sidebar module and our custom css
 import "react-pro-sidebar/dist/css/styles.css";
 import "./navSideBar.css";
+import { useSelector } from "react-redux";
+
 
 const NavSideBar = () => {
+    const userInfo = useSelector((state) => state.authReducer)
+
+
     //create initial menuCollapse state using useState hook
     const [menuCollapse, setMenuCollapse] = useState(false);
 
@@ -74,18 +79,27 @@ const NavSideBar = () => {
                             Petty Cash
                             <Link to="/expenses" />
                         </MenuItem>
-                        <MenuItem icon={<FiTag />}>
-                            Products
-                            <Link to="/products" />
-                        </MenuItem>
-                        <MenuItem icon={<FiUser />}>
-                            Customers
-                            <Link to="/customers" />
-                        </MenuItem>
-                        <MenuItem icon={<FiSettings />}>
-                            Settings
-                            <Link to="/settings/shop" />
-                        </MenuItem>
+                        {
+                            userInfo.user?.userType === 1 &&
+                            <MenuItem icon={<FiTag />}>
+                                Products
+                                <Link to="/products" />
+                            </MenuItem>
+                        }
+                        {
+                            userInfo.user?.userType === 1 &&
+                            <MenuItem icon={<FiUser />}>
+                                Customers
+                                <Link to="/customers" />
+                            </MenuItem>
+                        }
+                        {
+                            userInfo.user?.userType === 1 &&
+                            <MenuItem icon={<FiSettings />}>
+                                Settings
+                                <Link to="/settings/shop" />
+                            </MenuItem>
+                        }
                     </Menu>
                 </SidebarContent>
                 <SidebarFooter>

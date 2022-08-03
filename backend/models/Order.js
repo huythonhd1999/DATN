@@ -2,9 +2,9 @@ const knex = require('./database')
 const bcrypt = require('bcrypt')
 const config = require('../config/config')
 
-//Use for auth login
+
 exports.getOrderList = () => {
-    return knex.from('Order').select('*')
+    return knex.from('Order').select('*').orderBy('createDate', 'desc')
 }
 
 exports.getOrder = (orderId) => {

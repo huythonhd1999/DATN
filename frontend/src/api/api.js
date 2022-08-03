@@ -293,6 +293,12 @@ const Api = {
     getOrder: (id) => {
         return guest.get(`${baseUrl}/order/id/${id}`)
     },
+    editBookingOrder: (bookingOrder) => {
+        return user.post(`${baseUrl}/order/edit-booking-border`, bookingOrder)
+    },
+    createCanceledOrder: (canceledOrder) => {
+        return user.post(`${baseUrl}/order/create-canceled-order`, canceledOrder)
+    },
 
 }
 export default Api;

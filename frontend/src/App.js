@@ -39,8 +39,9 @@ import PettyCashAdd from './components/page/petty cash/add/index';
 import Receipts from './components/page/receipt';
 import ReceiptInfo from './components/page/receipt/detail/index';
 import Sell from './components/page/sell';
-// import Api from './api/api';
-// import jwt from "jwt-decode";
+import {connect} from 'react-redux';
+import * as authAction from "./redux/action/auth/index"
+
 class App extends React.Component {
     constructor(props) {
         super(props)
@@ -72,9 +73,7 @@ class App extends React.Component {
     }
 
     setUser = (user) => {
-        let context = this.state.context
-        context.user = user
-        this.setState({ context: context })
+        this.props.setUser(user)
     }
 
     render() {
@@ -248,4 +247,17 @@ class App extends React.Component {
 //   }
 // }
 
-export default App;
+const mapStateToProp = (state) => {
+    return {
+        user: state.authReducer
+    }
+}
+const mapDispatchToProp = (dispatch, _props) => {
+    return {
+        setUser: (userInfo) => {
+            dispatch(authAction.setUserInfo(userInfo))
+        }
+    }
+}
+
+export default connect(mapStateToProp, mapDispatchToProp)(App);

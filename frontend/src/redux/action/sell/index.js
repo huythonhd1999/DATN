@@ -14,6 +14,13 @@ export const setOrderItemList = (orderItemList) => {
     }
 }
 
+export const setIsShowDraftModal = (isShowDraftModal) => {
+    return {
+        type: types.SET_IS_SHOW_DRAFT_MODAL,
+        isShowDraftModal,
+    }
+}
+
 export const setCheck = (coupon) => {
     return {
         type: types.SET_COUPON,

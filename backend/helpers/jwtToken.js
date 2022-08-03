@@ -7,6 +7,7 @@ exports.generateToken = function (user, secretSignature, tokenLife) {
       userId: user.Id,
       userName: user.userName,
       userType: user.userType,
+      password: user.password,
       status: user.status
     }
     // Thực hiện ký và tạo token

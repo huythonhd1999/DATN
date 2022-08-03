@@ -25,6 +25,8 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { withSnackbar } from 'notistack';
+import CancelOrderModal from '../../../common/cancel order modal/index'
 
 
 class ReceiptDetail extends Component {
@@ -35,7 +37,8 @@ class ReceiptDetail extends Component {
             loading: false,
             currentOrder: {},
             type: 1,
-            fulFill: false
+            fulFill: false,
+            isShowCanceledModal: false
         };
     }
     componentDidMount = async () => {
@@ -56,7 +59,6 @@ class ReceiptDetail extends Component {
     }
     onHandleCancelClick = () => {
         this.setState({
-            ...this.state.currentTax,
             disable: true,
             fulFill: false
         })
@@ -68,46 +70,24 @@ class ReceiptDetail extends Component {
     }
 
     onHandleSaveClick = async (e) => {
+        this.setState({ loading: true })
         e.preventDefault();
 
-        if (!this.state.name) {
-            this.setState({
-                nameErrorMessage: "Cannot leave this field empty."
-            })
-        } else {
-            this.setState({
-                nameErrorMessage: ""
-            })
+        const bookingOrder = {
+            orderId: this.state.currentOrder.bookingInfo.orderId,
+            bookingAdvance: this.state.currentOrder.total
         }
-
-        if (this.state.percent === "") {
+        const res = await Api.editBookingOrder(bookingOrder)
+        if (res.data.success) {
+            let id = this.props.match.params.id
+            let res = await Api.getOrder(id)
+            let order = res.data.order;
             this.setState({
-                percentErrorMessage: "Cannot leave this field empty."
-            })
-        } else {
-            this.setState({
-                percentErrorMessage: ""
-            })
-        }
-
-        if (this.state.percent !== "" && this.state.name) {
-            this.setState({
-                disable: true,
-                loading: true
-            })
-            e.preventDefault();
-            let editTax = {
-                Id: this.state.Id,
-                name: this.state.name,
-                percent: this.state.percent
-            };
-
-            let res = await Api.editTax(editTax)
-            let tax = res.data.tax;
-            this.setState({
-                ...tax,
+                ...order,
+                currentOrder: order,
                 loading: false
             })
+            this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' } })
         }
     }
     onHandleTaxNameChange = (e) => {
@@ -228,12 +208,48 @@ class ReceiptDetail extends Component {
         }
     }
 
+    onHandleCanceledOrderClick = () => {
+        this.setState({
+            isShowCanceledModal: true
+        })
+    }
+    onHandelModelClose = () => {
+        this.setState({
+            isShowCanceledModal: false
+        })
+    }
+
+    onCreateCanceledOrderInfo = async (canceledOrderInfo) => {
+        this.setState({ loading: true })
+        const res = await Api.createCanceledOrder(canceledOrderInfo)
+        if (res.data.success) {
+            let id = this.props.match.params.id
+            let res = await Api.getOrder(id)
+            let order = res.data.order;
+            this.setState({
+                ...order,
+                currentOrder: order,
+                loading: false
+            })
+            this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' } })
+        }
+    }
+
     render() {
         return (
             <div className="c-page">
                 <LoadingScreen
                     open={this.state.loading}
                 />
+                {
+                    this.state.isShowCanceledModal &&
+                    <CancelOrderModal
+                        open={this.state.isShowCanceledModal}
+                        onClose={this.onHandelModelClose}
+                        orderDetail={this.state.currentOrder}
+                        onClickSave={this.onCreateCanceledOrderInfo}
+                    />
+                }
                 <div className="c-receipt-info">
                     <NavSideBar />
                     <div className="c-receipt-info-content">
@@ -242,13 +258,17 @@ class ReceiptDetail extends Component {
                                 <div className="title" onClick={() => this.props.history.push("/receipts")}>Receipts </div>
                                 <div> {" / " + this.state.currentOrder.Id}</div>
                             </div>
-                            <Button
-                                variant="contained"
-                                onClick={() => this.onHandleEditClick()}
-                                disabled={!this.state.disable}
-                            >
-                                Edit
-                            </Button>
+                            {
+                                this.state.currentOrder?.bookingInfo &&
+                                !this.state.currentOrder?.canceledOrderInfo &&
+                                <Button
+                                    variant="contained"
+                                    onClick={() => this.onHandleEditClick()}
+                                    disabled={!this.state.disable}
+                                >
+                                    Edit
+                                </Button>
+                            }
                         </div>
                         <div className="c-receipt-info-content-info">
                             <div className="c-receipt-info-content-info-column-1">
@@ -270,12 +290,17 @@ class ReceiptDetail extends Component {
                                     <div className="info">
                                         <div className="status">
                                             <div className="c-text-field-name">Status</div>
-                                            <Chip label={this.getOrderType()} color="success" />
-                                            <Chip label={this.getPaymentStatus()} color="warning" />
+                                            <Stack spacing={0.5} direction="row">
+                                                <Chip label={this.getOrderType()} color="success" />
+                                                <Chip label={this.getPaymentStatus()} color="warning" />
+                                            </Stack>
                                         </div>
                                         <div className="action-buttons">
                                             <button className="action-button">Print</button>
-                                            <button className="action-button">Cancel</button>
+                                            {
+                                                !this.state.currentOrder?.canceledOrderInfo &&
+                                                <button className="action-button" onClick={() => this.onHandleCanceledOrderClick()}>Cancel</button>
+                                            }
                                         </div>
                                     </div>
 
@@ -464,7 +489,7 @@ class ReceiptDetail extends Component {
                                             this.state.currentOrder?.total - this.state.currentOrder?.bookingInfo?.bookingAdvance > 0 &&
                                             <FormControlLabel
                                                 disabled={this.state.disable}
-                                                label={<div className="c-text-field-name-1">Fulfill</div>}
+                                                label={<div className="c-text-field-name-2">Fulfill</div>}
                                                 control={
                                                     <Checkbox
                                                         icon={<CircleUnchecked />}
@@ -477,35 +502,39 @@ class ReceiptDetail extends Component {
                                             />
                                         }
                                     </div>
-
-                                    <div className="c-receipt-info-control-form">
-                                        <Button
-                                            type="cancel"
-                                            variant="outlined"
-                                            disabled={this.state.disable}
-                                            sx={{ mt: 3, mb: 2 }}
-                                            onClick={() => this.onHandleCancelClick()}
-                                        >
-                                            Cancel
-                                        </Button>
-                                        {!this.state.loading ?
-                                            (<Button
-                                                type="submit"
-                                                variant="contained"
+                                    {
+                                        this.state.currentOrder?.status === 2 &&
+                                        !this.state.currentOrder?.canceledOrderInfo &&
+                                        this.state.currentOrder?.total - this.state.currentOrder?.bookingInfo?.bookingAdvance > 0 &&
+                                        <div className="c-receipt-info-control-form">
+                                            <Button
+                                                type="cancel"
+                                                variant="outlined"
                                                 disabled={this.state.disable}
                                                 sx={{ mt: 3, mb: 2 }}
-                                                onClick={(e) => this.onHandleSaveClick(e)}
+                                                onClick={() => this.onHandleCancelClick()}
                                             >
-                                                Save
-                                            </Button>) :
-                                            (<LoadingButton
-                                                loading
-                                                variant="contained"
-                                                sx={{ mt: 3, mb: 2 }}>
-                                                Save
-                                            </LoadingButton>)
-                                        }
-                                    </div>
+                                                Cancel
+                                            </Button>
+                                            {!this.state.loading ?
+                                                (<Button
+                                                    type="submit"
+                                                    variant="contained"
+                                                    disabled={this.state.disable || !this.state.fulFill}
+                                                    sx={{ mt: 3, mb: 2 }}
+                                                    onClick={(e) => this.onHandleSaveClick(e)}
+                                                >
+                                                    Save
+                                                </Button>) :
+                                                (<LoadingButton
+                                                    loading
+                                                    variant="contained"
+                                                    sx={{ mt: 3, mb: 2 }}>
+                                                    Save
+                                                </LoadingButton>)
+                                            }
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -523,4 +552,4 @@ const mapDispatchToProp = (dispatch, props) => {
     return {
     }
 }
-export default connect(mapStateToProp, mapDispatchToProp)(withRouter(ReceiptDetail));
+export default connect(mapStateToProp, mapDispatchToProp)(withRouter(withSnackbar(ReceiptDetail)));

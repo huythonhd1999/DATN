@@ -14,6 +14,7 @@ const initState = {
     canFinishOrder: false,
     cashTendered: 0,
     isDoorDelivery: 1,
+    isShowDraftModal: false
 }
 
 function getOrderItemPrice(orderItem) {
@@ -108,6 +109,11 @@ const sellReducer = (state = initState, action) => {
             return {
                 ...state,
                 isDoorDelivery: action.isDoorDelivery,
+            }
+        case types.SET_IS_SHOW_DRAFT_MODAL:
+            return {
+                ...state,
+                isShowDraftModal: action.isShowDraftModal,
             }
         case types.RESET_STATE:
             return {
