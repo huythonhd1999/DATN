@@ -91,6 +91,13 @@ export const setCashTendered = (cashTendered) => {
     }
 }
 
+export const setDraftOrder = (order) => {
+    return {
+        type: types.SET_DRAFT_ORDER,
+        ...order
+    }
+}
+
 export const resetSate = () => {
     return {
         type: types.RESET_STATE,

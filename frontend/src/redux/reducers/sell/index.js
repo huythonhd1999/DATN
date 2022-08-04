@@ -119,6 +119,7 @@ const sellReducer = (state = initState, action) => {
             return {
                 ...initState,
             }
+        case types.SET_DRAFT_ORDER:
         default:
             return {
                 ...state,

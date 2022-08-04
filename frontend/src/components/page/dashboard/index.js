@@ -1,4 +1,4 @@
-import { Card, CardContent, FormControl, MenuItem, Select } from "@mui/material";
+import { Button, Card, CardContent, FormControl, MenuItem, Select } from "@mui/material";
 import React, { Component } from "react";
 import NavSideBar from "../../common/navigation bar/navSideBar";
 import Table from '@mui/material/Table';
@@ -9,46 +9,177 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Chart from 'react-apexcharts'
+import Api from "../../../api/api";
+import { withRouter } from "react-router-dom";
+import { connect } from 'react-redux';
 import "./index.scss"
+import LoadingScreen from "../../common/loading";
+import { format } from 'date-fns'
 
 class DashBoard extends Component {
     constructor(props) {
         super(props);
         this.state = {
             options: {
-                chart: {
-                    id: 'apexchart-example'
-                },
                 xaxis: {
-                    categories: ["1 Jul", "2 Jul", "3 Jul", "4 Jul", "5 Jul", "6 Jul", "7 Jul", "8 Jul", "9 Jul", "10 Jul", "11 Jul", "12 Jul", "13 Jul", "14 Jul", "15 Jul", "16 Jul", "17 Jul", "18 Jul"]
+                    categories: []
                 }
             },
             series: [{
-                name: 'series-1',
-                data: [30, 40, 35, 50, 49, 60, 70, 91, 125, 30, 40, 35, 50, 49, 60, 70, 91, 125]
+                name: 'Total sales',
+                data: []
             }],
-            scope: 1
+            scope: 1, //1 la hom nay 2 la 7 ngay truoc 3 la 30 ngay truoc
+            numNewCustomer: 0,
+            topOrderItemList: [],
+            totalBookingAdvance: 0,
+            totalImmediateSaleOrder: 0,
+            totalOrder: 0,
+            totalRefundAmount: 0,
+            numOrderToday: 0,
+            numCanceledOrderToday: 0,
+            loading: false,
+            detail: [],
+            paymentSummary: {}
         };
     }
 
-    createData(name, calories, fat, carbs, protein) {
-        return { name, calories, fat, carbs, protein };
-    }
-    handleScopeChange = (e) => {
+    handleScopeChange = async (e) => {
         this.setState({
             scope: e.target.value
         })
+        this.setState({ loading: true })
+        const res1 = await Api.getStatisticByDate(e.target.value)
+        const data1 = await res1.data
+        this.setState({
+            ...data1,
+            loading: false
+        }, () => { this.getChartData() })
+    }
+
+    componentDidMount = async () => {
+        this.setState({ loading: true })
+        const res = await Api.getTodayStatistic()
+        const data = res.data
+        const res1 = await Api.getStatisticByDate(this.state.scope)
+        const data1 = await res1.data
+        this.setState({
+            ...data,
+            ...data1,
+            loading: false
+        })
+        this.getChartData()
+    }
+    getProductName(order) {
+        if (order.productInfo) {
+            return order.productInfo.name + " / " + order.variantInfo.name
+        } else {
+            return order.variantInfo.name
+        }
+    }
+    getTotalOrder(data) {
+        let sum = 0
+        data.totalOrder.forEach((item) => {
+            sum = sum + item.totalOrder
+        })
+        return sum
+    }
+
+    getPaymentSummary() {
+        let totalOrder = 0
+        let totalCash = 0
+        let totalCard = 0
+        let totalOther = 0
+        // const totalPettyCash = 0
+        this.state.detail.forEach((item) => {
+            totalOrder = totalOrder + item.data.numOrderToday
+            item.data.totalOrder.forEach((detail) => {
+                switch (detail.paymentType) {
+                    case 1:
+                        totalCash = totalCash + detail.totalOrder
+                        break
+                    case 2:
+                        totalCard = totalCard + detail.totalOrder
+                        break
+                    case 3:
+                        totalOther = totalOther + detail.totalOrder
+                        break
+                    default:
+                }
+            })
+        })
+        return {
+            totalOrder: totalOrder,
+            totalCash: totalCash,
+            totalCard: totalCard,
+            totalOther: totalOther,
+        }
+    }
+
+
+    getChartData() {
+        let categories = []
+        let chartData = []
+        // const totalCash = 0
+        // const totalCard = 0
+        // const totalOther = 0
+        // const totalPettyCash = 0
+
+        switch (this.state.scope) {
+            case 1:
+                this.state.detail.forEach((data) => {
+                    categories.push(format(new Date(data.date), "HH"))
+                    chartData.push(this.getTotalOrder(data.data))
+                })
+                break
+            case 2:
+            case 3:
+                this.state.detail.forEach((data) => {
+                    categories.push(format(new Date(data.date), "MM-dd"))
+                    chartData.push(this.getTotalOrder(data.data))
+                })
+                categories.reverse()
+                chartData.reverse()
+                break
+            default:
+        }
+        const paymentSummary = this.getPaymentSummary()
+
+        this.setState({
+            options: {
+                xaxis: {
+                    categories: categories
+                }
+            },
+            series: [{
+                name: 'Total sales',
+                data: chartData
+            }],
+            paymentSummary: paymentSummary
+        })
+    }
+
+    getTotal() {
+        return (this.state.paymentSummary?.totalCard + this.state.paymentSummary?.totalCash + this.state.paymentSummary?.totalOther) || ""
+    }
+
+    getTimeRange() {
+        switch (this.state.scope) {
+            case 1:
+                return format(new Date(), "MM-dd")
+            case 2:
+            case 3:
+                return this.state.options.xaxis.categories[0] + " to " + this.state.options.xaxis.categories.slice(-1)[0]
+            default:
+        }
     }
 
     render() {
-        const rows = [
-            this.createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-            this.createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-            this.createData('Eclair', 262, 16.0, 24, 6.0),
-        ];
-
         return (
             <div className="dashboard-page">
+                <LoadingScreen
+                    open={this.state.loading}
+                />
                 <NavSideBar />
                 <div className="dashboard-content">
                     <div className="header">
@@ -57,56 +188,79 @@ class DashBoard extends Component {
                     <div className="dashboard-detail">
                         <div className="column-1">
                             <div className="hello-message">
-                                Hello {"Huy"}, here's how today is.
+                                Hello {this.props.user?.userName}, here's how today is.
                             </div>
                             <div className="analysis-today-cards">
                                 <Card sx={{ width: 250 }}>
                                     <CardContent className="summary">
                                         <div className='title'>Total sales</div>
-                                        <div className='value'>{"100"}</div>
+                                        <div className='value'>{this.state.totalOrder}</div>
                                     </CardContent>
                                 </Card>
                                 <Card sx={{ width: 250 }}>
                                     <CardContent className="summary">
-                                        <div className='title'>Total bills</div>
-                                        <div className='value'>{"100"}</div>
+                                        <div className='title'>Total orders</div>
+                                        <div className='value'>{this.state.numOrderToday}</div>
                                     </CardContent>
                                 </Card>
                                 <Card sx={{ width: 250 }}>
                                     <CardContent className="summary">
                                         <div className='title'>New customer</div>
-                                        <div className='value'>{"100"}</div>
+                                        <div className='value'>{this.state.numNewCustomer}</div>
                                     </CardContent>
                                 </Card>
                             </div>
                             <div className="top-selling">
                                 <div className="title">
-                                    Top Selling
+                                    {this.state.topOrderItemList.length === 0 ? "You haven't made a sale yet today." : "Top Selling"}
                                 </div>
                                 <div className="table">
-                                    <TableContainer component={Paper}>
-                                        <Table aria-label="simple table">
-                                            <TableHead>
-                                                <TableRow>
-                                                    <TableCell>Product Name</TableCell>
-                                                    <TableCell>Today's Demand</TableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                            <TableBody>
-                                                {rows.map((row) => (
-                                                    <TableRow
-                                                        key={row.name}
-                                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                    >
-                                                        <TableCell component="th" scope="row" sx={{ color: "blue" }} >
-                                                            {row.name}
-                                                        </TableCell>
-                                                        <TableCell>{row.calories}</TableCell>
+                                    {
+                                        this.state.topOrderItemList.length > 0 &&
+                                        <TableContainer component={Paper}>
+                                            <Table aria-label="simple table">
+                                                <TableHead>
+                                                    <TableRow>
+                                                        <TableCell>Product Name</TableCell>
+                                                        <TableCell>Today's Demand</TableCell>
                                                     </TableRow>
-                                                ))}
-                                            </TableBody>
-                                        </Table>
-                                    </TableContainer>
+                                                </TableHead>
+                                                <TableBody>
+                                                    {
+                                                        this.state.topOrderItemList.map((order, index) => {
+                                                            if (index < 5) {
+                                                                return (
+                                                                    <TableRow
+                                                                        key={index}
+                                                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                                    >
+                                                                        <TableCell component="th" scope="row" sx={{ color: "blue" }} >
+                                                                            {this.getProductName(order)}
+                                                                        </TableCell>
+                                                                        <TableCell>{order.numVariant}</TableCell>
+                                                                    </TableRow>
+                                                                )
+                                                            } else {
+                                                                return <></>
+                                                            }
+                                                        })
+                                                    }
+                                                </TableBody>
+                                            </Table>
+                                        </TableContainer>
+                                    }
+                                    {
+                                        this.state.topOrderItemList.length === 0 &&
+                                        <div className="message-component">
+                                            <Button
+                                                onClick={() => this.props.history.push("/sell")}
+                                                type="submit"
+                                                variant="contained"
+                                            >
+                                                Start selling
+                                            </Button>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                             <div className="need-help">
@@ -130,7 +284,7 @@ class DashBoard extends Component {
                                             Need help or support?
                                         </div>
                                         <div className="link-list">
-                                        <ul>
+                                            <ul>
                                                 <li>Launch live support</li>
                                                 <li>Email to huyvq218@gmail.com</li>
                                             </ul>
@@ -143,6 +297,7 @@ class DashBoard extends Component {
                             <div className="title">
                                 Sales Summary This Month
                             </div>
+
                             <div className="graph">
                                 <div className="drop-down-option">
                                     <FormControl variant="outlined" size="small" className="scope-selection">
@@ -151,10 +306,19 @@ class DashBoard extends Component {
                                             onChange={(e) => this.handleScopeChange(e)}
                                         >
                                             <MenuItem value={1}>Today</MenuItem>
-                                            <MenuItem value={2}>This Month</MenuItem>
-                                            <MenuItem value={3}>This Week</MenuItem>
+                                            <MenuItem value={2}>Last 7 days</MenuItem>
+                                            <MenuItem value={3}>Last 30 days</MenuItem>
                                         </Select>
                                     </FormControl>
+                                </div>
+                                <div className="num-order">
+                                    <div className="key">
+                                        <div className="receipt">{this.state.paymentSummary?.totalOrder} orders</div>
+                                        <div className="time-range">{this.getTimeRange()}</div>
+                                    </div>
+                                    <div className="value">
+
+                                    </div>
                                 </div>
                                 <Chart options={this.state.options} series={this.state.series} type="bar" width={"100%"} height={300} />
                             </div>
@@ -164,20 +328,20 @@ class DashBoard extends Component {
                                     <Table aria-label="simple table">
                                         <TableBody>
                                             <TableRow>
+                                                <TableCell> Total </TableCell>
+                                                <TableCell>{this.getTotal()}</TableCell>
+                                            </TableRow>
+                                            <TableRow>
                                                 <TableCell> Cash </TableCell>
-                                                <TableCell>{100}</TableCell>
+                                                <TableCell>{this.state.paymentSummary?.totalCash}</TableCell>
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell> Card </TableCell>
-                                                <TableCell>{100}</TableCell>
+                                                <TableCell>{this.state.paymentSummary?.totalCard}</TableCell>
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell> Other </TableCell>
-                                                <TableCell>{100}</TableCell>
-                                            </TableRow>
-                                            <TableRow>
-                                                <TableCell> Petty Cash </TableCell>
-                                                <TableCell>{100}</TableCell>
+                                                <TableCell>{this.state.paymentSummary?.totalOther}</TableCell>
                                             </TableRow>
                                         </TableBody>
                                     </Table>
@@ -190,4 +354,16 @@ class DashBoard extends Component {
         )
     }
 }
-export default DashBoard;
+
+const mapStateToProp = (state) => {
+    return {
+        ...state.authReducer
+    }
+}
+const mapDispatchToProp = (dispatch, _props) => {
+    return {
+
+    }
+}
+
+export default connect(mapStateToProp, mapDispatchToProp)(withRouter(DashBoard));

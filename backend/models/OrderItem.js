@@ -41,5 +41,5 @@ exports.getTopVariantToday = () => {
         .groupBy('variantId')
         .whereIn('orderId', function () {
             this.select('Id').from('Order').where("createDate", ">=", startTime).where("createDate", "<=", endTime)
-        });
+        }).orderBy('numVariant', 'desc');
 }

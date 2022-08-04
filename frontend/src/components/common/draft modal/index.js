@@ -25,7 +25,7 @@ export default function SaveOrderToDraftModal(props) {
     }
 
 
-    const [notes, setNotes] = React.useState("")
+    const [notes, setNotes] = React.useState(props?.order?.notes || "")
 
 
     const handleClickSave = () => {
@@ -34,7 +34,8 @@ export default function SaveOrderToDraftModal(props) {
     }
 
     const handleRemove = () => {
-
+        props.onRemove()
+        props.onClose()
     }
 
     return (

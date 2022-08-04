@@ -87,7 +87,19 @@
                     width: 100%;
                     .drop-down-option {
                         .scope-selection {
-                            width: 130px;
+                            width: 140px;
+                        }
+                    }
+                    .num-order {
+                        .key {
+                            padding: 10px 10px 10px;
+                            .receipt {
+                                font: normal normal normal 18px/22px Segoe UI;
+                                padding-bottom: 2px;
+                            }
+                            .time-range {
+                                font: normal normal normal 16px/21px Segoe UI;
+                            }
                         }
                     }
                 }

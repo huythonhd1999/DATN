@@ -300,5 +300,13 @@ const Api = {
         return user.post(`${baseUrl}/order/create-canceled-order`, canceledOrder)
     },
 
+    //dashboard
+    getTodayStatistic: () => {
+        return guest.get(`${baseUrl}/dashboard/get-today-statistic`)
+    },
+    getStatisticByDate: (id) => { //1 la hom nay 2 la 7 ngay trc 3 la 30 ngay truoc
+        return guest.get(`${baseUrl}/dashboard/get-statistic-by-date/type/${id}`)
+    },
+
 }
 export default Api;
