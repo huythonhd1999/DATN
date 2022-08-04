@@ -8,7 +8,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
-import { format } from "date-fns";
 import SaveOrderToDraftModal from '../../../common/draft modal';
 import { withSnackbar } from 'notistack';
 import { connect } from 'react-redux';
@@ -49,7 +48,7 @@ class Draft extends Component {
     handleSave = (notes) => {
         const newDraftOrder = {
             ...this.state.selectedDraftOrder,
-            notes: notes
+            draftNotes: notes
         }
         const newDraftOrders = this.state.draftOrders.map((draftOrder) => {
             if(draftOrder.createDate !== this.state.selectedDraftOrder.createDate)  {
@@ -65,8 +64,8 @@ class Draft extends Component {
         this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' } })
     }
     handleClickToEdit = (order) => {
-        // this.props.setDraftOrder(order.detail)
-        // this.props.onClickDraftOrder()
+        this.props.setDraftOrder(order)
+        this.props.onClickDraftOrder()
     }
 
     render() {
@@ -95,17 +94,17 @@ class Draft extends Component {
                         </TableHead>
                         <TableBody>
                             {
-                                this.state.draftOrders.length > 0 &&
+                                this.state.draftOrders?.length > 0 &&
                                 this.state.draftOrders.map((order, index) => (
                                     <TableRow
                                         key={index}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
                                         <TableCell component="th" scope="row" sx={{ color: "blue" }} onClick = {() => this.handleClickToEdit(order)}>
-                                            {format(new Date(order.createDate), "yyyy-MM-dd HH:mm:ss")}
+                                            {(new Date(order.createDate)).toLocaleString()}
                                         </TableCell>
-                                        <TableCell>{order.notes}</TableCell>
-                                        <TableCell>{order.detail.total}</TableCell>
+                                        <TableCell>{order.draftNotes}</TableCell>
+                                        <TableCell>{order.total}</TableCell>
                                         <TableCell>
                                             <div className='action-button' onClick={() => this.handleClickDraftOrder(order)}>
                                                 <ModeEditOutlineOutlinedIcon />
@@ -115,7 +114,7 @@ class Draft extends Component {
                                 ))
                             }
                             {
-                                this.state.draftOrders.length === 0 &&
+                                this.state.draftOrders?.length === 0 &&
                                 <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }} >
                                     <TableCell className='no-item' colSpan={4} style={{ textAlign: "center" }}>
                                         No item to show in this view

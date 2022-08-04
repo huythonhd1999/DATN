@@ -14,7 +14,9 @@ const initState = {
     canFinishOrder: false,
     cashTendered: 0,
     isDoorDelivery: 1,
-    isShowDraftModal: false
+    isShowDraftModal: false,
+    draftNotes: "",
+    createDate: "",
 }
 
 function getOrderItemPrice(orderItem) {
@@ -35,7 +37,7 @@ function getTotal(orderItemList) {
 }
 
 function getOrderValue(total, coupon) {
-    if (coupon) {
+    if (coupon.type) {
         return coupon.type === 0 ? total * (1 - coupon.amount) : total - coupon.amount
     } else {
         return total
@@ -118,6 +120,13 @@ const sellReducer = (state = initState, action) => {
         case types.RESET_STATE:
             return {
                 ...initState,
+                loading: false,
+                isShowDraftModal: false,
+            }
+        case types.REMOVE_COUPON:
+            return {
+                ...state,
+                coupon: initState.coupon
             }
         case types.SET_DRAFT_ORDER:
         default:

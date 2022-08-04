@@ -139,11 +139,17 @@ class OrderItems extends Component {
             selectedOrderItem: { ...orderItem }
         })
     }
+    onHandleClickRemoveCoupon = () => {
+        this.props.setCoupon({})
+        this.setState({
+            couponCode: ""
+        })
+    }
 
     saveOrderItem = (orderItem) => {
         const newOrderItemList = this.props.sellProps.orderItemList
         // newOrderItemList.push(orderItem)
-        this.props.setOrderItemList([...newOrderItemList,orderItem])
+        this.props.setOrderItemList([...newOrderItemList, orderItem])
     }
 
     checkEditOrderItem(item) {
@@ -154,7 +160,7 @@ class OrderItems extends Component {
 
     saveEditedOrderItem = (newOrderItem) => {
         const newOrderItemList = this.props.sellProps.orderItemList.map((item) => {
-            if(this.checkEditOrderItem(item)) {
+            if (this.checkEditOrderItem(item)) {
                 return newOrderItem
             } else {
                 return item
@@ -175,7 +181,7 @@ class OrderItems extends Component {
 
     getOrderItemName(orderItem) {
         let variantName = orderItem.name + " / " + orderItem.selectedVariant.name
-        
+
         orderItem.selectedAddons.forEach((addon) => {
             variantName = variantName + " + " + addon.name
         })
@@ -186,13 +192,28 @@ class OrderItems extends Component {
         let variantPrice = orderItem.selectedVariant.price
         let taxPercent = orderItem.taxInfo?.percent || 0
         orderItem.selectedAddons.forEach((addon) => {
-            variantPrice = variantPrice + addon.price * (1 + taxPercent/100)
+            variantPrice = variantPrice + addon.price * (1 + taxPercent / 100)
         })
         return variantPrice * orderItem.quantity
     }
 
     onHandleClickHold = () => {
         this.props.setIsShowDraftModal(true)
+    }
+
+    getDiscountAmount = () => {
+        if (this.props.sellProps?.coupon?.type === 0) {
+            return this.props.sellProps?.total * this.props.sellProps?.coupon?.amount / 100 + ` (${this.props.sellProps?.coupon?.amount}%)`
+        } else {
+            return this.props.sellProps?.coupon?.amount
+        }
+    }
+
+    onHandleClickClear = () => {
+        this.props.resetSate()
+        this.setState({
+            couponCode: ""
+        })
     }
 
     render() {
@@ -266,7 +287,7 @@ class OrderItems extends Component {
                             Order Details
                             <div className='action-button'>
                                 <button onClick={() => this.onHandleClickHold()}>Hold</button>
-                                <button onClick={() => this.props.setOrderItemList([])}>Clear</button>
+                                <button onClick={() => this.onHandleClickClear()}>Clear</button>
                             </div>
                         </div>
                         {this.state.selectedOrderItem &&
@@ -274,7 +295,7 @@ class OrderItems extends Component {
                                 product={this.state.selectedOrderItem}
                                 onClose={() => this.setState({ selectedOrderItem: undefined })}
                                 onSave={this.saveEditedOrderItem}
-                                onRemove = {this.removeSelectedItem}
+                                onRemove={this.removeSelectedItem}
                             />
                         }
                         <TableContainer component={Paper}>
@@ -316,7 +337,15 @@ class OrderItems extends Component {
                         </TableContainer>
                     </div>
                     <div className='coupon-code'>
-                        <div className="c-text-field-name">Coupon code</div>
+                        <div className="c-text-field-name">
+                            Coupon code
+                            {
+                                this.props.sellProps.coupon.code &&
+                                <div className='action-button'>
+                                    <button onClick={() => this.onHandleClickRemoveCoupon()}>Remove coupon</button>
+                                </div>
+                            }
+                        </div>
                         <TextField
                             margin="normal"
                             required
@@ -327,16 +356,20 @@ class OrderItems extends Component {
                             error={this.state.couponErrorMessage ? true : false}
                             helperText={this.state.couponErrorMessage}
                             size="small"
+                            disabled={this.props.sellProps?.orderItemList?.length === 0}
                             onChange={this.onHandleCouponChange}
                             onKeyDown={this.onCouponEnter}
                         />
+                        {this.props.sellProps.coupon.code &&
+                            <div className="c-text-field-name">Discount amount: {this.getDiscountAmount()}</div>
+                        }
                     </div>
                     <div className='control-button'>
                         <Button
                             type="submit"
                             fullWidth
                             variant="contained"
-                            disabled = {!this.props.sellProps.total}
+                            disabled={!this.props.sellProps.total}
                             sx={{ mt: 1, mb: 1 }}
                             onClick={() => this.props.clickNextStep()}
                         >
@@ -367,7 +400,10 @@ const mapDispatchToProp = (dispatch, _props) => {
         },
         setIsShowDraftModal: (isShow) => {
             dispatch(SellAction.setIsShowDraftModal(isShow))
-        }
+        },
+        resetSate: () => {
+            dispatch(SellAction.resetSate())
+        },
     }
 }
 

@@ -151,7 +151,7 @@ exports.checkCoupon = async function (req, res) {
         if (present.getTime() < startTime.getTime() ) {
             return res.status(200).json({
                 success: false,
-                message: "Can not use the coupon now"
+                message: "Can not use the coupon now 3"
             })
         }
 
@@ -163,7 +163,7 @@ exports.checkCoupon = async function (req, res) {
             if(startHappyHourDate.getTime() > present.getTime() || endHappyHourDate.getTime() < present.getTime()) {
                 return res.status(200).json({
                     success: false,
-                    message: "Can not use the coupon now" 
+                    message: "Can not use the coupon now 1" 
                 })
             }
         }
@@ -174,7 +174,7 @@ exports.checkCoupon = async function (req, res) {
         if(!coupon.dayOfWeek.includes(dayOfWeek) && coupon.dayOfWeek) {
             return res.status(200).json({
                 success: false,
-                message: "Can not use the coupon now"
+                message: "Can not use the coupon now 2"
             })
         }
 

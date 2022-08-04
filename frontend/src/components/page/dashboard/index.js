@@ -166,7 +166,7 @@ class DashBoard extends Component {
     getTimeRange() {
         switch (this.state.scope) {
             case 1:
-                return format(new Date(), "MM-dd")
+                return format(new Date(), "MM-dd-YYY")
             case 2:
             case 3:
                 return this.state.options.xaxis.categories[0] + " to " + this.state.options.xaxis.categories.slice(-1)[0]
@@ -299,25 +299,27 @@ class DashBoard extends Component {
                             </div>
 
                             <div className="graph">
-                                <div className="drop-down-option">
-                                    <FormControl variant="outlined" size="small" className="scope-selection">
-                                        <Select
-                                            value={this.state.scope}
-                                            onChange={(e) => this.handleScopeChange(e)}
-                                        >
-                                            <MenuItem value={1}>Today</MenuItem>
-                                            <MenuItem value={2}>Last 7 days</MenuItem>
-                                            <MenuItem value={3}>Last 30 days</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                </div>
-                                <div className="num-order">
-                                    <div className="key">
-                                        <div className="receipt">{this.state.paymentSummary?.totalOrder} orders</div>
-                                        <div className="time-range">{this.getTimeRange()}</div>
+                                <div className="detail">
+                                    <div className="drop-down-option">
+                                        <FormControl variant="outlined" size="small" className="scope-selection">
+                                            <Select
+                                                value={this.state.scope}
+                                                onChange={(e) => this.handleScopeChange(e)}
+                                            >
+                                                <MenuItem value={1}>Today</MenuItem>
+                                                <MenuItem value={2}>Last 7 days</MenuItem>
+                                                <MenuItem value={3}>Last 30 days</MenuItem>
+                                            </Select>
+                                        </FormControl>
                                     </div>
-                                    <div className="value">
+                                    <div className="num-order">
+                                        <div className="key">
+                                            <div className="receipt">{this.state.paymentSummary?.totalOrder || 0} orders</div>
+                                            <div className="time-range">{this.getTimeRange()}</div>
+                                        </div>
+                                        <div className="value">
 
+                                        </div>
                                     </div>
                                 </div>
                                 <Chart options={this.state.options} series={this.state.series} type="bar" width={"100%"} height={300} />

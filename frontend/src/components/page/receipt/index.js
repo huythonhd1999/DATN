@@ -112,7 +112,7 @@ class Receipts extends Component {
 
     render() {
         const columns = [
-            { field: 'id', headerName: 'Receipt Id', width: 150 },
+            { field: 'id', headerName: 'Order Id', width: 150 },
             { field: 'createDate', headerName: 'Create Date', width: 250 },
             { field: 'mobilePhone', headerName: 'Customer Mobile Phone', width: 250 },
             { field: 'orderType', headerName: 'Order Type', width: 150 },
@@ -159,7 +159,7 @@ class Receipts extends Component {
                                         onChange={this.onHandleSearchStringChange}
                                         onKeyDown={this.onEnter}
                                         disabled={this.state.disable}
-                                        placeholder="Search by receipt id"
+                                        placeholder="Search by order id"
                                         size="small"
 
                                     />

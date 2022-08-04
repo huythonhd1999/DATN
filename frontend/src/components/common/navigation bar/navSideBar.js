@@ -72,7 +72,7 @@ const NavSideBar = () => {
                             <Link to="/sell" />
                         </MenuItem>
                         <MenuItem icon={<FiFileText />}>
-                            Receipts
+                            Order
                             <Link to="/receipts" />
                         </MenuItem>
                         <MenuItem icon={<FiBriefcase />}>

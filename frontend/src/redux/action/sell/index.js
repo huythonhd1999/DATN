@@ -103,3 +103,9 @@ export const resetSate = () => {
         type: types.RESET_STATE,
     }
 }
+
+export const removeCoupon = () => {
+    return {
+        type: types.REMOVE_COUPON,
+    }
+}

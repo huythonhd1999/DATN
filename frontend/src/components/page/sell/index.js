@@ -35,17 +35,39 @@ class Sell extends Component {
     }
 
     saveDraftOrder = (notes) => {
-        let draftOrders = JSON.parse(localStorage.getItem("draftOrders")) || []
+        const oldDraftOrders = JSON.parse(localStorage.getItem("draftOrders")) || []
+        let newDraftOrders = []
         const data = {
-            detail: {...this.props.sellProps},
-            notes: notes,
-            createDate: new Date()
+            orderItemList: this.props.sellProps.orderItemList,
+            total: this.props.sellProps.total,
+            coupon: this.props.sellProps.coupon,
+            totalQuantity: this.props.sellProps.totalQuantity,
+            orderType: this.props.sellProps.orderType,
+            paymentType: this.props.sellProps.paymentType,
+            deliveryDate: this.props.sellProps.deliveryDate,
+            bookingAdvance: this.props.sellProps.bookingAdvance,
+            notes: this.props.sellProps.notes,
+            canFinishOrder: this.props.sellProps.canFinishOrder,
+            cashTendered: this.props.sellProps.cashTendered,
+            isDoorDelivery: this.props.sellProps.isDoorDelivery,
+            draftNotes: notes,
+            createDate: this.props.sellProps.createDate || new Date(),
         }
-        draftOrders = [...draftOrders, data]
+        if (oldDraftOrders.find((order) => (order.createDate === data.createDate))) { //chỉnh sửa đơn hàng nháp đã được lưu trước đó
+            newDraftOrders = oldDraftOrders.map((order) => {
+                if (order.createDate === data.createDate) {
+                    return data
+                } else {
+                    return order
+                }
+            })
+        } else { //thêm đơn hàng nháp mới
+            newDraftOrders = [...oldDraftOrders, data]
+        }
 
-        localStorage.setItem("draftOrders", JSON.stringify(draftOrders))
-        this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
-        this.props.setOrderItemList([])
+        localStorage.setItem("draftOrders", JSON.stringify(newDraftOrders))
+        this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' } })
+        this.props.resetSate()
     }
 
     render() {
@@ -57,8 +79,9 @@ class Sell extends Component {
                 {this.props.sellProps.isShowDraftModal &&
                     <SaveOrderToDraftModal
                         open={this.props.sellProps.isShowDraftModal}
-                        onClose = {() => this.props.setIsShowDraftModal(false)}
-                        onSave = {this.saveDraftOrder}
+                        onClose={() => this.props.setIsShowDraftModal(false)}
+                        onSave={this.saveDraftOrder}
+                        order={this.props.sellProps}
                     />
                 }
                 <div className="c-sell-info">
@@ -105,6 +128,9 @@ const mapDispatchToProp = (dispatch, props) => {
         setOrderItemList: (orderItemList) => {
             dispatch(SellAction.setOrderItemList(orderItemList))
         },
+        resetSate: () => {
+            dispatch(SellAction.resetSate())
+        }
     }
 }
 export default connect(mapStateToProp, mapDispatchToProp)(withRouter(withSnackbar(Sell)));
