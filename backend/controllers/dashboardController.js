@@ -66,7 +66,7 @@ exports.getDetailStatisticByDate = async function (req, res) {
         switch (Number(type)) {
             case 1: //lay thong tin trong ngay
                 for (let i = 0; i <= 23; i++) {
-                    const hour = new Date(now.setHours(i))
+                    const hour = new Date(now.setHours(i,0,0,0))
                     const data = {
                         totalOrder: await Order.getTotalOrderDetailSalesByHour(hour) || [],
                         numOrderToday: (await Order.getNumOrderByHour(hour)).numOrder || 0,

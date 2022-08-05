@@ -194,19 +194,19 @@ class DashBoard extends Component {
                                 <Card sx={{ width: 250 }}>
                                     <CardContent className="summary">
                                         <div className='title'>Total sales</div>
-                                        <div className='value'>{this.state.totalOrder}</div>
+                                        <div className='value'>{this.state.totalOrder || 0}</div>
                                     </CardContent>
                                 </Card>
                                 <Card sx={{ width: 250 }}>
                                     <CardContent className="summary">
                                         <div className='title'>Total orders</div>
-                                        <div className='value'>{this.state.numOrderToday}</div>
+                                        <div className='value'>{this.state.numOrderToday || 0}</div>
                                     </CardContent>
                                 </Card>
                                 <Card sx={{ width: 250 }}>
                                     <CardContent className="summary">
                                         <div className='title'>New customer</div>
-                                        <div className='value'>{this.state.numNewCustomer}</div>
+                                        <div className='value'>{this.state.numNewCustomer || 0}</div>
                                     </CardContent>
                                 </Card>
                             </div>
@@ -295,7 +295,7 @@ class DashBoard extends Component {
                         </div>
                         <div className="column-2">
                             <div className="title">
-                                Sales Summary This Month
+                                Sales Summary
                             </div>
 
                             <div className="graph">

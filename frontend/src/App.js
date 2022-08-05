@@ -41,6 +41,7 @@ import ReceiptInfo from './components/page/receipt/detail/index';
 import Sell from './components/page/sell';
 import {connect} from 'react-redux';
 import * as authAction from "./redux/action/auth/index"
+import Page404 from './components/page/page404';
 
 class App extends React.Component {
     constructor(props) {
@@ -67,6 +68,13 @@ class App extends React.Component {
                 console.log(err)
                 this.setUser(null)
                 localStorage.removeItem('accessToken')
+                if(!window.location.href.includes('/login')) {
+                    window.location.href = '/login'
+                }
+            }
+        } else {
+            if(!window.location.href.includes('/login')) {
+                window.location.href = '/login'
             }
         }
         // this.setState({ loading: false })
@@ -201,9 +209,7 @@ class App extends React.Component {
               <PrivateRouter exact path="/student-attendance" component={<StudentAttendance />} role={[2, 1]} />
               <PrivateRouter exact path="/pll" component={<PLL />} role={[2, 1]} />
               <PrivateRouter exact path="/student-pll" component={<StudentPLL />} role={[0]} /> */}
-                        {/* <Route path="/">
-                <Page404 />
-              </Route> */}
+                        <Route path="/"><Page404 /></Route>
                     </Switch>
                 </div>
                 {/* <Footer /> */}
