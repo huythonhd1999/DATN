@@ -122,6 +122,13 @@ class OrderDetail extends Component {
         })
     }
 
+    onHandleReceipt = () => {
+        //gọi hàm in hóa đơn
+
+        //tạo hóa đơn
+        this.onHandleComplete()
+    }
+
     render() {
         return (
             <div className='detail-element'>
@@ -199,7 +206,7 @@ class OrderDetail extends Component {
                                     fullWidth
                                     variant="contained"
                                     disabled={!this.props.sellProps.canFinishOrder}
-                                    onClick={() => this.props.clickPrevStep()}
+                                    onClick={this.onHandleReceipt}
                                 >
                                     Received {this.getReceived()}
                                 </Button>
