@@ -68,12 +68,11 @@ exports.getDetailStatisticByDate = async function (req, res) {
             case 1: //lay thong tin trong ngay
                 for (let i = 0; i <= 23; i++) {
                     const hour = new Date(now.setHours(i,0,0,0))
-                    console.log(hour)
                     const data = {
                         totalOrder: await Order.getTotalOrderDetailSalesByHour(hour) || [],
                         numOrderToday: (await Order.getNumOrderByHour(hour)).numOrder || 0,
                     }
-                    detail.push({ date: format(hour, "yyyy-MM-dd HH:mm:ss"), data: data })
+                    detail.push({ date: hour, data: data })
                 }
                 break
             case 2: //lay thong tin tu 7 ngay truoc
@@ -83,7 +82,7 @@ exports.getDetailStatisticByDate = async function (req, res) {
                         totalOrder: await Order.getTotalOrderDetailSalesByDay(date) || [],
                         numOrderToday: (await Order.getNumOrderByDay(date)).numOrder || 0,
                     }
-                    detail.push({ date: format(date, "yyyy-MM-dd HH:mm:ss"), data: data })
+                    detail.push({ date: date, data: data })
                 }
                 break
             case 3: //lay thong tin tu 30 ngay truoc
@@ -93,7 +92,7 @@ exports.getDetailStatisticByDate = async function (req, res) {
                         totalOrder: await Order.getTotalOrderDetailSalesByDay(date) || [],
                         numOrderToday: (await Order.getNumOrderByDay(date)).numOrder || 0,
                     }
-                    detail.push({ date: format(date, "yyyy-MM-dd HH:mm:ss"), data: data })
+                    detail.push({ date: date, data: data })
                 }
                 break
             default:
