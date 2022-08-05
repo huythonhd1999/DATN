@@ -62,6 +62,7 @@ exports.getDetailStatisticByDate = async function (req, res) {
         //chia lam 3 truong hop trong ngay = 1, trong tuan = 2 va trong thang = 3
         const type = req.params.type
         const now = new Date()
+        console.log(now)
         var detail = []
         switch (Number(type)) {
             case 1: //lay thong tin trong ngay
