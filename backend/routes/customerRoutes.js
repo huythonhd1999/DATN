@@ -1,5 +1,5 @@
 const customerRouter = require('express').Router()
-const customerController = require('../controllers/CustomerController')
+const customerController = require('../controllers/customerController')
 const authMiddleware = require('../middlewares/authentication')
 const notFound = require('./404')
 

@@ -1,5 +1,5 @@
 const pettyCashRouter = require('express').Router()
-const pettyCashController = require('../controllers/PettyCashController')
+const pettyCashController = require('../controllers/pettyCashController')
 const authMiddleware = require('../middlewares/authentication')
 const notFound = require('./404')
 
