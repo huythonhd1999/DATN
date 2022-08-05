@@ -1,8 +1,8 @@
 import axios from 'axios';
 import packagejson from "../../package.json"
 
-const baseUrl = packagejson.proxy.charAt(packagejson.proxy.length - 1) === "/" ? packagejson.proxy.slice(0, -1) : packagejson.proxy
-
+// const baseUrl = packagejson.proxy.charAt(packagejson.proxy.length - 1) === "/" ? packagejson.proxy.slice(0, -1) : packagejson.proxy
+const baseUrl = "http://52.139.214.15:3001"
 const user = axios.create({ timeout: 30000 });
 const guest = axios.create({ timeout: 30000 });
 
