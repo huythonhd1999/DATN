@@ -64,7 +64,9 @@ class App extends React.Component {
                 // await Api.checkAuth()
                 let user = jwt(accessToken)
                 this.setUser(user)
-                window.location.href = '/dashboard'
+                if(!window.location.href.includes('/dashboard')) {
+                    window.location.href = '/dashboard'
+                }
             } catch (err) {
                 console.log(err)
                 this.setUser(null)
