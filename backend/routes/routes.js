@@ -1,8 +1,5 @@
 const authRouter = require('./authRoutes')
 const settingRouter = require('./settingRoutes')
-const postRouter = require('./postRoutes')
-const answerRouter = require('./answerRoutes')
-const adminRouter = require('./adminRoutes')
 const pettyCashRouter = require('./pettyCashRoutes')
 const productRouter = require('./productRoutes')
 const customerRouter = require('./customerRoutes')
@@ -17,9 +14,6 @@ module.exports = function (app) {
     app.use('/product', productRouter)
     app.use('/customer', customerRouter)
     app.use('/order', orderRouter)
-    app.use('/post', postRouter)
-    app.use('/answer', answerRouter)
-    app.use('/admin', adminRouter)
     app.use('/dashboard', dashboardRouter)
     app.use(notFound)
 }
