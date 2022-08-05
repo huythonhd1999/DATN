@@ -411,7 +411,7 @@ class CouponInfo extends Component {
                                             />
 
                                             {this.state.setEndDate &&
-                                                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                                <LocalizationProvider dateAdapter={AdapterDateFns} >
                                                     <DesktopDatePicker
                                                         inputFormat="MM/dd/yyyy"
                                                         value={this.state.endTime}
@@ -441,8 +441,8 @@ class CouponInfo extends Component {
                                             />
 
                                             {this.state.setHappyHour &&
-                                                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                                    <Stack direction="row" >
+                                                <LocalizationProvider dateAdapter={AdapterDateFns} >
+                                                    <Stack direction="row" className="set-happy-hour">
                                                         <div className="hour">
                                                             <div className="c-text-field-name">Start time</div>
                                                             <TimePicker
