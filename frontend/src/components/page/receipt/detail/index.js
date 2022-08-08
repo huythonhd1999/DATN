@@ -27,6 +27,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { withSnackbar } from 'notistack';
 import CancelOrderModal from '../../../common/cancel order modal/index'
+import { ComponentToPrint } from "../../../common/receipt form";
+import ReactToPrint, { PrintContextConsumer } from "react-to-print";
+import * as storeAction from "../../../../redux/action/setting/store/index";
 
 
 class ReceiptDetail extends Component {
@@ -40,12 +43,17 @@ class ReceiptDetail extends Component {
             fulFill: false,
             isShowCanceledModal: false
         };
+        this.componentRef = React.createRef();
     }
     componentDidMount = async () => {
         let id = this.props.match.params.id
         this.setState({ loading: true })
         let res = await Api.getOrder(id)
         let order = res.data.order;
+        let res1 = await Api.getStore();
+        let store = res1.data.store;
+        //lưu vào redux
+        this.props.setStoreInfo(store);
         this.setState({
             ...order,
             currentOrder: order,
@@ -234,6 +242,17 @@ class ReceiptDetail extends Component {
             this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' } })
         }
     }
+    getOrderInfoToPrint () {
+        return {
+            ...this.state.currentOrder,
+            customer: this.state.currentOrder?.customerInfo,
+            bookingAdvance: this.state.currentOrder?.bookingInfo?.bookingAdvance,
+            deliveryDate: this.state.currentOrder?.bookingInfo?.deliveryDate,
+            isDoorDelivery: this.state.currentOrder?.bookingInfo?.isDoorDelivery,
+            coupon: this.state.currentOrder?.couponInfo,
+            orderType: this.state.currentOrder?.status
+        }
+    }
 
     render() {
         return (
@@ -241,6 +260,17 @@ class ReceiptDetail extends Component {
                 <LoadingScreen
                     open={this.state.loading}
                 />
+                <div
+                    style={{ display: "none" }}
+                    className="receipt">
+                    <ComponentToPrint
+                        ref={el => (this.componentRef = el)}
+                    store={this.props.store}
+                    // sellProps={this.props.sellProps}
+                    order={this.getOrderInfoToPrint()}
+                    user={this.state.currentOrder.userInfo}
+                    />
+                </div>
                 {
                     this.state.isShowCanceledModal &&
                     <CancelOrderModal
@@ -296,7 +326,13 @@ class ReceiptDetail extends Component {
                                             </Stack>
                                         </div>
                                         <div className="action-buttons">
-                                            <button className="action-button">Print</button>
+                                            <ReactToPrint content={() => this.componentRef}>
+                                                <PrintContextConsumer>
+                                                    {({ handlePrint }) => (
+                                                        <button className="action-button" onClick={handlePrint}>Print</button>
+                                                    )}
+                                                </PrintContextConsumer>
+                                            </ReactToPrint>
                                             {
                                                 !this.state.currentOrder?.canceledOrderInfo &&
                                                 <button className="action-button" onClick={() => this.onHandleCanceledOrderClick()}>Cancel</button>
@@ -546,10 +582,14 @@ class ReceiptDetail extends Component {
 }
 const mapStateToProp = (state) => {
     return {
+        store: state.storeReducer.store
     }
 }
 const mapDispatchToProp = (dispatch, props) => {
     return {
+        setStoreInfo: (store) => {
+            dispatch(storeAction.setStoreInfo(store))
+        },
     }
 }
 export default connect(mapStateToProp, mapDispatchToProp)(withRouter(withSnackbar(ReceiptDetail)));

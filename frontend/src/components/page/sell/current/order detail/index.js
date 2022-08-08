@@ -13,6 +13,9 @@ import { format } from "date-fns";
 import { withSnackbar } from 'notistack';
 import { withRouter } from "react-router-dom";
 import { LoadingButton } from '@mui/lab';
+import ReactToPrint, { PrintContextConsumer } from 'react-to-print';
+import { ComponentToPrint } from '../../../../common/receipt form';
+import * as storeAction from "../../../../../redux/action/setting/store/index";
 // import Card from '@mui/material/Card';
 // import CardContent from '@mui/material/CardContent';
 // import SellModal from '../../../../common/modal';
@@ -34,11 +37,14 @@ class OrderDetail extends Component {
             shippingAddressErrorMessage: "",
             completeLoading: false,
             receiveLoading: false,
+            loading: true,
         };
+        this.componentRef = React.createRef();
     }
 
     componentDidMount = async () => {
         const res = await Api.getCustomerList()
+        this.onHandleLoadStoreInfo()
         this.setState({ customers: res.data.customerList })
     }
 
@@ -81,7 +87,8 @@ class OrderDetail extends Component {
                     selectedVariant: item.selectedVariant,
                     selectedAddons: item.selectedAddons,
                     taxId: item.taxId,
-                    productId: item.Id
+                    productId: item.Id,
+                    name: item.name,
                 }
             }),
             userId: this.props.user?.userId || 1,
@@ -97,7 +104,8 @@ class OrderDetail extends Component {
             bookingAdvance: Number(this.props.sellProps.bookingAdvance),
             paymentType: this.props.sellProps.paymentType,
             deliveryDate: format(new Date(this.props.sellProps.deliveryDate), "yyyy-MM-dd HH:mm:ss"),
-            notes: this.props.sellProps.notes
+            notes: this.props.sellProps.notes,
+            isDoorDelivery: this.props.sellProps.isDoorDelivery
         }
         return model
     }
@@ -123,10 +131,16 @@ class OrderDetail extends Component {
     }
 
     onHandleReceipt = () => {
-        //gọi hàm in hóa đơn
-
-        //tạo hóa đơn
         this.onHandleComplete()
+    }
+
+    onHandleLoadStoreInfo = async () => {
+        //load thông tin về store
+        this.setState({ loading: true })
+        let res = await Api.getStore();
+        let store = res.data.store;
+        //lưu vào redux
+        this.props.setStoreInfo(store);
     }
 
     render() {
@@ -167,6 +181,17 @@ class OrderDetail extends Component {
                     <div className='order-detail'>
                         {this.state.orderType === 1 && <ImmediateSaleOrderDetail />}
                         {this.state.orderType === 2 && <BookingOrderDetail />}
+                        <div
+                            style={{ display: "none" }} 
+                            className="receipt">
+                            <ComponentToPrint
+                                ref={el => (this.componentRef = el)}
+                                store={this.props.store}
+                                sellProps={this.props.sellProps}
+                                order={this.getOrderDetail()}
+                                user={this.props.user}
+                            />
+                        </div>
                     </div>
                     <div className='controller'>
                         {/* button de dieu khien */}
@@ -201,15 +226,21 @@ class OrderDetail extends Component {
                                 </LoadingButton>)
                             }
                             {!this.state.receiveLoading ?
-                                <Button
-                                    type="submit"
-                                    fullWidth
-                                    variant="contained"
-                                    disabled={!this.props.sellProps.canFinishOrder}
-                                    onClick={this.onHandleReceipt}
-                                >
-                                    Received {this.getReceived()}
-                                </Button>
+                                <ReactToPrint content={() => this.componentRef} onAfterPrint={this.onHandleComplete}>
+                                    <PrintContextConsumer>
+                                        {({ handlePrint }) => (
+                                            <Button
+                                                type="submit"
+                                                fullWidth
+                                                variant="contained"
+                                                disabled={!this.props.sellProps.canFinishOrder}
+                                                onClick={handlePrint}
+                                            >
+                                                Received {this.getReceived()}
+                                            </Button>
+                                        )}
+                                    </PrintContextConsumer>
+                                </ReactToPrint>
                                 :
                                 <LoadingButton
                                     loading
@@ -287,7 +318,8 @@ class OrderDetail extends Component {
 const mapStateToProp = (state) => {
     return {
         ...state.authReducer,
-        sellProps: state.sellReducer
+        sellProps: state.sellReducer,
+        store: state.storeReducer.store
     }
 }
 const mapDispatchToProp = (dispatch, _props) => {
@@ -303,6 +335,9 @@ const mapDispatchToProp = (dispatch, _props) => {
         },
         setOrderItemList: (orderItemList) => {
             dispatch(SellAction.setOrderItemList(orderItemList))
+        },
+        setStoreInfo: (store) => {
+            dispatch(storeAction.setStoreInfo(store))
         },
     }
 }
