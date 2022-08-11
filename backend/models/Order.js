@@ -108,3 +108,16 @@ exports.getTotalImmediateOrderByHour = (date) => { //laasy toongr gias tri cac d
     .where("createDate","<=", endTime)
     .where("status", 1).first()
 }
+
+
+exports.getOrderCountByCustomerId = (customerId) => {
+    return knex("Order").count("Id", {as: 'numOrder'}).where("customerId", customerId).first()
+}
+
+exports.getOrdersTotalByCustomerId = (customerId) => {
+    return knex("Order").sum("total", {as: 'totalOrder'}).where("customerId", customerId).first()
+}
+
+exports.getLastOrderByCustomerId = (customerId) => {
+    return knex("Order").select('*').where("customerId", customerId).first()
+}

@@ -2,10 +2,27 @@ const jwtHelper = require('../helpers/jwtToken')
 const bcrypt = require('bcrypt')
 const config = require('../config/config')
 const Customer = require('../models/Customer')
+const Order = require('../models/Order')
+const OrderItem = require('../models/OrderItem')
+const OrderItemAddon = require('../models/OrderItemAddon')
+const BookingOrder = require('../models/BookingOrder')
+const ImmediateSaleOrder = require('../models/ImmediateSaleOrder')
+const CanceledOrder = require('../models/CanceledOrder')
+const Product = require('../models/Product')
+const Tax = require('../models/Tax')
+const Coupon = require('../models/Coupon')
+const Addon = require('../models/Addon')
+const Variant = require('../models/Variant')
+const User = require('../models/User')
 
 exports.getCustomerList = async function (req, res) {
     try {
-        var customerList =  await Customer.getCustomerList()
+        var customerList = await Customer.getCustomerList()
+        for (var customer of customerList) {
+            customer.orderCount = (await Order.getOrderCountByCustomerId(customer.Id)).numOrder
+            customer.lastOrder = await Order.getLastOrderByCustomerId(customer.Id)
+            customer.totalOrder = (await Order.getOrdersTotalByCustomerId(customer.Id)).totalOrder
+        }
         res.status(200).json({
             customerList: customerList,
         })
@@ -21,8 +38,10 @@ exports.getCustomerList = async function (req, res) {
 
 exports.getCustomer = async function (req, res) {
     try {
-        console.log(req.body)
-        var customer =  await Customer.getCustomer(req.params.id)
+        var customer = await Customer.getCustomer(req.params.id)
+        customer.orderCount = (await Order.getOrderCountByCustomerId(req.params.id)).numOrder
+        customer.lastOrder = await Order.getLastOrderByCustomerId(req.params.id)
+        customer.totalOrder = (await Order.getOrdersTotalByCustomerId(req.params.id)).totalOrder
         res.status(200).json({
             customer: customer
         })
@@ -39,8 +58,8 @@ exports.getCustomer = async function (req, res) {
 exports.createCustomer = async function (req, res) {
     try {
         var info = req.body
-        var id =  await Customer.createCustomer(info)
-        var customer =  await Customer.getCustomer(id)
+        var id = await Customer.createCustomer(info)
+        var customer = await Customer.getCustomer(id)
         res.status(200).json({
             customer: customer,
             success: true,
@@ -60,7 +79,7 @@ exports.editCustomer = async function (req, res) {
         var data = req.body
         var id = req.body.Id
         await Customer.editCustomer(data, id)
-        var customer =  await Customer.getCustomer(id)
+        var customer = await Customer.getCustomer(id)
         res.status(200).json({
             customer: customer
         })
@@ -77,7 +96,7 @@ exports.editCustomer = async function (req, res) {
 exports.deleteCustomer = async function (req, res) {
     try {
         var idList = req.body.IdList
-        idList.forEach(async(id) => {
+        idList.forEach(async (id) => {
             await Customer.deleteCustomer(id)
         });
         res.status(200).json({
