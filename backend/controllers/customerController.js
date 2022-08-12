@@ -118,6 +118,11 @@ exports.searchCustomer = async function (req, res) {
         var searchString = req.body.searchString
         console.log(searchString)
         var customerList = await Customer.searchCustomer(searchString)
+        for (var customer of customerList) {
+            customer.orderCount = (await Order.getOrderCountByCustomerId(customer.Id)).numOrder
+            customer.lastOrder = await Order.getLastOrderByCustomerId(customer.Id)
+            customer.totalOrder = (await Order.getOrdersTotalByCustomerId(customer.Id)).totalOrder
+        }
         res.status(200).json({
             success: true,
             customerList: customerList
