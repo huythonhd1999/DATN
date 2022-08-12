@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt')
 const config = require('../config/config')
 
 exports.getCouponList = () => {
-    return knex.from('Coupon').select('*')
+    return knex.from('Coupon').select('*').where('status', 1)
 }
 
 exports.getCoupon = (couponId) => {
@@ -27,9 +27,11 @@ exports.createCoupon = (coupon) => {
 }
 
 exports.deleteCoupon = (couponId) => {
-    return knex('Coupon').where('Id', couponId).del()
+    return knex('Coupon').where('Id', couponId).update({
+        status: 0
+    })
 }
 
 exports.searchCoupon = (query) => {
-    return knex.from('Coupon').select('*').where('code', 'like', `%${query}%`)
+    return knex.from('Coupon').select('*').where('code', 'like', `%${query}%`).where('status', 1)
 }
