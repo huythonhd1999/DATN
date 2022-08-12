@@ -11,6 +11,7 @@ import BasicMenu from "../../common/menu/menu";
 import LoadingScreen from "../../common/loading";
 import AlertDialog from "../../common/dialog";
 import NavSideBar from "../../common/navigation bar/navSideBar";
+import { withSnackbar } from 'notistack';
 
 class PettyCashes extends Component {
     constructor(props) {
@@ -185,6 +186,7 @@ class PettyCashes extends Component {
             loading: true,
         })
         await Api.deletePettyCashList(this.state.selectedItemsId);
+        this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
         let res = await Api.getPettyCashList();
         this.setState({
             pettyCashList: res.data.pettyCashList,
@@ -192,4 +194,4 @@ class PettyCashes extends Component {
         })
     }
 }
-export default withRouter(PettyCashes);
+export default withRouter(withSnackbar(PettyCashes));

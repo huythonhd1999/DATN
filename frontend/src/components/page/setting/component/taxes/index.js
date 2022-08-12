@@ -14,6 +14,7 @@ import Tab from '@mui/material/Tab';
 import BasicMenu from "../../../../common/menu/menu";
 import AlertDialog from "../../../../common/dialog";
 import LoadingScreen from "../../../../common/loading";
+import { withSnackbar } from 'notistack';
 
 class Taxes extends Component {
     constructor(props) {
@@ -183,10 +184,11 @@ class Taxes extends Component {
         })
         await Api.deleteTaxList(this.state.selectedItemsId);
         let res = await Api.getTaxList();
+        this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
         this.setState({
             taxList: res.data.taxList,
             loading: false
         })
     }
 }
-export default withRouter(Taxes);
+export default withRouter(withSnackbar(Taxes));
