@@ -471,7 +471,7 @@ class CouponInfo extends Component {
                                         <div className="happy-day">
                                             <FormControlLabel
                                                 disabled={this.state.disable}
-                                                label={<div className="c-text-field-name-1">Set Days Of Week </div>}
+                                                label={<div className="c-text-field-name-1">Set Days Of Week (Optional)</div>}
                                                 control={
                                                     <Checkbox
                                                         icon={<CircleUnchecked />}

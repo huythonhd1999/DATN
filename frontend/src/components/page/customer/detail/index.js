@@ -8,8 +8,8 @@ import Api from "../../../../api/api";
 import { connect } from 'react-redux';
 import LoadingScreen from "../../../common/loading";
 import { withRouter } from "react-router-dom";
-import Chip from '@mui/material/Chip';
-import Stack from '@mui/material/Stack';
+// import Chip from '@mui/material/Chip';
+// import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -18,7 +18,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { withSnackbar } from 'notistack';
-
+// import { format } from "date-fns";
 // import CircularProgress from '@mui/material/CircularProgress';
 
 class CustomerInfo extends Component {
@@ -37,6 +37,8 @@ class CustomerInfo extends Component {
             mobilePhoneErrorMessage: "",
             emailErrorMessage: "",
             shippingAddress: "",
+            orderCount: 0,
+            totalOrder: 0,
         };
     }
     componentDidMount = async () => {
@@ -87,7 +89,7 @@ class CustomerInfo extends Component {
                 currentCustomer: customer,
                 loading: false
             })
-            this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
+            this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' } })
         }
     }
     onHandleNameChange = (e) => {
@@ -264,7 +266,7 @@ class CustomerInfo extends Component {
                                     </div>
                                     {/* đổi state chỗ này */}
                                     <div className="c-guild-content">
-                                        Last Seen At Mar 4, 2022,10:50 AM
+                                        {this.state.loading ? "" : new Date(this.state.currentCustomer?.lastOrder?.createDate || "").toLocaleString()}
                                     </div>
                                 </div>
                             </div>
@@ -274,50 +276,53 @@ class CustomerInfo extends Component {
                                     <TextField
                                         margin="normal"
                                         required
-                                        value={this.state.name}
+                                        value={this.state.orderCount}
                                         fullWidth
                                         disabled={true}
                                         size="small"
-                                        error={this.state.nameErrorMessage ? true : false}
-                                        helperText={this.state.nameErrorMessage}
-
-                                        onChange={this.onHandleCustomerNameChange}
                                     />
                                     <div className="c-text-field-name">Order Value</div>
                                     <TextField
                                         margin="normal"
                                         required
-                                        value={this.state.name}
+                                        value={this.state.totalOrder}
                                         fullWidth
                                         disabled={true}
                                         size="small"
-                                        error={this.state.nameErrorMessage ? true : false}
-                                        helperText={this.state.nameErrorMessage}
-
-                                        onChange={this.onHandleCustomerNameChange}
                                     />
                                     {/* dùng for để render các tag */}
-                                    <div className="c-text-field-name">Last Purchase</div>
+                                    {/* <div className="c-text-field-name">Last Purchase</div>
                                     <Stack direction="row" spacing={1} paddingBottom={1}>
                                         <Chip label="Chip Filled" />
                                         <Chip label="Chip Filled" />
                                         <Chip label="Chip Filled" />
-                                    </Stack>
-                                    <div className="c-text-field-name">Recent Receipts</div>
+                                    </Stack> */}
+                                    <div className="c-text-field-name">Last Order</div>
                                     <TableContainer component={Paper}>
                                         <Table size="small" aria-label="a dense table">
                                             <TableHead>
                                                 <TableRow>
                                                     <TableCell>Created At</TableCell>
-                                                    <TableCell>Receipts</TableCell>
+                                                    <TableCell>Order Id</TableCell>
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
                                                 <TableRow>
-                                                    <TableCell>Mar 4, 2022, 10:50 AM</TableCell>
-                                                    <TableCell onClick={() => true}>
-                                                        TH-F0I-2204-2
+                                                    <TableCell>
+                                                        {this.state.loading ? "" : new Date(this.state.currentCustomer?.lastOrder?.createDate || "").toLocaleString()}
                                                     </TableCell>
+                                                    {!this.state.loading &&
+                                                        <TableCell onClick={() => {
+                                                            this.props.history.push(`/receipts/${this.state?.lastOrder?.Id}`);
+                                                        }}>
+                                                            {this.state?.lastOrder?.Id} (Click to see detail)
+                                                        </TableCell>
+                                                    }
+                                                    {this.state.loading &&
+                                                        <TableCell className='no-item' colSpan={2} style={{ textAlign: "center" }}>
+                                                            No item to show in this view
+                                                        </TableCell>
+                                                    }
                                                 </TableRow>
                                             </TableBody>
                                         </Table>

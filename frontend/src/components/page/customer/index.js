@@ -11,6 +11,7 @@ import BasicMenu from "../../common/menu/menu";
 import LoadingScreen from "../../common/loading";
 import AlertDialog from "../../common/dialog";
 import NavSideBar from "../../common/navigation bar/navSideBar";
+import { format } from "date-fns";
 
 class Customers extends Component {
     constructor(props) {
@@ -41,8 +42,8 @@ class Customers extends Component {
                 id: item.Id,
                 name: item.name,
                 mobile: item.mobilePhone,
-                orderCount: "",
-                lastSeen: "",
+                orderCount: item.orderCount,
+                lastSeen: format(new Date(item.lastOrder.createDate), "yyyy-MM-dd HH:mm:ss"),
             }
         })
     }
