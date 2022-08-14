@@ -6,7 +6,7 @@ exports.up = function (knex) {
         table.integer('categoryId');
         table.string('name', 256).notNullable();
         table.integer('price').notNullable();
-        table.integer('status').notNullable().defaultTo(1) //1: active 0: deleted;
+        table.integer('status').notNullable().defaultTo(1) //1: active 0: deleted, 2 la variant;
     })
 };
 

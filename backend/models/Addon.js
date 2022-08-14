@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt')
 const config = require('../config/config')
 
 exports.getAddonList = () => {
-    return knex.from('Addon').select('*').where('status', 1)
+    return knex.from('Addon').select('*')
 }
 
 exports.getAddonListByAddonGroupId = (addonGroupId) => {

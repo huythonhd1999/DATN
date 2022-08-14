@@ -75,7 +75,7 @@ exports.createProduct = async function (req, res) {
             price: req.body.price,
             // taxId: req.body.taxId
         }
-        var baseVariantId = await Variant.createVariant(info)
+        var baseVariantId = await Variant.createVariant({...info, status: 2})
 
         info = {
             name: req.body.name,

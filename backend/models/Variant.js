@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt')
 const config = require('../config/config')
 
 exports.getVariantList = () => {
-    return knex.from('Variant').select('*').whereNot('status', 2).whereNot('status', 0)
+    return knex.from('Variant').select('*').whereNot('status', 2)
 }
 
 exports.getVariantListByVariantGroupId = (variantGroupId) => {
