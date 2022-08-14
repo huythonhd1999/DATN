@@ -32,8 +32,18 @@ class Receipts extends Component {
         })
         let res = await Api.getOrderList();
         this.setState({
-            orderList: res.data.orderList,
-            allOrder: res.data.orderList,
+            orderList: res.data.orderList.map((order) => {
+                if(order.canceledOrderInfo) {
+                    return {...order, status: 3}
+                }
+                return order
+            }),
+            allOrder: res.data.orderList.map((order) => {
+                if(order.canceledOrderInfo) {
+                    return {...order, status: 3}
+                }
+                return order
+            }),
             loading: false,
         })
     }
