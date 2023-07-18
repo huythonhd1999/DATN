@@ -4,7 +4,7 @@ const config = require('../config/config')
 
 //Use for auth login
 exports.getTaxList = () => {
-    return knex.from('Tax').select('*')
+    return knex.from('Tax').select('*').where('status', 1)
 }
 
 exports.getTax = (taxId) => {
@@ -24,10 +24,12 @@ exports.createTax = (tax) => {
     })
 }
 
-exports.deleteTax = (taxId) => {
-    return knex('Tax').where('Id', taxId).del()
+exports.deleteTax = (data, taxId) => {
+    return knex('Tax').where('Id', taxId).update({
+        ...data
+    })
 }
 
 exports.searchTax = (query) => {
-    return knex.from('Tax').select('*').where('name', 'like', `%${query}%`)
+    return knex.from('Tax').select('*').where('name', 'like', `%${query}%`).where('status', 1)
 }

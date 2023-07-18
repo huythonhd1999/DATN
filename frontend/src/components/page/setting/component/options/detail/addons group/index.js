@@ -27,6 +27,7 @@ class AddonGroupInfo extends Component {
             selectedAddons: [],
             currentAddonGroup: {},
             nameErrorMessage: "",
+            addonOptions: []
         };
     }
     componentDidMount = async () => {
@@ -40,6 +41,7 @@ class AddonGroupInfo extends Component {
             addonWithoutGroupList: res1.data.addonList,
             selectedAddons: addonGroup.addonList,
             currentAddonGroup: addonGroup,
+            addonOptions: [...res1.data.addonList, ...addonGroup.addonList],
             loading: false
         })
     }
@@ -88,6 +90,7 @@ class AddonGroupInfo extends Component {
                 addonWithoutGroupList: res1.data.addonList,
                 selectedAddons: addonGroup.addonList,
                 currentAddonGroup: addonGroup,
+                addonOptions: [...res1.data.addonList, ...addonGroup.addonList],
                 loading: false
             })
             this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
@@ -170,7 +173,7 @@ class AddonGroupInfo extends Component {
                                     <div className="c-text-field-name">Addon List</div>
                                     <Tags
                                         disabled={this.state.disable}
-                                        options={this.state.addonWithoutGroupList}
+                                        options={this.state.addonOptions}
                                         value={this.state.selectedAddons}
                                         onSelectedListChange={this.onHandleAddonListChange}
                                     />

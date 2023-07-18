@@ -13,11 +13,11 @@ exports.getVariantListByVariantGroupId = (variantGroupId) => {
             .select('name')
             .where('Variant_Group.Id', variantGroupId)
             .as('variantGroupName'),
-    ).where('variantGroupId', variantGroupId).whereNot('status', 2)
+    ).where('variantGroupId', variantGroupId).whereNot('status', 2).whereNot('status', 0)
 }
 
 exports.getVariantListWithoutGroup = () => {
-    return knex.from('Variant').select('*').where('variantGroupId', null).whereNot('status', 2)
+    return knex.from('Variant').select('*').where('variantGroupId', null).whereNot('status', 2).whereNot('status', 0)
 }
 
 exports.getVariant = (variantId) => {
@@ -43,9 +43,11 @@ exports.createVariant = (variant) => {
 }
 
 exports.deleteVariant = (variantId) => {
-    return knex('Variant').where('Id', variantId).del()
+    return knex('Variant').where('Id', variantId).update({
+        status: 0
+    })
 }
 
 exports.searchVariant = (query) => {
-    return knex.from('Variant').select('*').where('name', 'like', `%${query}%`).whereNot('status', 2)
+    return knex.from('Variant').select('*').where('name', 'like', `%${query}%`).whereNot('status', 2).whereNot('status', 0)
 }

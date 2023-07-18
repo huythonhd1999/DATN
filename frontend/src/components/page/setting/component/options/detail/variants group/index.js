@@ -27,6 +27,7 @@ class VariantGroupInfo extends Component {
             selectedVariants: [],
             currentVariantGroup: {},
             nameErrorMessage: "",
+            variantOptions: [],
         };
     }
     componentDidMount = async () => {
@@ -40,6 +41,7 @@ class VariantGroupInfo extends Component {
             variantWithoutGroupList: res1.data.variantList,
             selectedVariants: variantGroup.variantList,
             currentVariantGroup: variantGroup,
+            variantOptions: [...res1.data.variantList, variantGroup.variantList],
             loading: false
         })
     }
@@ -88,6 +90,7 @@ class VariantGroupInfo extends Component {
                 variantWithoutGroupList: res1.data.variantList,
                 selectedVariants: variantGroup.variantList,
                 currentVariantGroup: variantGroup,
+                variantOptions: [...res1.data.variantList, variantGroup.variantList],
                 loading: false
             })
             this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})

@@ -14,6 +14,7 @@ import Tab from '@mui/material/Tab';
 import BasicMenu from "../../../../common/menu/menu";
 import AlertDialog from "../../../../common/dialog";
 import LoadingScreen from "../../../../common/loading";
+import { withSnackbar } from 'notistack';
 class ProductCategories extends Component {
     constructor(props) {
         super(props);
@@ -200,10 +201,11 @@ class ProductCategories extends Component {
         })
         await Api.deleteCategoryList(this.state.selectedItemsId);
         let res = await Api.getCategoryList();
+        this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
         this.setState({
             categoryList: res.data.categoryList,
             loading: false
         })
     }
 }
-export default withRouter(ProductCategories);
+export default withRouter(withSnackbar(ProductCategories));

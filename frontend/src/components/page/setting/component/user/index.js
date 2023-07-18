@@ -15,6 +15,7 @@ import BasicMenu from "../../../../common/menu/menu";
 import AlertDialog from "../../../../common/dialog";
 import LoadingScreen from "../../../../common/loading";
 import { InputBase } from "@mui/material";
+import { withSnackbar } from 'notistack';
 
 class Users extends Component {
     constructor(props) {
@@ -214,9 +215,10 @@ class Users extends Component {
         })
         await Api.deleteUserList(this.state.selectedItemsId);
         let res = await Api.getUserList();
+        this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
         this.setState({
             userList: res.data.userList
         })
     }
 }
-export default withRouter(Users);
+export default withRouter(withSnackbar(Users));

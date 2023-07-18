@@ -43,9 +43,11 @@ exports.createAddon = (addon) => {
 }
 
 exports.deleteAddon = (addonId) => {
-    return knex('Addon').where('Id', addonId).del()
+    return knex('Addon').where('Id', addonId).update({
+        status: 0
+    })
 }
 
 exports.searchAddon = (query) => {
-    return knex.from('Addon').select('*').where('name', 'like', `%${query}%`)
+    return knex.from('Addon').select('*').where('name', 'like', `%${query}%`).where('status', 1)
 }

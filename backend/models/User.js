@@ -9,7 +9,7 @@ exports.getUserByUserName = (username) => {
 }
 
 exports.getUserList = () => {
-    return knex.from('User').select('*')
+    return knex.from('User').select('*').where('status', 1)
 }
 
 exports.getUser = (userId) => {
@@ -29,9 +29,11 @@ exports.createUser = (user) => {
 }
 
 exports.deleteUser = (userId) => {
-    return knex('User').where('Id', userId).del()
+    return knex('User').where('Id', userId).update({
+        status: 0
+    })
 }
 
 exports.searchUser = (query) => {
-    return knex.from('User').select('*').where('userName', 'like', `%${query}%`)
+    return knex.from('User').select('*').where('userName', 'like', `%${query}%`).where('status', 1)
 }

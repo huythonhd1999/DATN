@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt')
 const config = require('../config/config')
 
 exports.getPettyCashList = () => {
-    return knex.from('Petty_Cash').select('*')
+    return knex.from('Petty_Cash').select('*').where('status', 1)
 }
 
 exports.getPettyCashListByPettyCashGroupId = (pettyCashGroupId) => {
@@ -37,9 +37,11 @@ exports.createPettyCash = (pettyCash) => {
 }
 
 exports.deletePettyCash = (pettyCashId) => {
-    return knex('Petty_Cash').where('Id', pettyCashId).del()
+    return knex('Petty_Cash').where('Id', pettyCashId).update({
+        status: 0
+    })
 }
 
 exports.searchPettyCash = (query) => {
-    return knex.from('Petty_Cash').select('*').where('notes', 'like', `%${query}%`)
+    return knex.from('Petty_Cash').select('*').where('notes', 'like', `%${query}%`).where('status', 1)
 }

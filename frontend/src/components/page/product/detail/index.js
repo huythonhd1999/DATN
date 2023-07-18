@@ -226,6 +226,8 @@ class ProductInfo extends Component {
                                         getOptionLabel={(option) => option.name}
                                         options={this.state.categories}
                                         disabled={this.state.disable}
+                                        filterSelectedOptions
+                                        isOptionEqualToValue = {(option, value) => (option.Id === value.Id)}
                                         value={this.state.selectedCategory}
                                         onChange={(_event, value) => this.onHandleCategoryChange(value)}
                                         renderInput={(params) => <TextField {...params} fullWidth size="small" placeholder="Select a value" />}
@@ -264,6 +266,8 @@ class ProductInfo extends Component {
                                         id="combo-box-demo"
                                         getOptionLabel={(option) => option.name}
                                         options={this.state.taxes}
+                                        filterSelectedOptions
+                                        isOptionEqualToValue = {(option, value) => (option.Id === value.Id)}
                                         disabled={this.state.disable}
                                         value={this.state.selectedTax}
                                         onChange={(_event, value) => this.onHandleTaxChange(value)}
@@ -277,6 +281,8 @@ class ProductInfo extends Component {
                                         getOptionLabel={(option) => option.name}
                                         options={this.state.variantGroups}
                                         disabled={this.state.disable}
+                                        filterSelectedOptions
+                                        isOptionEqualToValue = {(option, value) => (option.Id === value.Id)}
                                         value={this.state.selectedVariantGroups}
                                         onChange={(_event, value) => this.onHandleVariantGroupsChange(value)}
                                         renderInput={(params) => <TextField {...params} fullWidth size="small" placeholder="Select a value" />}
@@ -289,6 +295,8 @@ class ProductInfo extends Component {
                                         getOptionLabel={(option) => option.name}
                                         options={this.state.addonGroups}
                                         disabled={this.state.disable}
+                                        filterSelectedOptions
+                                        isOptionEqualToValue = {(option, value) => (option.Id === value.Id)}
                                         value={this.state.selectedAddonGroups}
                                         onChange={(_event, value) => this.onHandleAddonGroupsChange(value)}
                                         renderInput={(params) => <TextField {...params} fullWidth size="small" placeholder="Select a value" />}

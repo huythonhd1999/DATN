@@ -4,7 +4,7 @@ const config = require('../config/config')
 const {format} = require('date-fns')
 
 exports.getCustomerList = () => {
-    return knex.from('Customer').select('*')
+    return knex.from('Customer').select('*').where('status', 1)
 }
 
 exports.getCustomerByPhone = (phone) => {
@@ -28,11 +28,13 @@ exports.createCustomer = (customer) => {
 }
 
 exports.deleteCustomer = (customerId) => {
-    return knex('Customer').where('Id', customerId).del()
+    return knex('Customer').where('Id', customerId).update({
+        status: 0
+    })
 }
 
 exports.searchCustomer = (query) => {
-    return knex.from('Customer').select('*').where('mobilePhone', 'like', `%${query}%`)
+    return knex.from('Customer').select('*').where('mobilePhone', 'like', `%${query}%`).where('status', 1)
 }
 
 exports.getNumNewCustomerToday = () => {

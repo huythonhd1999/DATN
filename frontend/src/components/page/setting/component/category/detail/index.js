@@ -25,7 +25,8 @@ class ProductCategoryInfo extends Component {
             currentCategory: {},
             nameErrorMessage: "",
             selectedProducts: [],
-            productWithoutCategory: []
+            productWithoutCategory: [], 
+            productOptions: []
         };
     }
     componentDidMount = async () => {
@@ -39,7 +40,8 @@ class ProductCategoryInfo extends Component {
             productWithoutCategory: res1.data.productList,
             currentCategory: category,
             selectedProducts: category.productList,
-            loading: false
+            loading: false,
+            productOptions: [...res1.data.productList,...category.productList]
         })
     }
     onHandleEditClick = () => {
@@ -88,6 +90,7 @@ class ProductCategoryInfo extends Component {
                 productWithoutCategory: res1.data.productList,
                 currentCategory: category,
                 selectedProducts: category.productList,
+                productOptions: [...res1.data.productList,...category.productList],
                 loading: false
             })
             this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
@@ -176,7 +179,7 @@ class ProductCategoryInfo extends Component {
                                     <div className="c-text-field-name">Product List</div>
                                     <Tags
                                         disabled={this.state.disable}
-                                        options={this.state.productWithoutCategory}
+                                        options={this.state.productOptions}
                                         value={this.state.selectedProducts}
                                         onSelectedListChange={this.onHandleProductListChange}
                                     />

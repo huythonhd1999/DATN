@@ -15,6 +15,7 @@ import Tab from '@mui/material/Tab';
 import BasicMenu from "../../../../common/menu/menu";
 import AlertDialog from "../../../../common/dialog";
 import LoadingScreen from "../../../../common/loading";
+import { withSnackbar } from 'notistack';
 
 class DiscountRules extends Component {
     constructor(props) {
@@ -192,10 +193,11 @@ class DiscountRules extends Component {
         })
         await Api.deleteCouponList(this.state.selectedItemsId);
         let res = await Api.getCouponList();
+        this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
         this.setState({
             couponList: res.data.couponList,
             loading: false
         })
     }
 }
-export default withRouter(DiscountRules);
+export default withRouter(withSnackbar(DiscountRules));

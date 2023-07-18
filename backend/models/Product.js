@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt')
 const config = require('../config/config')
 
 exports.getProductList = () => {
-    return knex.from('Product').select('*')
+    return knex.from('Product').select('*').where('status', 1)
 }
 
 exports.getProductListByCategoryId = (categoryId) => {
@@ -37,9 +37,11 @@ exports.createProduct = (product) => {
 }
 
 exports.deleteProduct = (productId) => {
-    return knex('Product').where('Id', productId).del()
+    return knex('Product').where('Id', productId).update({
+        status: 0
+    })
 }
 
 exports.searchProduct = (query) => {
-    return knex.from('Product').select('*').where('name', 'like', `%${query}%`)
+    return knex.from('Product').select('*').where('name', 'like', `%${query}%`).where('status', 1)
 }

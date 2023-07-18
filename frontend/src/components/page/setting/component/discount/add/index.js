@@ -415,7 +415,7 @@ class CouponAdd extends Component {
 
                                             {this.state.setHappyHour &&
                                                 <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                                    <Stack direction="row" >
+                                                    <Stack direction="row" className="set-happy-hour">
                                                         <div className="hour">
                                                             <div className="c-text-field-name">Start time</div>
                                                             <TimePicker
@@ -444,7 +444,7 @@ class CouponAdd extends Component {
                                         <div className="happy-day">
                                             <FormControlLabel
                                                 disabled={this.state.disable}
-                                                label={<div className="c-text-field-name-1">Set Days Of Week </div>}
+                                                label={<div className="c-text-field-name-1">Set Days Of Week (Optional)</div>}
                                                 control={
                                                     <Checkbox
                                                         icon={<CircleUnchecked />}

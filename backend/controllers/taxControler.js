@@ -77,7 +77,7 @@ exports.deleteTax = async function (req, res) {
     try {
         var idList = req.body
         idList.forEach(async(id) => {
-            await Tax.deleteTax(id)
+            await Tax.deleteTax({status: 0},id)
         });
         res.status(200).json({
             success: true,

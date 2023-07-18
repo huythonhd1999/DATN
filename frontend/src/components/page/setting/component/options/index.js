@@ -16,6 +16,7 @@ import AlertDialog from "../../../../common/dialog";
 import LoadingScreen from "../../../../common/loading";
 import Tabs from '@mui/material/Tabs';
 import * as productOptionAction from "../../../../../redux/action/setting/product options/index"
+import { withSnackbar } from 'notistack';
 class ProductOptions extends Component {
     constructor(props) {
         super(props);
@@ -482,7 +483,7 @@ class ProductOptions extends Component {
                 break
             default:
         }
-
+        this.props.enqueueSnackbar('Successfully to save data.', { variant: 'success', anchorOrigin: { vertical: 'top', horizontal: 'right' }})
         this.setState({
             selectedItemsId: [],
             loading: false,
@@ -504,4 +505,4 @@ const mapDispatchToProp = (dispatch, _props) => {
     }
 }
 
-export default connect(mapStateToProp, mapDispatchToProp)(withRouter(ProductOptions));
+export default connect(mapStateToProp, mapDispatchToProp)(withRouter(withSnackbar(ProductOptions)));
