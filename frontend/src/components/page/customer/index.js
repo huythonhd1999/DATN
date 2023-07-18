@@ -43,7 +43,7 @@ class Customers extends Component {
                 name: item.name,
                 mobile: item.mobilePhone,
                 orderCount: item.orderCount,
-                lastSeen: format(new Date(item.lastOrder.createDate), "yyyy-MM-dd HH:mm:ss"),
+                lastSeen: item.lastOrder?.createDate ? format(new Date(item.lastOrder.createDate), "yyyy-MM-dd HH:mm:ss") : "",
             }
         })
     }

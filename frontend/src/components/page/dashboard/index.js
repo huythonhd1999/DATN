@@ -49,26 +49,34 @@ class DashBoard extends Component {
             scope: e.target.value
         })
         this.setState({ loading: true })
-        const res1 = await Api.getStatisticByDate(e.target.value)
-        const data1 = await res1.data
-        this.setState({
-            ...data1,
-            loading: false
-        }, () => { this.getChartData() })
+        try {
+            const res1 = await Api.getStatisticByDate(e.target.value)
+            const data1 = await res1.data
+            this.setState({
+                ...data1,
+                loading: false
+            }, () => { this.getChartData() })
+        } catch (err) {
+            this.setState({ loading: false })
+        }
     }
 
     componentDidMount = async () => {
         this.setState({ loading: true })
-        const res = await Api.getTodayStatistic()
-        const data = res.data
-        const res1 = await Api.getStatisticByDate(this.state.scope)
-        const data1 = await res1.data
-        this.setState({
-            ...data,
-            ...data1,
-            loading: false
-        })
-        this.getChartData()
+        try {
+            const res = await Api.getTodayStatistic()
+            const data = res.data
+            const res1 = await Api.getStatisticByDate(this.state.scope)
+            const data1 = await res1.data
+            this.setState({
+                ...data,
+                ...data1,
+                loading: false
+            })
+            this.getChartData()
+        } catch (err) {
+            this.setState({loading: false})
+        }
     }
     getProductName(order) {
         if (order.productInfo) {
