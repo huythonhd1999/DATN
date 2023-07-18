@@ -1,0 +1,54 @@
+-- MySQL dump 10.13  Distrib 8.0.26, for Win64 (x86_64)
+--
+-- Host: 52.139.214.15    Database: DATN
+-- ------------------------------------------------------
+-- Server version	5.7.38-0ubuntu0.18.04.1
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `User`
+--
+
+DROP TABLE IF EXISTS `User`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `User` (
+  `Id` int(10) NOT NULL AUTO_INCREMENT,
+  `userName` varchar(256) NOT NULL,
+  `password` varchar(256) NOT NULL,
+  `userType` int(11) NOT NULL DEFAULT '1',
+  `status` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `User`
+--
+
+LOCK TABLES `User` WRITE;
+/*!40000 ALTER TABLE `User` DISABLE KEYS */;
+INSERT INTO `User` VALUES (1,'admin01','$2b$10$zHRNY2K/oJDPxviv64SXR.j1B73I2rPzLlhwq28DJy4BkyEIH6vIK',1,1),(2,'admin021','$2b$10$WZqK3eR4m5GtNoB.5dKUUeWx7oQkCLUW3CD1si2PUuX2h8FEBtovu',1,1),(3,'admin03','$2b$10$9ZtPWtLGOm5CiW9C.CiyPONNmhPWz/g1FY17jMK3vIOqPzeWRjpI2',1,1),(4,'admin04','$2b$10$.o/zFZW1QxAnuJ6aui3Cve3Hx0MbjOZZpmeK3JtWnGXk.qD6c4XrK',1,1),(5,'admin051','$2b$10$A.4VlNmRMUvVDOneythsCusTEcAvl2D7dLdasVDGdS.Rv4p8ltM/O',2,1),(6,'admin06','$2b$10$beZBtMAK4g.oeOu0Cc.Nd.ZVC6MhUXF1pV8doAR9HO8UTPCXF3Mv.',1,1),(9,'admin09 edited','$2b$10$4MW1.t4WJOEVC6dlB7CTWuitGJXyyzbQe/iOKjVDq1uU40CvYK4gq',1,1),(10,'Test create','$2b$10$O8X8qAOsyMr6OYc.VvLUn.siJaleN/EAMLz71u7s2fl4lNcJFYhou',2,1),(11,'Test create 1','$2b$10$qj81iqnb4qXs.4Lrd.4xIebNSb/LMGsLJdB7SzHX2Z/92/dIykiHG',1,1);
+/*!40000 ALTER TABLE `User` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2022-07-29 22:59:44

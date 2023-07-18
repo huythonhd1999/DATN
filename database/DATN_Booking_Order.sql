@@ -1,0 +1,54 @@
+-- MySQL dump 10.13  Distrib 8.0.26, for Win64 (x86_64)
+--
+-- Host: 52.139.214.15    Database: DATN
+-- ------------------------------------------------------
+-- Server version	5.7.38-0ubuntu0.18.04.1
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `Booking_Order`
+--
+
+DROP TABLE IF EXISTS `Booking_Order`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Booking_Order` (
+  `orderId` int(11) NOT NULL,
+  `isDoorDelivery` int(11) NOT NULL,
+  `deliveryDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `bookingAdvance` int(11) NOT NULL,
+  `notes` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`orderId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Booking_Order`
+--
+
+LOCK TABLES `Booking_Order` WRITE;
+/*!40000 ALTER TABLE `Booking_Order` DISABLE KEYS */;
+INSERT INTO `Booking_Order` VALUES (7,1,'2022-07-29 23:00:03',100,'Test new customer'),(10,1,'2022-07-29 22:40:54',100,'Test'),(11,1,'2022-07-29 21:45:42',100,'Test'),(12,1,'2022-07-28 22:45:27',100,'Test'),(13,1,'2022-07-29 21:44:44',100,'Test'),(14,1,'2022-07-28 21:45:44',10,'Test'),(15,1,'2022-07-29 20:51:07',100,'Test'),(16,1,'2022-07-28 21:59:11',100,''),(17,1,'2022-07-29 21:40:04',100,'Test'),(18,1,'2022-07-29 21:45:23',10,''),(19,1,'2022-07-29 22:44:06',100,'test'),(20,1,'2022-07-29 22:47:34',10,'test');
+/*!40000 ALTER TABLE `Booking_Order` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2022-07-29 23:00:30
